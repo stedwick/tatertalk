@@ -74,8 +74,8 @@ const smileyRegex = new RegExp(
 
 // Character spacing rules
 const charsWithNoSpaces = "_\\-@/\\\\"
-const charsWithOnlySpaceBefore = "(#$%{\\["
-const charsWithOnlySpaceAfter = ",.:;?!)}\\]™"
+const charsWithOnlySpaceBefore = "(#${\\["
+const charsWithOnlySpaceAfter = ",.:;?!%)}\\]™"
 const charsThatCapitalizeNext = ".?!\\n"
 
 const charsWithNoSpacesRegex = new RegExp(`\\s*([${charsWithNoSpaces}])\\s*`, "g")

@@ -53,4 +53,9 @@ describe("Punctuation System", () => {
     const result = await Effect.runPromise(punctuate("I love hashtag programming"))
     expect(result).toBe("I love #programming")
   })
+
+  test("Percent sign spacing", async () => {
+    const result = await Effect.runPromise(punctuate("the discount is 20 percent sign off"))
+    expect(result).toBe("The discount is 20% off")
+  })
 })
