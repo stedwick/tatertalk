@@ -15,6 +15,7 @@ function App() {
   return (
     <main className="container">
       <h1>Welcome to Tauri + React</h1>
+      <button className="btn btn-primary">Click me</button>
 
       <div className="row">
         <a href="https://vitejs.dev" target="_blank">
