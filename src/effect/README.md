@@ -1,32 +1,31 @@
-# Effect-Based Punctuation System
+# TypeScript-Based Punctuation System
 
-This is a functional rewrite of the XState-based punctuation machine using the Effect library. It transforms spoken dialogue into properly punctuated text.
+This is a functional punctuation system built with pure TypeScript that transforms spoken dialogue into properly punctuated text.
 
 ## Features
 
-- **Pure Functions**: Each transformation step is a pure function wrapped in Effect
-- **Composable**: Easy to add, remove, or reorder transformation steps
+- **Pure Functions**: Each transformation step is a pure function
+- **Composable**: Easy to add, remove, or reorder transformation steps using function composition
 - **Type Safe**: Full TypeScript support with proper type inference
-- **Error Handling**: Built-in error handling through Effect's error channel
+- **Synchronous**: No async operations, immediate results
 - **Testable**: Each step can be tested independently
+- **Functional Pipeline**: Uses function composition for clean data flow
 
 ## Usage
 
 ### Basic Usage
 
 ```typescript
-import { Effect } from "effect"
 import { punctuate } from "./punctuation"
 
 // Simple text processing
-const result = await Effect.runPromise(punctuate("hello comma world"))
+const result = punctuate("hello comma world")
 console.log(result) // "hello, world"
 ```
 
 ### Advanced Usage with Context
 
 ```typescript
-import { Effect } from "effect"
 import { punctuateText, PunctuationContext } from "./punctuation"
 
 const context: PunctuationContext = {
@@ -35,13 +34,13 @@ const context: PunctuationContext = {
   after: " there"
 }
 
-const result = await Effect.runPromise(punctuateText(context))
-console.log(result) // "Hello, world. there"
+const result = punctuateText(context)
+console.log(result) // ", world."
 ```
 
 ## Transformation Pipeline
 
-The system applies transformations in this specific order:
+The system applies transformations in this specific order using a functional pipeline:
 
 1. **Trim** - Remove leading/trailing whitespace
 2. **Preserve Special Cases** - Temporarily replace a.m./p.m.
@@ -109,10 +108,50 @@ The system applies transformations in this specific order:
 Run the test file to see examples:
 
 ```bash
-npx tsx src/effect/punctuation.test.ts
+bun test src/effect/punctuation.test.ts
 ```
 
-## Comparison with XState
+## Architecture
+
+### Function Composition Approach
+- Pure functional pipeline using a custom `pipe` function
+- Each step is a separate function that takes and returns a `PunctuationContext`
+- Clear data flow through function composition
+- Easy to test individual steps
+- No side effects or mutations
+
+### Pipeline Helper
+
+The system uses a simple `pipe` helper function for composing transformations:
+
+```typescript
+const pipe = <T>(value: T, ...functions: Array<(arg: T) => T>): T => {
+  return functions.reduce((acc, fn) => fn(acc), value)
+}
+```
+
+This allows for clean, readable transformation chains:
+
+```typescript
+const result = pipe(
+  input,
+  trimText,
+  preserveSpecialCases,
+  addSpaceBefore,
+  applyPunctuationMap,
+  // ... more transformations
+)
+```
+
+## Performance
+
+The TypeScript-based version provides:
+- **Fast execution**: Synchronous operations with no async overhead
+- **Memory efficient**: Immutable transformations with structural sharing
+- **Predictable**: No state machine complexity
+- **Lightweight**: No external dependencies beyond TypeScript
+
+## Comparison with Previous Approaches
 
 ### XState Approach
 - State machine with complex state transitions
@@ -121,27 +160,55 @@ npx tsx src/effect/punctuation.test.ts
 - More complex debugging
 
 ### Effect Approach
+- Functional pipeline with Effect monads
+- Type-safe error handling
+- Async-capable but overkill for this use case
+- Additional dependency overhead
+
+### TypeScript Approach (Current)
 - Pure functional pipeline
-- Each step is a separate Effect
-- Easy to test individual steps
-- Clear data flow
-- Better error handling
-- More composable
+- Simple function composition
+- Synchronous and fast
+- Easy to understand and debug
+- Zero dependencies
+- Perfect for this domain
 
 ## Error Handling
 
-The Effect-based approach provides better error handling:
+While the system doesn't need complex error handling for text transformation, individual functions can be wrapped with try-catch if needed:
 
 ```typescript
-import { Effect } from "effect"
-import { punctuate } from "./punctuation"
-
-const program = punctuate("hello comma world")
-  .pipe(Effect.catchAll(error => Effect.succeed(`Error: ${error}`)))
-
-const result = await Effect.runPromise(program)
+const safeTransform = (fn: (ctx: PunctuationContext) => PunctuationContext) => 
+  (ctx: PunctuationContext): PunctuationContext => {
+    try {
+      return fn(ctx)
+    } catch (error) {
+      console.warn('Transform failed:', error)
+      return ctx // Return unchanged on error
+    }
+  }
 ```
 
-## Performance
+## Extending the System
 
-The Effect-based version should have similar performance to the XState version, but with better memory usage due to immutable transformations and no state machine overhead. 
+Adding new transformations is straightforward:
+
+```typescript
+const customTransform = (context: PunctuationContext): PunctuationContext => ({
+  ...context,
+  text: context.text.replace(/custom pattern/g, 'replacement')
+})
+
+// Add it to the pipeline
+export const punctuateText = (input: PunctuationContext): string => {
+  const result = pipe(
+    input,
+    trimText,
+    preserveSpecialCases,
+    customTransform, // <-- Add here
+    // ... rest of pipeline
+  )
+  
+  return result.text
+}
+``` 
