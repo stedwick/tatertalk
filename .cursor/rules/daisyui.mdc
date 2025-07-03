@@ -1,0 +1,6 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+Use Tailwind CSS and Daisy UI for the React components in this project.
