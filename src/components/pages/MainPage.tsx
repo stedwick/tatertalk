@@ -82,6 +82,7 @@ const MainPage: React.FC = () => {
             onClick={isRecording ? handleStopDictation : handleStartDictation}
             className={isRecording ? 'btn-error btn-lg' : 'btn-outline btn-primary btn-lg'}
             icon={<MicrophoneIcon className="w-6 h-6" />}
+            isAnimating={isRecording}
           >
             {isRecording ? 'Stop Dictation' : 'Start Dictation'}
           </ActionButton>

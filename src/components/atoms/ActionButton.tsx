@@ -7,6 +7,7 @@ interface ActionButtonProps {
   className?: string;
   children: React.ReactNode;
   icon?: React.ReactNode;
+  isAnimating?: boolean;
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({ 
@@ -14,15 +15,25 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   disabled = false, 
   className,
   children,
-  icon 
+  icon,
+  isAnimating = false
 }) => {
   return (
     <button 
-      className={clsx('btn gap-2', className)}
+      className={clsx('btn gap-2 relative', className)}
       onClick={onClick}
       disabled={disabled}
     >
-      {icon && icon}
+      {icon && (
+        <div className="relative">
+          {isAnimating && (
+            <div className="absolute inset-0 animate-ping">
+              {icon}
+            </div>
+          )}
+          {icon}
+        </div>
+      )}
       {children}
     </button>
   );
