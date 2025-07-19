@@ -19,3 +19,5 @@ src/components
 Don't forget to check for existing components before creating new ones.
 
 Write and update Storybook stories for each component.
+
+Use Zustand for state and Immer for modifying it.
