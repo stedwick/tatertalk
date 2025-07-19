@@ -45,7 +45,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
       icon: <QuestionMarkCircleIcon className="w-5 h-5" />,
       label: 'Help',
       onClick: () => {
-        console.log('Help clicked');
+        window.open('https://youtu.be/47E8MYEPQrI', '_blank');
         onClose();
       }
     },
