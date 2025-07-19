@@ -16,7 +16,7 @@ const TextArea: React.FC<TextAreaProps> = ({
   return (
     <div className="w-full flex-1 flex flex-col">
       <textarea
-        className="textarea textarea-bordered w-full flex-1 text-lg leading-relaxed resize-none"
+        className="textarea textarea-lg textarea-primary textarea-bordered w-full flex-1 text-lg leading-relaxed resize-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
