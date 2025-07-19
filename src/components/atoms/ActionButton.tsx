@@ -1,10 +1,10 @@
 import React from 'react';
+import clsx from 'clsx';
 
 interface ActionButtonProps {
   onClick: () => void;
   disabled?: boolean;
-  variant?: 'primary' | 'secondary' | 'accent' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  className?: string;
   children: React.ReactNode;
   icon?: React.ReactNode;
 }
@@ -12,16 +12,13 @@ interface ActionButtonProps {
 const ActionButton: React.FC<ActionButtonProps> = ({ 
   onClick, 
   disabled = false, 
-  variant = 'primary',
-  size = 'lg',
+  className,
   children,
   icon 
 }) => {
-  const buttonClasses = `btn btn-${variant} btn-${size} gap-2`;
-  
   return (
     <button 
-      className={buttonClasses}
+      className={clsx('btn gap-2', className)}
       onClick={onClick}
       disabled={disabled}
     >

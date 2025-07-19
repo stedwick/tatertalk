@@ -74,14 +74,13 @@ const MainPage: React.FC = () => {
           <TextArea 
             value={text}
             onChange={setText}
-            disabled={isRecording}
           />
         </div>
         
         <div className="flex gap-4 mt-6 justify-center">
           <ActionButton
             onClick={isRecording ? handleStopDictation : handleStartDictation}
-            variant={isRecording ? 'secondary' : 'primary'}
+            className={isRecording ? 'btn-error btn-lg' : 'btn-outline btn-primary btn-lg'}
             icon={<MicrophoneIcon className="w-6 h-6" />}
           >
             {isRecording ? 'Stop Dictation' : 'Start Dictation'}
@@ -89,7 +88,7 @@ const MainPage: React.FC = () => {
           
           <ActionButton
             onClick={handleCutText}
-            variant="accent"
+            className="btn-outline btn-lg"
             disabled={!text}
             icon={<ScissorsIcon className="w-6 h-6" />}
           >
