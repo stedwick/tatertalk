@@ -16,8 +16,10 @@ src/components
 ├── pages
 └── templates
 
-Don't forget to check for existing components before creating new ones.
+Don't forget to check for existing components before creating new ones. There's no need to create components for native Daisy UI components, like buttons or inputs.
 
 Write and update Storybook stories for each component.
 
 Use Zustand for state and Immer for modifying it.
+
+Use Heroicons for all the icons.
