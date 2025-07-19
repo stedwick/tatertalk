@@ -4,6 +4,7 @@ import Header from '../atoms/Header';
 import TextArea from '../atoms/TextArea';
 import ActionButton from '../atoms/ActionButton';
 import SideMenu from '../molecules/SideMenu';
+import AuthButton from '../atoms/AuthButton';
 
 const MainPage: React.FC = () => {
   const [text, setText] = useState('');
@@ -106,6 +107,8 @@ const MainPage: React.FC = () => {
           >
             Cut Text
           </ActionButton>
+
+          <AuthButton />
         </div>
       </main>
     </div>
