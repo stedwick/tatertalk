@@ -1,6 +1,0 @@
----
-description: 
-globs: 
-alwaysApply: true
----
-Use bun instead of npm in this project.

@@ -1,0 +1,21 @@
+---
+alwaysApply: true
+---
+Use bun instead of npm in this project.
+
+Use Tailwind CSS and Daisy UI for the React components in this project.
+
+Use Stately Xstate in this project.
+
+When creating React components use Atomic Design in the following directory structure:
+
+src/components
+├── atoms
+├── molecules
+├── organisms
+├── pages
+└── templates
+
+Don't forget to check for existing components before creating new ones.
+
+Write and update Storybook stories for each component.
