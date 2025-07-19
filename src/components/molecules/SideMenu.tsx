@@ -1,5 +1,6 @@
 import React from 'react';
-import { XMarkIcon, Cog6ToothIcon, InformationCircleIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, Cog6ToothIcon, InformationCircleIcon, QuestionMarkCircleIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
+import { useSupabase } from '../../hooks/useSupabase';
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -7,6 +8,22 @@ interface SideMenuProps {
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
+  const { signOut } = useSupabase();
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await signOut();
+      if (error) {
+        console.error('Logout error:', error);
+      } else {
+        console.log('Logged out successfully');
+        onClose();
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   const menuItems = [
     {
       icon: <Cog6ToothIcon className="w-5 h-5" />,
@@ -31,6 +48,11 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
         console.log('Help clicked');
         onClose();
       }
+    },
+    {
+      icon: <ArrowRightStartOnRectangleIcon className="w-5 h-5" />,
+      label: 'Logout',
+      onClick: handleLogout
     }
   ];
 

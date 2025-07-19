@@ -6,22 +6,11 @@ import ActionButton from '../atoms/ActionButton';
 import SideMenu from '../molecules/SideMenu';
 
 const MainPage: React.FC = () => {
+  const savedTheme = document.documentElement.getAttribute('data-theme');
   const [text, setText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(savedTheme === 'dark');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Initialize theme from localStorage or system preference
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme) {
-      setIsDarkMode(savedTheme === 'dark');
-    } else {
-      setIsDarkMode(prefersDark);
-    }
-  }, []);
 
   // Update document theme when isDarkMode changes
   useEffect(() => {
