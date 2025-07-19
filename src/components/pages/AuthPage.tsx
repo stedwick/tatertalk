@@ -7,7 +7,7 @@ import { useAuthStore } from '../../lib/authStore'
 import { supabase } from '../../lib/supabase'
 
 const AuthPage: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true)
+  const [isLogin, setIsLogin] = useState(false)
   const { user, session, loading, setUser, setSession, setLoading, error, success, clearMessages } = useAuthStore()
   
   // Theme management
