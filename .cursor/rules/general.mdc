@@ -25,3 +25,5 @@ Use Zustand for state and Immer for modifying it.
 Use Heroicons for all the icons.
 
 Use React Hook Form for forms with Zod for validation.
+
+Use clsx to pass class names to components.
