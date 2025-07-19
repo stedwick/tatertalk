@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase'
 import FormInput from '../atoms/FormInput'
 import { useAuthStore } from '../../lib/authStore'
 import { loginSchema, type LoginFormData } from '../../lib/validationSchemas'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
 
 interface LoginFormProps {
   onSwitchToSignup: () => void
@@ -68,10 +69,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
           
           <button
             type="submit"
-            className={`btn btn-primary w-full ${loading ? 'loading' : ''}`}
+            className="btn btn-primary w-full"
             disabled={loading}
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? (
+              <>
+                <ArrowPathIcon className="h-5 w-5 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              'Sign In'
+            )}
           </button>
         </form>
         
