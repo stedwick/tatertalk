@@ -1,68 +1,35 @@
 import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { supabase } from '../../lib/supabase'
 import FormInput from '../atoms/FormInput'
 import { useAuthStore } from '../../lib/authStore'
+import { signupSchema, type SignupFormData } from '../../lib/validationSchemas'
 
 interface SignupFormProps {
   onSwitchToLogin: () => void
 }
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<{ 
-    email?: string; 
-    password?: string; 
-    confirmPassword?: string 
-  }>({})
-  
   const { setError, clearError } = useAuthStore()
 
-  const validateForm = () => {
-    const newErrors: { 
-      email?: string; 
-      password?: string; 
-      confirmPassword?: string 
-    } = {}
-    
-    if (!email) {
-      newErrors.email = 'Email is required'
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email'
-    }
-    
-    if (!password) {
-      newErrors.password = 'Password is required'
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters'
-    }
-    
-    if (!confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password'
-    } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match'
-    }
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+  })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: SignupFormData) => {
     clearError()
-    
-    if (!validateForm()) {
-      return
-    }
-    
     setLoading(true)
     
     try {
       const { error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: data.email,
+        password: data.password,
       })
       
       if (error) {
@@ -83,34 +50,31 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
       <div className="card-body">
         <h2 className="card-title text-2xl font-bold text-center mb-6">Sign Up</h2>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormInput
             label="Email"
             type="email"
-            value={email}
-            onChange={setEmail}
             placeholder="Enter your email"
             required
+            register={register('email')}
             error={errors.email}
           />
           
           <FormInput
             label="Password"
             type="password"
-            value={password}
-            onChange={setPassword}
             placeholder="Enter your password"
             required
+            register={register('password')}
             error={errors.password}
           />
           
           <FormInput
             label="Confirm Password"
             type="password"
-            value={confirmPassword}
-            onChange={setConfirmPassword}
             placeholder="Confirm your password"
             required
+            register={register('confirmPassword')}
             error={errors.confirmPassword}
           />
           

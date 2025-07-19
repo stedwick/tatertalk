@@ -1,53 +1,35 @@
 import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { supabase } from '../../lib/supabase'
 import FormInput from '../atoms/FormInput'
 import { useAuthStore } from '../../lib/authStore'
+import { loginSchema, type LoginFormData } from '../../lib/validationSchemas'
 
 interface LoginFormProps {
   onSwitchToSignup: () => void
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
-  
   const { setError, clearError } = useAuthStore()
 
-  const validateForm = () => {
-    const newErrors: { email?: string; password?: string } = {}
-    
-    if (!email) {
-      newErrors.email = 'Email is required'
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email'
-    }
-    
-    if (!password) {
-      newErrors.password = 'Password is required'
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters'
-    }
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: LoginFormData) => {
     clearError()
-    
-    if (!validateForm()) {
-      return
-    }
-    
     setLoading(true)
     
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: data.email,
+        password: data.password,
       })
       
       if (error) {
@@ -65,24 +47,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
       <div className="card-body">
         <h2 className="card-title text-2xl font-bold text-center mb-6">Login</h2>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormInput
             label="Email"
             type="email"
-            value={email}
-            onChange={setEmail}
             placeholder="Enter your email"
             required
+            register={register('email')}
             error={errors.email}
           />
           
           <FormInput
             label="Password"
             type="password"
-            value={password}
-            onChange={setPassword}
             placeholder="Enter your password"
             required
+            register={register('password')}
             error={errors.password}
           />
           

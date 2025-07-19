@@ -8,6 +8,13 @@ const meta: Meta<typeof SignupForm> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <div className="min-h-screen bg-gradient-to-br from-primary to-secondary flex items-center justify-center p-4">
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export default meta

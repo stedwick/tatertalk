@@ -23,3 +23,5 @@ Write and update Storybook stories for each component.
 Use Zustand for state and Immer for modifying it.
 
 Use Heroicons for all the icons.
+
+Use React Hook Form for forms with Zod for validation.

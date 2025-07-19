@@ -1,22 +1,21 @@
 import React from 'react'
+import { UseFormRegisterReturn, FieldError } from 'react-hook-form'
 
 interface FormInputProps {
   label: string
   type: 'text' | 'email' | 'password'
-  value: string
-  onChange: (value: string) => void
   placeholder?: string
   required?: boolean
-  error?: string
+  register: UseFormRegisterReturn
+  error?: FieldError
 }
 
 const FormInput: React.FC<FormInputProps> = ({
   label,
   type,
-  value,
-  onChange,
   placeholder,
   required = false,
+  register,
   error
 }) => {
   return (
@@ -26,15 +25,14 @@ const FormInput: React.FC<FormInputProps> = ({
       </label>
       <input
         type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
         className={`input input-bordered w-full ${error ? 'input-error' : ''}`}
+        {...register}
       />
       {error && (
         <label className="label">
-          <span className="label-text-alt text-error">{error}</span>
+          <span className="label-text-alt text-error">{error.message}</span>
         </label>
       )}
     </div>
