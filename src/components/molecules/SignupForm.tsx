@@ -12,7 +12,7 @@ interface SignupFormProps {
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
   const [loading, setLoading] = useState(false)
-  const { setError, clearError } = useAuthStore()
+  const { setError, setSuccess, clearError, clearSuccess } = useAuthStore()
 
   const {
     register,
@@ -24,6 +24,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
 
   const onSubmit = async (data: SignupFormData) => {
     clearError()
+    clearSuccess()
     setLoading(true)
     
     try {
@@ -35,8 +36,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
       if (error) {
         setError(error.message)
       } else {
-        // Show success message or redirect
-        setError('Check your email for verification link')
+        // Show success message for email verification
+        setSuccess('Check your email for verification link')
       }
     } catch (error) {
       setError('An unexpected error occurred')
@@ -46,11 +47,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
   }
 
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
-      <div className="card-body">
-        <h2 className="card-title text-2xl font-bold text-center mb-6">Sign Up</h2>
+    <div className="card w-full max-w-sm sm:w-96 bg-base-100 shadow-xl">
+      <div className="card-body p-4 sm:p-6">
+        <h2 className="card-title text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6">Sign Up</h2>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
           <FormInput
             label="Email"
             type="email"
@@ -87,10 +88,10 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
           </button>
         </form>
         
-        <div className="divider">OR</div>
+        <div className="divider my-3 sm:my-4">OR</div>
         
         <div className="text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-gray-600">
             Already have an account?{' '}
             <button
               onClick={onSwitchToLogin}

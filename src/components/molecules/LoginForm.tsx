@@ -12,7 +12,7 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
   const [loading, setLoading] = useState(false)
-  const { setError, clearError } = useAuthStore()
+  const { setError, clearMessages } = useAuthStore()
 
   const {
     register,
@@ -23,7 +23,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
   })
 
   const onSubmit = async (data: LoginFormData) => {
-    clearError()
+    clearMessages()
     setLoading(true)
     
     try {
@@ -43,11 +43,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
   }
 
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
-      <div className="card-body">
-        <h2 className="card-title text-2xl font-bold text-center mb-6">Login</h2>
+    <div className="card w-full max-w-sm sm:w-96 bg-base-100 shadow-xl">
+      <div className="card-body p-4 sm:p-6">
+        <h2 className="card-title text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6">Login</h2>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
           <FormInput
             label="Email"
             type="email"
@@ -75,10 +75,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
           </button>
         </form>
         
-        <div className="divider">OR</div>
+        <div className="divider my-3 sm:my-4">OR</div>
         
         <div className="text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-gray-600">
             Don't have an account?{' '}
             <button
               onClick={onSwitchToSignup}
