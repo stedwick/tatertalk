@@ -80,7 +80,7 @@ const MainPage: React.FC = () => {
         <div className="flex gap-4 mt-6 justify-center">
           <ActionButton
             onClick={isRecording ? handleStopDictation : handleStartDictation}
-            className={isRecording ? 'btn-error btn-lg' : 'btn-outline btn-primary btn-lg'}
+            className={isRecording ? 'btn-error sm:btn-lg' : 'btn-outline btn-primary sm:btn-lg'}
             icon={<MicrophoneIcon className="w-6 h-6" />}
             isAnimating={isRecording}
           >
@@ -89,7 +89,7 @@ const MainPage: React.FC = () => {
           
           <ActionButton
             onClick={handleCutText}
-            className="btn-outline btn-lg"
+            className="btn-outline sm:btn-lg"
             disabled={!text}
             icon={<ScissorsIcon className="w-6 h-6" />}
           >
