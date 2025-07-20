@@ -7,6 +7,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline"
 import type React from "react"
+import { useEffect } from "react"
 import { useSupabase } from "../../hooks/useSupabase"
 
 interface SideMenuProps {
@@ -18,12 +19,30 @@ interface MenuItem {
   id: string
   label: string
   icon: React.ReactNode
-  onClick: () => void
+  onClick?: () => void
+  href?: string
   variant?: "default" | "danger"
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
   const { user, signOut, clearMessages } = useSupabase()
+
+  // Handle escape key globally when menu is open
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isOpen) {
+        onClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape)
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape)
+    }
+  }, [isOpen, onClose])
 
   const handleLogout = async () => {
     try {
@@ -58,19 +77,13 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
       id: "help",
       label: "Help",
       icon: <QuestionMarkCircleIcon className="w-5 h-5" />,
-      onClick: () => {
-        window.open("https://youtu.be/47E8MYEPQrI", "_blank")
-        onClose()
-      },
+      href: "https://youtu.be/47E8MYEPQrI",
     },
     {
       id: "about",
       label: "About",
       icon: <InformationCircleIcon className="w-5 h-5" />,
-      onClick: () => {
-        console.log("About clicked")
-        onClose()
-      },
+      href: "https://phils.app",
     },
     {
       id: "logout",
@@ -92,7 +105,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
         }`}
         onClick={onClose}
         onKeyDown={(e) => {
-          if (e.key === "Escape") {
+          if (e.key === "Enter" || e.key === " ") {
             onClose()
           }
         }}
@@ -123,18 +136,35 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
             <ul className="space-y-2">
               {menuItems.map((item) => (
                 <li key={item.id}>
-                  <button
-                    type="button"
-                    onClick={item.onClick}
-                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
-                      item.variant === "danger"
-                        ? "hover:bg-error hover:text-error-content active:scale-95"
-                        : "hover:bg-base-300 active:scale-95"
-                    }`}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </button>
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
+                        item.variant === "danger"
+                          ? "hover:bg-error hover:text-error-content active:scale-95"
+                          : "hover:bg-base-300 active:scale-95"
+                      }`}
+                      onClick={onClose}
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={item.onClick}
+                      className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
+                        item.variant === "danger"
+                          ? "hover:bg-error hover:text-error-content active:scale-95"
+                          : "hover:bg-base-300 active:scale-95"
+                      }`}
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
