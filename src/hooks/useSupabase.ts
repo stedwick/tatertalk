@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
-import type { User, Session } from '@supabase/supabase-js'
+import type { Session, User } from "@supabase/supabase-js"
+import { useEffect, useState } from "react"
+import { supabase } from "../lib/supabase"
 
 export const useSupabase = () => {
   const [user, setUser] = useState<User | null>(null)
@@ -57,4 +57,4 @@ export const useSupabase = () => {
     signOut,
     supabase,
   }
-} 
+}

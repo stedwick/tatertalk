@@ -1,42 +1,51 @@
-import React from 'react'
-import { UseFormRegisterReturn, FieldError } from 'react-hook-form'
+import clsx from "clsx"
+import type React from "react"
+import { useFormContext } from "react-hook-form"
 
 interface FormInputProps {
+  name: string
   label: string
-  type: 'text' | 'email' | 'password'
+  type?: string
   placeholder?: string
-  required?: boolean
-  register: UseFormRegisterReturn
-  error?: FieldError
+  className?: string
 }
 
 const FormInput: React.FC<FormInputProps> = ({
+  name,
   label,
-  type,
+  type = "text",
   placeholder,
-  required = false,
-  register,
-  error
+  className,
 }) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext()
+  const error = errors[name]
+
   return (
     <div className="form-control w-full">
-      <label className="label">
+      <label htmlFor={name} className="label">
         <span className="label-text">{label}</span>
       </label>
       <input
+        id={name}
         type={type}
         placeholder={placeholder}
-        required={required}
-        className={`input input-bordered w-full ${error ? 'input-error' : ''}`}
-        {...register}
+        className={clsx("input input-bordered w-full", className, {
+          "input-error": error,
+        })}
+        {...register(name)}
       />
       {error && (
-        <label className="label">
-          <span className="label-text-alt text-error">{error.message}</span>
+        <label htmlFor={name} className="label">
+          <span className="label-text-alt text-error">
+            {error.message?.toString()}
+          </span>
         </label>
       )}
     </div>
   )
 }
 
-export default FormInput 
+export default FormInput

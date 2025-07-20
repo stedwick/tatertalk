@@ -1,5 +1,9 @@
 import { describe, expect, test } from "bun:test"
-import { punctuate, punctuateText, PunctuationContext } from "./punctuation"
+import {
+  type PunctuationContext,
+  punctuate,
+  punctuateText,
+} from "./punctuation"
 
 describe("Punctuation System", () => {
   test("Basic punctuation", () => {
@@ -21,16 +25,19 @@ describe("Punctuation System", () => {
     const context: PunctuationContext = {
       before: "Hello",
       text: "comma world period",
-      after: " there"
+      after: " there",
     }
     const result = punctuateText(context)
     expect(result).toBe(", world.")
   })
 
   test("Complex sentence", () => {
-    const complexText = "Wow exclamation mark Can you believe it question mark exclamation mark The package open parentheses dollar sign 49 period 99 plus taxes close parentheses arrived at 3 colon 30 p period m period dash but it was empty ellipsis hashtag disappointed frowny face Email me at philip at sign gmail period com"
+    const complexText =
+      "Wow exclamation mark Can you believe it question mark exclamation mark The package open parentheses dollar sign 49 period 99 plus taxes close parentheses arrived at 3 colon 30 p period m period dash but it was empty ellipsis hashtag disappointed frowny face Email me at philip at sign gmail period com"
     const result = punctuate(complexText)
-    expect(result).toBe("Wow! Can you believe it?! The package ($49. 99 plus taxes) arrived at 3: 30 p. M. Dash but it was empty... #disappointed :( Email me at philip@gmail. Com")
+    expect(result).toBe(
+      "Wow! Can you believe it?! The package ($49. 99 plus taxes) arrived at 3: 30 p. M. Dash but it was empty... #disappointed :( Email me at philip@gmail. Com",
+    )
   })
 
   test("Capitalization", () => {
@@ -74,7 +81,9 @@ describe("Punctuation System", () => {
   })
 
   test("Quotations", () => {
-    const result = punctuate("He said star quotations hello world finish quotations")
+    const result = punctuate(
+      "He said star quotations hello world finish quotations",
+    )
     expect(result).toBe('He said "hello world"')
   })
 

@@ -1,34 +1,34 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import Header from '../components/atoms/Header';
+import type { Meta, StoryObj } from "@storybook/react"
+import Header from "../components/atoms/Header"
 
 const meta: Meta<typeof Header> = {
-  title: 'Atoms/Header',
+  title: "Atoms/Header",
   component: Header,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    onMenuClick: { action: 'menu clicked' },
-    onThemeToggle: { action: 'theme toggled' },
+    onMenuClick: { action: "menu clicked" },
+    onThemeToggle: { action: "theme toggled" },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    onMenuClick: () => console.log('Menu clicked'),
-    onThemeToggle: () => console.log('Theme toggled'),
+    onMenuClick: () => console.log("Menu clicked"),
+    onThemeToggle: () => console.log("Theme toggled"),
     isDarkMode: false,
   },
-};
+}
 
 export const DarkMode: Story = {
   args: {
-    onMenuClick: () => console.log('Menu clicked'),
-    onThemeToggle: () => console.log('Theme toggled'),
+    onMenuClick: () => console.log("Menu clicked"),
+    onThemeToggle: () => console.log("Theme toggled"),
     isDarkMode: true,
   },
-}; 
+}

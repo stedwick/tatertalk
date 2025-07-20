@@ -1,20 +1,23 @@
-import { create, StoreApi, UseBoundStore } from 'zustand'
-import { produce } from 'immer'
+import { produce } from "immer"
+import { create, type StoreApi, type UseBoundStore } from "zustand"
 
 type WithSelectors<S> = S extends { getState: () => infer T }
   ? S & { use: { [K in keyof T]: () => T[K] } }
   : never
 
-const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
-  _store: S,
-) => {
-  const store = _store as WithSelectors<typeof _store>
-  store.use = {}
+const createSelectors = <T extends UseBoundStore<StoreApi<object>>>(
+  store: T,
+): WithSelectors<T> => {
+  const storeWithSelectors = store as WithSelectors<T>
+  // biome-ignore lint/suspicious/noExplicitAny: Required for dynamic store selector creation
+  storeWithSelectors.use = {} as any
   for (const k of Object.keys(store.getState())) {
-    ;(store.use as any)[k] = () => store((s) => s[k as keyof typeof s])
+    // biome-ignore lint/suspicious/noExplicitAny: Required for dynamic property assignment
+    ;(storeWithSelectors.use as any)[k] = () =>
+      store((s) => s[k as keyof typeof s])
   }
 
-  return store
+  return storeWithSelectors
 }
 
 interface BearState {
@@ -24,9 +27,12 @@ interface BearState {
 
 const useBearStoreBase = create<BearState>()((set) => ({
   bears: 0,
-  increase: (by) => set(produce((state) => {
-    state.bears += by
-  })),
+  increase: (by) =>
+    set(
+      produce((state) => {
+        state.bears += by
+      }),
+    ),
 }))
 
 const useBearStore = createSelectors(useBearStoreBase)

@@ -1,55 +1,39 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import FormInput from '../components/atoms/FormInput'
-import { z } from 'zod'
+import type { Meta, StoryObj } from "@storybook/react"
+import { FormProvider, useForm } from "react-hook-form"
+import FormInput from "../components/atoms/FormInput"
 
-// Create a simple schema for the story
-const testSchema = z.object({
-  email: z.email('Please enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  name: z.string().min(1, 'Name is required'),
-})
-
-type TestFormData = z.infer<typeof testSchema>
+interface FormInputWrapperProps {
+  field: string
+  label: string
+  type?: string
+  placeholder?: string
+}
 
 // Wrapper component to provide form context
-const FormInputWrapper = ({ field, ...props }: any) => {
-  const {
-    register,
-    formState: { errors },
-  } = useForm<TestFormData>({
-    resolver: zodResolver(testSchema),
-  })
+const FormInputWrapper = ({ field, ...props }: FormInputWrapperProps) => {
+  const methods = useForm()
 
   return (
-    <FormInput
-      {...props}
-      register={register(field)}
-      error={errors[field as keyof TestFormData]}
-    />
+    <FormProvider {...methods}>
+      <form>
+        <FormInput name={field} {...props} />
+      </form>
+    </FormProvider>
   )
 }
 
 const meta: Meta<typeof FormInputWrapper> = {
-  title: 'Atoms/FormInput',
+  title: "Atoms/FormInput",
   component: FormInputWrapper,
   parameters: {
-    layout: 'centered',
+    layout: "padded",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    type: {
-      control: { type: 'select' },
-      options: ['text', 'email', 'password'],
-    },
-    required: {
-      control: { type: 'boolean' },
-    },
-    field: {
-      control: { type: 'select' },
-      options: ['email', 'password', 'name'],
-    },
+    field: { control: "text" },
+    label: { control: "text" },
+    type: { control: "select", options: ["text", "email", "password"] },
+    placeholder: { control: "text" },
   },
 }
 
@@ -58,47 +42,27 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    label: 'Email',
-    type: 'email',
-    placeholder: 'Enter your email',
-    required: true,
-    field: 'email',
-  },
-}
-
-export const WithError: Story = {
-  args: {
-    label: 'Email',
-    type: 'email',
-    placeholder: 'Enter your email',
-    required: true,
-    field: 'email',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'This story shows the input with validation error styling.',
-      },
-    },
+    field: "email",
+    label: "Email",
+    type: "email",
+    placeholder: "Enter your email",
   },
 }
 
 export const Password: Story = {
   args: {
-    label: 'Password',
-    type: 'password',
-    placeholder: 'Enter your password',
-    required: true,
-    field: 'password',
+    field: "password",
+    label: "Password",
+    type: "password",
+    placeholder: "Enter your password",
   },
 }
 
-export const Text: Story = {
+export const WithError: Story = {
   args: {
-    label: 'Name',
-    type: 'text',
-    placeholder: 'Enter your name',
-    required: false,
-    field: 'name',
+    field: "email",
+    label: "Email",
+    type: "email",
+    placeholder: "Enter your email",
   },
-} 
+}

@@ -1,17 +1,22 @@
-import React from 'react';
-import { Bars3Icon, SunIcon, MoonIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, MoonIcon, SunIcon } from "@heroicons/react/24/outline"
+import type React from "react"
 
 interface HeaderProps {
-  onMenuClick: () => void;
-  onThemeToggle: () => void;
-  isDarkMode: boolean;
+  onMenuClick: () => void
+  onThemeToggle: () => void
+  isDarkMode: boolean
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick, onThemeToggle, isDarkMode }) => {
+const Header: React.FC<HeaderProps> = ({
+  onMenuClick,
+  onThemeToggle,
+  isDarkMode,
+}) => {
   return (
     <header className="navbar bg-base-100 shadow-lg">
       <div className="navbar-start">
-        <button 
+        <button
+          type="button"
           className="btn btn-ghost btn-circle"
           onClick={onMenuClick}
           aria-label="Menu"
@@ -23,16 +28,21 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onThemeToggle, isDarkMode 
         <h1 className="text-2xl font-bold text-primary">Tater 🎙️ Talk</h1>
       </div>
       <div className="navbar-end">
-        <button 
+        <button
+          type="button"
           className="btn btn-ghost btn-circle"
           onClick={onThemeToggle}
           aria-label="Toggle theme"
         >
-          {isDarkMode ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
+          {isDarkMode ? (
+            <SunIcon className="w-5 h-5" />
+          ) : (
+            <MoonIcon className="w-5 h-5" />
+          )}
         </button>
       </div>
     </header>
-  );
-};
+  )
+}
 
-export default Header; 
+export default Header

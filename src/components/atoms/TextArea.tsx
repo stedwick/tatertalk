@@ -1,17 +1,17 @@
-import React from 'react';
+import type React from "react"
 
 interface TextAreaProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  disabled?: boolean;
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  disabled?: boolean
 }
 
-const TextArea: React.FC<TextAreaProps> = ({ 
-  value, 
-  onChange, 
+const TextArea: React.FC<TextAreaProps> = ({
+  value,
+  onChange,
   placeholder = "Click 🎙️ Start Dictation button below...",
-  disabled = false 
+  disabled = false,
 }) => {
   return (
     <div className="w-full flex-1 flex flex-col">
@@ -23,7 +23,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         disabled={disabled}
       />
     </div>
-  );
-};
+  )
+}
 
-export default TextArea; 
+export default TextArea

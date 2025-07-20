@@ -1,12 +1,15 @@
 import { useEffect } from "react"
-import MainPage from "./components/pages/MainPage"
 import AuthPage from "./components/pages/AuthPage"
+import MainPage from "./components/pages/MainPage"
+import { useTheme } from "./hooks/useTheme"
 import { useAuthStore } from "./lib/authStore"
 import { supabase } from "./lib/supabase"
 import "./App.css"
 
 function App() {
-  const { user, session, loading, setUser, setSession, setLoading } = useAuthStore()
+  const { user, session, loading, setUser, setSession, setLoading } =
+    useAuthStore()
+  const { isDarkMode, toggleTheme } = useTheme()
 
   useEffect(() => {
     // Get initial session
@@ -36,7 +39,11 @@ function App() {
     )
   }
 
-  return user && session ? <MainPage /> : <AuthPage />
+  return user && session ? (
+    <MainPage isDarkMode={isDarkMode} onThemeToggle={toggleTheme} />
+  ) : (
+    <AuthPage isDarkMode={isDarkMode} onThemeToggle={toggleTheme} />
+  )
 }
 
 export default App
