@@ -1,7 +1,6 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
-import { useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { useSupabase } from "../../hooks/useSupabase"
 import { type LoginFormData, loginSchema } from "../../lib/validationSchemas"
@@ -12,22 +11,17 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
-  const [loading, setLoading] = useState(false)
-  const { signIn } = useSupabase()
+  const { signIn, loading } = useSupabase()
 
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
 
   const onSubmit = async (data: LoginFormData) => {
-    setLoading(true)
-
     try {
       await signIn(data.email, data.password)
     } catch (_error) {
       // Error is handled by the hook
-    } finally {
-      setLoading(false)
     }
   }
 

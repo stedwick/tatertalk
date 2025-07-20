@@ -1,7 +1,6 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
-import { useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { useSupabase } from "../../hooks/useSupabase"
 import { type SignupFormData, signupSchema } from "../../lib/validationSchemas"
@@ -12,22 +11,17 @@ interface SignupFormProps {
 }
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
-  const [loading, setLoading] = useState(false)
-  const { signUp } = useSupabase()
+  const { signUp, loading } = useSupabase()
 
   const methods = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   })
 
   const onSubmit = async (data: SignupFormData) => {
-    setLoading(true)
-
     try {
       await signUp(data.email, data.password)
     } catch (_error) {
       // Error is handled by the hook
-    } finally {
-      setLoading(false)
     }
   }
 

@@ -10,7 +10,7 @@ import SignupForm from "../molecules/SignupForm"
 
 const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(false)
-  const { user, session, error, success, clearMessages } = useSupabase()
+  const { user, error, success, clearMessages } = useSupabase()
 
   const handleSwitchToSignup = () => {
     setIsLogin(false)
@@ -23,7 +23,7 @@ const AuthPage: React.FC = () => {
   }
 
   // If user is already authenticated, redirect to main page
-  if (user && session) {
+  if (user) {
     return null // This will be handled by the parent component
   }
 

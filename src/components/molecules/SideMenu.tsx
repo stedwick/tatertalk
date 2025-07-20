@@ -81,27 +81,29 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
     },
   ]
 
-  if (!isOpen) return null
-
   return (
     <>
-      {/* Backdrop - transparent with blur effect */}
-      {isOpen && (
-        <div
-          role="button"
-          tabIndex={0}
-          className="fixed inset-0 backdrop-blur-sm z-40"
-          onClick={onClose}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") {
-              onClose()
-            }
-          }}
-        />
-      )}
+      {/* Backdrop with fade animation */}
+      <div
+        role="button"
+        tabIndex={0}
+        className={`fixed inset-0 backdrop-blur-sm z-40 transition-all duration-300 ease-in-out ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            onClose()
+          }
+        }}
+      />
 
-      {/* Menu */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-base-100 shadow-xl z-50 transform transition-transform duration-300 ease-in-out">
+      {/* Menu with slide animation */}
+      <div
+        className={`fixed inset-y-0 left-0 w-64 bg-base-100 shadow-xl z-50 transform transition-all duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-base-300">
@@ -109,7 +111,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="btn btn-ghost btn-sm btn-circle cursor-pointer"
+              className="btn btn-ghost btn-sm btn-circle cursor-pointer hover:bg-base-300 transition-colors"
               aria-label="Close menu"
             >
               <XMarkIcon className="w-5 h-5" />
@@ -124,10 +126,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
                   <button
                     type="button"
                     onClick={item.onClick}
-                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors cursor-pointer ${
+                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
                       item.variant === "danger"
-                        ? "hover:bg-error hover:text-error-content"
-                        : "hover:bg-base-300"
+                        ? "hover:bg-error hover:text-error-content active:scale-95"
+                        : "hover:bg-base-300 active:scale-95"
                     }`}
                   >
                     {item.icon}
