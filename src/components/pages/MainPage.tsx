@@ -28,6 +28,7 @@ const MainPage: React.FC<MainPageProps> = ({ initialText = "" }) => {
     if (text) {
       navigator.clipboard.writeText(text)
       setText("")
+      setIsRecording(false)
       console.log("Text cut to clipboard")
     }
   }
