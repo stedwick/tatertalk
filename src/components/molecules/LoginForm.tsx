@@ -1,4 +1,8 @@
-import { ArrowPathIcon } from "@heroicons/react/24/outline"
+import {
+  ArrowPathIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
 import { FormProvider, useForm } from "react-hook-form"
@@ -11,7 +15,7 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
-  const { signIn, loading } = useSupabase()
+  const { signIn, signInLoading, error, success } = useSupabase()
 
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -31,6 +35,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
         <h2 className="card-title text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6">
           Login
         </h2>
+
+        {error && (
+          <div className="alert alert-error mb-3 sm:mb-4">
+            <ExclamationTriangleIcon className="stroke-current shrink-0 h-4 w-4 sm:h-6 sm:w-6" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {success && (
+          <div className="alert alert-success mb-3 sm:mb-4">
+            <CheckCircleIcon className="stroke-current shrink-0 h-4 w-4 sm:h-6 sm:w-6" />
+            <span>{success}</span>
+          </div>
+        )}
 
         <FormProvider {...methods}>
           <form
@@ -54,9 +72,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
             <button
               type="submit"
               className="btn btn-primary w-full"
-              disabled={loading}
+              disabled={signInLoading}
             >
-              {loading ? (
+              {signInLoading ? (
                 <>
                   <ArrowPathIcon className="h-5 w-5 animate-spin" />
                   Signing in...

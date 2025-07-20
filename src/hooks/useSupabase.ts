@@ -6,6 +6,8 @@ export const useSupabase = () => {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [signInLoading, setSignInLoading] = useState(false)
+  const [signUpLoading, setSignUpLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
@@ -32,29 +34,39 @@ export const useSupabase = () => {
   const signIn = async (email: string, password: string) => {
     setError(null)
     setSuccess(null)
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    if (error) {
-      setError(error.message)
+    setSignInLoading(true)
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) {
+        setError(error.message)
+      }
+      return { error }
+    } finally {
+      setSignInLoading(false)
     }
-    return { error }
   }
 
   const signUp = async (email: string, password: string) => {
     setError(null)
     setSuccess(null)
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-    if (error) {
-      setError(error.message)
-    } else {
-      setSuccess("Check your email for the confirmation link!")
+    setSignUpLoading(true)
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      if (error) {
+        setError(error.message)
+      } else {
+        setSuccess("Check your email for the confirmation link!")
+      }
+      return { error }
+    } finally {
+      setSignUpLoading(false)
     }
-    return { error }
   }
 
   const signOut = async () => {
@@ -77,6 +89,8 @@ export const useSupabase = () => {
     user,
     session,
     loading,
+    signInLoading,
+    signUpLoading,
     error,
     success,
     signIn,
