@@ -1,5 +1,7 @@
+import { zodResolver } from "@hookform/resolvers/zod"
 import type { Meta, StoryObj } from "@storybook/react"
 import { FormProvider, useForm } from "react-hook-form"
+import { z } from "zod"
 import FormInput from "../components/atoms/FormInput"
 
 interface FormInputWrapperProps {
@@ -7,11 +9,30 @@ interface FormInputWrapperProps {
   label: string
   type?: string
   placeholder?: string
+  showError?: boolean
 }
 
 // Wrapper component to provide form context
-const FormInputWrapper = ({ field, ...props }: FormInputWrapperProps) => {
-  const methods = useForm()
+const FormInputWrapper = ({
+  field,
+  showError = false,
+  ...props
+}: FormInputWrapperProps) => {
+  const schema = z.object({
+    [field]: z.string().min(1, "This field is required"),
+  })
+
+  const methods = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      [field]: "",
+    },
+  })
+
+  // Trigger validation to show error
+  if (showError) {
+    methods.trigger(field)
+  }
 
   return (
     <FormProvider {...methods}>
@@ -34,6 +55,7 @@ const meta: Meta<typeof FormInputWrapper> = {
     label: { control: "text" },
     type: { control: "select", options: ["text", "email", "password"] },
     placeholder: { control: "text" },
+    showError: { control: "boolean" },
   },
 }
 
@@ -64,5 +86,6 @@ export const WithError: Story = {
     label: "Email",
     type: "email",
     placeholder: "Enter your email",
+    showError: true,
   },
 }
