@@ -73,6 +73,13 @@ export const useSupabase = () => {
     setError(null)
     const { error } = await supabase.auth.signOut()
     if (error) {
+      // Treat session_not_found as successful logout since it achieves the same result
+      if (error.message.includes("session_not_found")) {
+        // Clear the user and session state manually
+        setUser(null)
+        setSession(null)
+        return { error: null }
+      }
       setError(error.message)
     }
     return { error }
