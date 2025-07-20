@@ -6,6 +6,8 @@ export const useSupabase = () => {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     // Get initial session
@@ -28,33 +30,61 @@ export const useSupabase = () => {
   }, [])
 
   const signIn = async (email: string, password: string) => {
+    setError(null)
+    setSuccess(null)
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
+    if (error) {
+      setError(error.message)
+    }
     return { error }
   }
 
   const signUp = async (email: string, password: string) => {
+    setError(null)
+    setSuccess(null)
     const { error } = await supabase.auth.signUp({
       email,
       password,
     })
+    if (error) {
+      setError(error.message)
+    } else {
+      setSuccess("Check your email for the confirmation link!")
+    }
     return { error }
   }
 
   const signOut = async () => {
+    setError(null)
     const { error } = await supabase.auth.signOut()
+    if (error) {
+      setError(error.message)
+    }
     return { error }
+  }
+
+  const clearError = () => setError(null)
+  const clearSuccess = () => setSuccess(null)
+  const clearMessages = () => {
+    setError(null)
+    setSuccess(null)
   }
 
   return {
     user,
     session,
     loading,
+    error,
+    success,
     signIn,
     signUp,
     signOut,
+    clearError,
+    clearSuccess,
+    clearMessages,
     supabase,
   }
 }

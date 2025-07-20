@@ -3,8 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
 import { useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
-import { useAuthStore } from "../../lib/authStore"
-import { supabase } from "../../lib/supabase"
+import { useSupabase } from "../../hooks/useSupabase"
 import { type SignupFormData, signupSchema } from "../../lib/validationSchemas"
 import FormInput from "../atoms/FormInput"
 
@@ -14,29 +13,19 @@ interface SignupFormProps {
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
   const [loading, setLoading] = useState(false)
-  const { setError, setSuccess, clearMessages } = useAuthStore()
+  const { signUp } = useSupabase()
 
   const methods = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   })
 
   const onSubmit = async (data: SignupFormData) => {
-    clearMessages()
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-      })
-
-      if (error) {
-        setError(error.message)
-      } else {
-        setSuccess("Check your email for verification link")
-      }
+      await signUp(data.email, data.password)
     } catch (_error) {
-      setError("An unexpected error occurred")
+      // Error is handled by the hook
     } finally {
       setLoading(false)
     }

@@ -17,11 +17,20 @@ const meta: Meta<typeof Header> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {
+export const WithMenu: Story = {
   args: {
     onMenuClick: () => console.log("Menu clicked"),
     onThemeToggle: () => console.log("Theme toggled"),
     isDarkMode: false,
+    showMenu: true,
+  },
+}
+
+export const WithoutMenu: Story = {
+  args: {
+    onThemeToggle: () => console.log("Theme toggled"),
+    isDarkMode: false,
+    showMenu: false,
   },
 }
 
@@ -30,5 +39,6 @@ export const DarkMode: Story = {
     onMenuClick: () => console.log("Menu clicked"),
     onThemeToggle: () => console.log("Theme toggled"),
     isDarkMode: true,
+    showMenu: true,
   },
 }

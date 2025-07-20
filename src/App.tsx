@@ -1,35 +1,11 @@
-import { useEffect } from "react"
+import Header from "./components/atoms/Header"
 import AuthPage from "./components/pages/AuthPage"
 import MainPage from "./components/pages/MainPage"
-import { useTheme } from "./hooks/useTheme"
-import { useAuthStore } from "./lib/authStore"
-import { supabase } from "./lib/supabase"
+import { useSupabase } from "./hooks/useSupabase"
 import "./App.css"
 
 function App() {
-  const { user, session, loading, setUser, setSession, setLoading } =
-    useAuthStore()
-  const { isDarkMode, toggleTheme } = useTheme()
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [setUser, setSession, setLoading])
+  const { user, loading } = useSupabase()
 
   if (loading) {
     return (
@@ -39,10 +15,12 @@ function App() {
     )
   }
 
-  return user && session ? (
-    <MainPage isDarkMode={isDarkMode} onThemeToggle={toggleTheme} />
-  ) : (
-    <AuthPage isDarkMode={isDarkMode} onThemeToggle={toggleTheme} />
+  return (
+    <div className="min-h-screen bg-base-100 flex flex-col">
+      <Header />
+
+      {user ? <MainPage /> : <AuthPage />}
+    </div>
   )
 }
 

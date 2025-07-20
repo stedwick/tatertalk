@@ -1,47 +1,61 @@
 import { Bars3Icon, MoonIcon, SunIcon } from "@heroicons/react/24/outline"
 import type React from "react"
+import { useState } from "react"
+import { useSupabase } from "../../hooks/useSupabase"
+import { useTheme } from "../../hooks/useTheme"
+import SideMenu from "../molecules/SideMenu"
 
-interface HeaderProps {
-  onMenuClick: () => void
-  onThemeToggle: () => void
-  isDarkMode: boolean
-}
+const Header: React.FC = () => {
+  const { user } = useSupabase()
+  const { isDarkMode, toggleTheme } = useTheme()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-const Header: React.FC<HeaderProps> = ({
-  onMenuClick,
-  onThemeToggle,
-  isDarkMode,
-}) => {
+  const handleMenuClick = () => {
+    setIsMenuOpen(true)
+  }
+
+  const handleMenuClose = () => {
+    setIsMenuOpen(false)
+  }
+
   return (
-    <header className="navbar bg-base-100 shadow-lg">
-      <div className="navbar-start">
-        <button
-          type="button"
-          className="btn btn-ghost btn-circle"
-          onClick={onMenuClick}
-          aria-label="Menu"
-        >
-          <Bars3Icon className="w-6 h-6" />
-        </button>
-      </div>
-      <div className="navbar-center">
-        <h1 className="text-2xl font-bold text-primary">Tater 🎙️ Talk</h1>
-      </div>
-      <div className="navbar-end">
-        <button
-          type="button"
-          className="btn btn-ghost btn-circle"
-          onClick={onThemeToggle}
-          aria-label="Toggle theme"
-        >
-          {isDarkMode ? (
-            <SunIcon className="w-5 h-5" />
-          ) : (
-            <MoonIcon className="w-5 h-5" />
+    <>
+      <header className="navbar bg-base-100 shadow-lg">
+        <div className="navbar-start">
+          {user && (
+            <button
+              type="button"
+              className="btn btn-ghost btn-circle"
+              onClick={handleMenuClick}
+              aria-label="Menu"
+            >
+              <Bars3Icon className="w-6 h-6" />
+            </button>
           )}
-        </button>
-      </div>
-    </header>
+        </div>
+        <div className="navbar-center">
+          <h1 className="text-xl sm:text-2xl font-bold text-primary">
+            Tater 🎙️ Talk
+          </h1>
+        </div>
+        <div className="navbar-end">
+          <button
+            type="button"
+            className="btn btn-ghost btn-circle"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+          >
+            {isDarkMode ? (
+              <SunIcon className="w-5 h-5" />
+            ) : (
+              <MoonIcon className="w-5 h-5" />
+            )}
+          </button>
+        </div>
+      </header>
+
+      {user && <SideMenu isOpen={isMenuOpen} onClose={handleMenuClose} />}
+    </>
   )
 }
 

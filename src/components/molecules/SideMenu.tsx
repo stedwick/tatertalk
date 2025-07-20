@@ -1,10 +1,13 @@
 import {
+  ArrowRightStartOnRectangleIcon,
   Cog6ToothIcon,
   InformationCircleIcon,
   QuestionMarkCircleIcon,
+  UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
 import type React from "react"
+import { useSupabase } from "../../hooks/useSupabase"
 
 interface SideMenuProps {
   isOpen: boolean
@@ -16,10 +19,32 @@ interface MenuItem {
   label: string
   icon: React.ReactNode
   onClick: () => void
+  variant?: "default" | "danger"
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
+  const { user, signOut, clearMessages } = useSupabase()
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      clearMessages()
+      onClose()
+    } catch (error) {
+      console.error("Error signing out:", error)
+    }
+  }
+
   const menuItems: MenuItem[] = [
+    {
+      id: "user-info",
+      label: user?.email || "User",
+      icon: <UserIcon className="w-5 h-5" />,
+      onClick: () => {
+        console.log("User info clicked")
+        onClose()
+      },
+    },
     {
       id: "settings",
       label: "Settings",
@@ -46,6 +71,13 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
         console.log("About clicked")
         onClose()
       },
+    },
+    {
+      id: "logout",
+      label: "Logout",
+      icon: <ArrowRightStartOnRectangleIcon className="w-5 h-5" />,
+      onClick: handleLogout,
+      variant: "danger",
     },
   ]
 
@@ -92,7 +124,11 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
                   <button
                     type="button"
                     onClick={item.onClick}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-base-300 transition-colors cursor-pointer"
+                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors cursor-pointer ${
+                      item.variant === "danger"
+                        ? "hover:bg-error hover:text-error-content"
+                        : "hover:bg-base-300"
+                    }`}
                   >
                     {item.icon}
                     <span>{item.label}</span>
