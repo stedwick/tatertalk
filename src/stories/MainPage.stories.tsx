@@ -8,6 +8,13 @@ const meta: Meta<typeof MainPage> = {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <div className="bg-base-100">
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export default meta
@@ -15,4 +22,10 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {},
+}
+
+export const WithText: Story = {
+  args: {
+    initialText: "This is some sample text that has been transcribed.",
+  },
 }

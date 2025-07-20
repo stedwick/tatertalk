@@ -4,8 +4,12 @@ import { useState } from "react"
 import ActionButton from "../atoms/ActionButton"
 import TextArea from "../atoms/TextArea"
 
-const MainPage: React.FC = () => {
-  const [text, setText] = useState("")
+interface MainPageProps {
+  initialText?: string
+}
+
+const MainPage: React.FC<MainPageProps> = ({ initialText = "" }) => {
+  const [text, setText] = useState(initialText)
   const [isRecording, setIsRecording] = useState(false)
 
   const handleStartDictation = () => {
