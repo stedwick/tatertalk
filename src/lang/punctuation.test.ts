@@ -1,9 +1,6 @@
 import { describe, expect, test } from "bun:test"
-import {
-  type PunctuationContext,
-  punctuate,
-  punctuateText,
-} from "./punctuation"
+import type { TextAreaContext } from "../lib/textarea"
+import { punctuate, punctuateText } from "./punctuation"
 
 describe("Punctuation System", () => {
   test("Basic punctuation", () => {
@@ -22,7 +19,7 @@ describe("Punctuation System", () => {
   })
 
   test("With context", () => {
-    const context: PunctuationContext = {
+    const context: TextAreaContext = {
       before: "Hello",
       text: "comma world period",
       after: " there",

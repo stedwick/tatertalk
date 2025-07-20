@@ -1,4 +1,9 @@
-import type { PunctuationContext } from "../lang/punctuation"
+// Types
+export interface TextAreaContext {
+  before: string
+  text: string
+  after: string
+}
 
 /**
  * Reads the content of a textarea element and returns a PunctuationContext.
@@ -10,7 +15,7 @@ import type { PunctuationContext } from "../lang/punctuation"
  */
 export const readFromTextArea = (
   element: HTMLTextAreaElement,
-): PunctuationContext => {
+): TextAreaContext => {
   const { value, selectionStart, selectionEnd } = element
 
   const before = value.substring(0, selectionStart)
@@ -38,7 +43,7 @@ const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
 
 export const writeToTextArea = (
   element: HTMLTextAreaElement,
-  context: PunctuationContext,
+  context: TextAreaContext,
 ): void => {
   const { before, after, text } = context
   const newValue = `${before}${text}${after}`
@@ -47,7 +52,7 @@ export const writeToTextArea = (
 
   // Set the cursor position after the newly inserted text
   const newCursorPosition = (before + text).length
-  element.selectionStart = newCursorPosition
+  element.selectionStart = before.length
   element.selectionEnd = newCursorPosition
   element.focus()
 

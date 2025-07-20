@@ -1,9 +1,4 @@
-// Types
-export interface PunctuationContext {
-  before: string
-  text: string
-  after: string
-}
+import type { TextAreaContext } from "../lib/textarea"
 
 // Punctuation mappings
 const punctuationMap: Record<string, string> = {
@@ -102,37 +97,33 @@ const spaceComesBeforeRegex = new RegExp(`^[^\\s${charsWithOnlySpaceAfter}]`)
 const debugLog = false
 
 // Text transformation functions
-const trimText = (context: PunctuationContext): PunctuationContext => ({
+const trimText = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text.trim(),
 })
 
-const preserveSpecialCases = (
-  context: PunctuationContext,
-): PunctuationContext => ({
+const preserveSpecialCases = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text
     .replace(/a\.m\./g, "xxAAMMxx")
     .replace(/p\.m\./g, "xxPPMMxx"),
 })
 
-const addSpaceBefore = (context: PunctuationContext): PunctuationContext => ({
+const addSpaceBefore = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.before.match(spaceComesNextRegex)
     ? ` ${context.text}`
     : context.text,
 })
 
-const addSpaceAfter = (context: PunctuationContext): PunctuationContext => ({
+const addSpaceAfter = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.after.match(spaceComesBeforeRegex)
     ? `${context.text} `
     : context.text,
 })
 
-const applyPunctuationMap = (
-  context: PunctuationContext,
-): PunctuationContext => ({
+const applyPunctuationMap = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text.replace(punctuationRegex, (matched: string) => {
     const matchedLowerCase = matched.toLowerCase()
@@ -141,9 +132,7 @@ const applyPunctuationMap = (
   }),
 })
 
-const applySpecialRules = (
-  context: PunctuationContext,
-): PunctuationContext => ({
+const applySpecialRules = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text
     .replace(/star.{1,10}quotations?\s*/gi, '"')
@@ -153,9 +142,7 @@ const applySpecialRules = (
     .replace(/\b- sign\b/gi, "–"),
 })
 
-const capitalizeFirstLetter = (
-  context: PunctuationContext,
-): PunctuationContext => ({
+const capitalizeFirstLetter = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text:
     context.before === "" || context.before.match(capitalizeNextRegex)
@@ -164,8 +151,8 @@ const capitalizeFirstLetter = (
 })
 
 const capitalizeWithinUtterance = (
-  context: PunctuationContext,
-): PunctuationContext => ({
+  context: TextAreaContext,
+): TextAreaContext => ({
   ...context,
   text: context.text.replace(
     charsThatCapitalizeNextRegex,
@@ -173,26 +160,22 @@ const capitalizeWithinUtterance = (
   ),
 })
 
-const removeSpacesBefore = (
-  context: PunctuationContext,
-): PunctuationContext => ({
+const removeSpacesBefore = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text.replace(charsWithOnlySpaceBeforeRegex, "$1"),
 })
 
-const removeSpacesAfter = (
-  context: PunctuationContext,
-): PunctuationContext => ({
+const removeSpacesAfter = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text.replace(charsWithOnlySpaceAfterRegex, "$1"),
 })
 
-const removeAllSpaces = (context: PunctuationContext): PunctuationContext => ({
+const removeAllSpaces = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text.replace(charsWithNoSpacesRegex, "$1"),
 })
 
-const applySmileyMap = (context: PunctuationContext): PunctuationContext => ({
+const applySmileyMap = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text.replace(smileyRegex, (matched: string) => {
     const matchedLowerCase = matched.toLowerCase()
@@ -201,19 +184,17 @@ const applySmileyMap = (context: PunctuationContext): PunctuationContext => ({
   }),
 })
 
-const downcaseHashtags = (context: PunctuationContext): PunctuationContext => ({
+const downcaseHashtags = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text.replace(/#\w/g, (hashtag) => hashtag.toLowerCase()),
 })
 
-const restoreSpecialCases = (
-  context: PunctuationContext,
-): PunctuationContext => ({
+const restoreSpecialCases = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text.replace(/xxAAMMxx/g, "a.m.").replace(/xxPPMMxx/g, "p.m."),
 })
 
-const trimMultiLine = (context: PunctuationContext): PunctuationContext => ({
+const trimMultiLine = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text.replace(/[^\S\n]*(\n+)[^\S\n]*/g, "$1"),
 })
@@ -221,7 +202,7 @@ const trimMultiLine = (context: PunctuationContext): PunctuationContext => ({
 // Debug logging function (optional)
 const debugLogStep =
   (stepName: string) =>
-  (context: PunctuationContext): PunctuationContext => {
+  (context: TextAreaContext): TextAreaContext => {
     if (debugLog) {
       console.log(`${stepName}: [${context.text}]`)
     }
@@ -234,7 +215,7 @@ const pipe = <T>(value: T, ...functions: Array<(arg: T) => T>): T => {
 }
 
 // Main punctuation function
-export const punctuateText = (input: PunctuationContext): string => {
+export const punctuateText = (input: TextAreaContext): string => {
   const result = pipe(
     input,
     trimText,
