@@ -1,34 +1,28 @@
-import { MicrophoneIcon, ScissorsIcon } from "@heroicons/react/24/outline"
+import {
+  ArrowPathIcon,
+  MicrophoneIcon,
+  ScissorsIcon,
+} from "@heroicons/react/24/outline"
 import type React from "react"
-import { useState } from "react"
+import { useRef, useState } from "react"
+import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
 import ActionButton from "../atoms/ActionButton"
 import TextArea from "../atoms/TextArea"
 
-interface MainPageProps {
-  initialText?: string
-}
+const MainPage: React.FC = () => {
+  const [text, setText] = useState("")
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
-const MainPage: React.FC<MainPageProps> = ({ initialText = "" }) => {
-  const [text, setText] = useState(initialText)
-  const [isRecording, setIsRecording] = useState(false)
-
-  const handleStartDictation = () => {
-    setIsRecording(true)
-    // TODO: Implement speech recognition
-    console.log("Starting dictation...")
-  }
-
-  const handleStopDictation = () => {
-    setIsRecording(false)
-    // TODO: Stop speech recognition
-    console.log("Stopping dictation...")
-  }
+  const { isLoading, isListening, errorMsg, start, stop } =
+    useSpeechRecognition({
+      textAreaRef,
+    })
 
   const handleCutText = () => {
     if (text) {
       navigator.clipboard.writeText(text)
       setText("")
-      setIsRecording(false)
+      stop()
       console.log("Text cut to clipboard")
     }
   }
@@ -36,21 +30,33 @@ const MainPage: React.FC<MainPageProps> = ({ initialText = "" }) => {
   return (
     <main className="flex-1 container mx-auto px-4 py-6 flex flex-col">
       <div className="flex-1 flex flex-col">
-        <TextArea value={text} onChange={setText} />
+        <TextArea value={text} onChange={setText} ref={textAreaRef} />
+        {errorMsg && (
+          <div className="alert alert-error mt-4">
+            <span>{errorMsg}</span>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-4 mt-6 justify-center">
         <ActionButton
-          onClick={isRecording ? handleStopDictation : handleStartDictation}
+          onClick={isListening ? stop : start}
           className={
-            isRecording
+            isListening
               ? "btn-error sm:btn-lg"
               : "btn-outline btn-primary sm:btn-lg"
           }
-          icon={<MicrophoneIcon className="w-6 h-6" />}
-          isAnimating={isRecording}
+          icon={
+            isLoading ? (
+              <ArrowPathIcon className="w-6 h-6 animate-spin" />
+            ) : (
+              <MicrophoneIcon className="w-6 h-6" />
+            )
+          }
+          isAnimating={isListening}
+          disabled={isLoading}
         >
-          {isRecording ? "Stop Dictation" : "Start Dictation"}
+          {isLoading || isListening ? "Stop Dictation" : "Start Dictation"}
         </ActionButton>
 
         <ActionButton

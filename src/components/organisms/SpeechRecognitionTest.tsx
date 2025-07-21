@@ -5,7 +5,7 @@ import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
 
 const SpeechRecognitionTest: React.FC = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const { isLoading, isListening, errorMsg, speechActor } =
+  const { isLoading, isListening, errorMsg, start, stop } =
     useSpeechRecognition({
       textAreaRef,
     })
@@ -65,20 +65,12 @@ const SpeechRecognitionTest: React.FC = () => {
               Loading...
             </button>
           ) : isListening ? (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => speechActor.send({ type: "stop" })}
-            >
+            <button type="button" className="btn btn-primary" onClick={stop}>
               <StopIcon className="h-5 w-5" />
               Stop
             </button>
           ) : (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => speechActor.send({ type: "start" })}
-            >
+            <button type="button" className="btn btn-primary" onClick={start}>
               <PlayIcon className="h-5 w-5" />
               Start
             </button>

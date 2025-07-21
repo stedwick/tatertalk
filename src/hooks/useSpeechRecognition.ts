@@ -18,10 +18,19 @@ export const useSpeechRecognition = ({
   )
   const errorMsg = useSelector(speechActor, (state) => state.context.errorMsg)
 
+  const start = () => {
+    speechActor.send({ type: "start" })
+  }
+  const stop = () => {
+    speechActor.send({ type: "stop" })
+  }
+
   return {
     isLoading,
     isListening,
     errorMsg,
     speechActor,
+    start,
+    stop,
   }
 }

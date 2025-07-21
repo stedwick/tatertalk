@@ -8,6 +8,7 @@ import {
 import { assign, fromPromise, raise, setup } from "xstate"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
+import { getAzureCredentials } from "../lib/azureConfig"
 
 // Types for the speech recognition context and events
 interface SpeechContext {
@@ -68,16 +69,18 @@ const audioStreamActor = fromPromise(async () => {
 const speechRecognizerActorAzure = fromPromise(
   async ({ input }: { input: MediaStream }) => {
     const mediaStream = input
-    const API_KEY = localStorage.getItem("AZURE_SPEECH_KEY")
-    const API_LOCATION = localStorage.getItem("AZURE_SPEECH_REGION")
+    const credentials = getAzureCredentials()
 
-    if (!API_KEY || !API_LOCATION) {
+    if (!credentials) {
       throw new Error(
         "Azure Speech Service credentials not configured. Please set AZURE_SPEECH_KEY and AZURE_SPEECH_REGION in localStorage.",
       )
     }
 
-    const speechConfig = SpeechConfig.fromSubscription(API_KEY, API_LOCATION)
+    const speechConfig = SpeechConfig.fromSubscription(
+      credentials.key,
+      credentials.region,
+    )
     const audioConfig = AudioConfig.fromStreamInput(mediaStream)
     const recognizer = new SpeechRecognizer(speechConfig, audioConfig)
     return recognizer
@@ -148,7 +151,6 @@ export const speechRecognitionImpl = setup({
               isLoading: true,
               errorMsg: null,
             }),
-            "read",
           ],
           target: "gettingAudioStream",
         },
@@ -244,6 +246,7 @@ export const speechRecognitionImpl = setup({
       on: {
         recognizing: {
           actions: [
+            "read",
             assign({
               recognizedText: ({ context, event }) => ({
                 before: context.currentText.before,
@@ -252,13 +255,13 @@ export const speechRecognitionImpl = setup({
               }),
             }),
             "write",
-            "read",
           ],
           target: "listening",
           reenter: true,
         },
         recognized: {
           actions: [
+            "read",
             assign({
               recognizedText: ({ context, event }) => ({
                 before: context.currentText.before + event.text,
@@ -267,7 +270,6 @@ export const speechRecognitionImpl = setup({
               }),
             }),
             "write",
-            "read",
           ],
           target: "listening",
           reenter: true,
