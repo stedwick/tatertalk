@@ -56,7 +56,7 @@ const MainPage: React.FC = () => {
           isAnimating={isListening}
           disabled={isLoading}
         >
-          {isLoading || isListening ? "Stop Dictation" : "Start Dictation"}
+          {isListening ? "Stop Dictation" : "Start Dictation"}
         </ActionButton>
 
         <ActionButton

@@ -6,9 +6,9 @@ import {
   SpeechRecognizer,
 } from "microsoft-cognitiveservices-speech-sdk"
 import { assign, fromPromise, raise, setup } from "xstate"
+import { getAzureCredentials } from "../lib/azureConfig"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
-import { getAzureCredentials } from "../lib/azureConfig"
 
 // Types for the speech recognition context and events
 interface SpeechContext {
