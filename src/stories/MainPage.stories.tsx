@@ -23,9 +23,3 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {},
 }
-
-export const WithText: Story = {
-  args: {
-    initialText: "This is some sample text that has been transcribed.",
-  },
-}
