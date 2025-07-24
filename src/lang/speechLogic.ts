@@ -1,14 +1,13 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: machine will error if not available */
 import {
-  AudioConfig,
   CancellationReason,
-  SpeechConfig,
-  SpeechRecognizer,
+  type SpeechRecognizer,
 } from "microsoft-cognitiveservices-speech-sdk"
-import { assign, fromPromise, raise, setup } from "xstate"
-import { getAzureCredentials } from "../lib/azureConfig"
+import { assign, raise, setup } from "xstate"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
+import { audioStreamActor } from "./providers/audioStream"
+import { speechRecognizerActorAzure } from "./providers/azure"
 
 // Types for the speech recognition context and events
 interface SpeechContext {
@@ -44,48 +43,6 @@ type SpeechEvents =
   | { type: "recognizing"; text: string } // partial result
   | { type: "recognized"; text: string } // final result
   | { type: "error"; errorMsg: string }
-
-// Actor for handling audio stream setup
-const audioStreamActor = fromPromise(async () => {
-  const constraints = {
-    video: false,
-    audio: {
-      channelCount: 1,
-      sampleRate: 16000,
-      sampleSize: 16,
-      volume: 1,
-    },
-  }
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia(constraints)
-    return stream
-  } catch (error) {
-    throw new Error(`Failed to get audio stream: ${error}`)
-  }
-})
-
-// Actor for creating speech recognizer
-const speechRecognizerActorAzure = fromPromise(
-  async ({ input }: { input: MediaStream }) => {
-    const mediaStream = input
-    const credentials = getAzureCredentials()
-
-    if (!credentials) {
-      throw new Error(
-        "Azure Speech Service credentials not configured. Please set AZURE_SPEECH_KEY and AZURE_SPEECH_REGION in localStorage.",
-      )
-    }
-
-    const speechConfig = SpeechConfig.fromSubscription(
-      credentials.key,
-      credentials.region,
-    )
-    const audioConfig = AudioConfig.fromStreamInput(mediaStream)
-    const recognizer = new SpeechRecognizer(speechConfig, audioConfig)
-    return recognizer
-  },
-)
 
 // Main speech recognition machine
 export const speechRecognitionImpl = setup({
