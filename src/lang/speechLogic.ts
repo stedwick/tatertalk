@@ -1,23 +1,17 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: machine will error if not available */
-import {
-  CancellationReason,
-  type SpeechRecognizer,
-} from "microsoft-cognitiveservices-speech-sdk"
-import { assign, raise, setup } from "xstate"
+import { assign, setup, spawnChild, stopChild } from "xstate"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
-import { audioStreamActor } from "./providers/audioStream"
-import { speechRecognizerActorAzure } from "./providers/azure"
+import type { AzureActor } from "./providers/azure"
+import { azureSpeechMachine } from "./providers/azure"
 
-// Types for the speech recognition context and events
 interface SpeechContext {
   isLoading: boolean
   isListening: boolean
   currentText: TextAreaContext
   recognizedText: TextAreaContext
   textAreaRef: React.RefObject<HTMLTextAreaElement>
-  audioStream: MediaStream | null
-  speechRecognizer: SpeechRecognizer | null
+  azureRef: AzureActor | null // child actor ref
   errorMsg: string | null
 }
 
@@ -27,8 +21,7 @@ const initialContext: SpeechContext = {
   currentText: { before: "", text: "", after: "" },
   recognizedText: { before: "", text: "", after: "" },
   textAreaRef: { current: null },
-  audioStream: null,
-  speechRecognizer: null,
+  azureRef: null,
   errorMsg: null,
 } as const
 
@@ -40,20 +33,16 @@ type SpeechInput = { textAreaRef: React.RefObject<HTMLTextAreaElement> }
 type SpeechEvents =
   | { type: "start" }
   | { type: "stop" }
-  | { type: "recognizing"; text: string } // partial result
-  | { type: "recognized"; text: string } // final result
+  | { type: "ready" }
+  | { type: "recognizing"; text: string }
+  | { type: "recognized"; text: string }
   | { type: "error"; errorMsg: string }
 
-// Main speech recognition machine
 export const speechRecognitionImpl = setup({
   types: {
     input: {} as SpeechInput,
     context: {} as SpeechContext,
     events: {} as SpeechEvents,
-  },
-  actors: {
-    audioStreamActor,
-    speechRecognizerActor: speechRecognizerActorAzure,
   },
   actions: {
     read: assign({
@@ -64,20 +53,50 @@ export const speechRecognitionImpl = setup({
       writeToTextArea(context.textAreaRef.current!, context.recognizedText),
     reset: assign({
       ...getInitialContext(),
-      audioStream: ({ context }) => {
-        if (context.audioStream) {
-          context.audioStream.getTracks().forEach((track) => track.stop())
-        }
-        return null
-      },
-      speechRecognizer: ({ context }) => {
-        if (context.speechRecognizer) {
-          context.speechRecognizer.close()
-        }
-        return null
-      },
       textAreaRef: ({ context }) => context.textAreaRef,
       errorMsg: ({ context }) => context.errorMsg,
+      azureRef: ({ context }) => {
+        if (context.azureRef) stopChild(context.azureRef)
+        return null
+      },
+    }),
+    spawnAzure: assign({
+      azureRef: () =>
+        spawnChild(azureSpeechMachine, { input: {} }) as unknown as AzureActor,
+      isLoading: true,
+      errorMsg: null,
+    }),
+    stopAzure: assign({
+      azureRef: ({ context }) => {
+        if (context.azureRef) stopChild(context.azureRef)
+        return null
+      },
+    }),
+    setReady: assign({ isLoading: false }),
+    setListening: assign({ isListening: true }),
+    setIdle: assign({ isListening: false, isLoading: false }),
+    setError: assign({
+      errorMsg: ({ event }) => (event.type === "error" ? event.errorMsg : null),
+    }),
+    updateRecognizing: assign({
+      recognizedText: ({ context, event }) =>
+        event.type === "recognizing"
+          ? {
+              before: context.currentText.before,
+              text: event.text,
+              after: context.currentText.after,
+            }
+          : context.recognizedText,
+    }),
+    updateRecognized: assign({
+      recognizedText: ({ context, event }) =>
+        event.type === "recognized"
+          ? {
+              before: context.currentText.before + event.text,
+              text: "",
+              after: context.currentText.after,
+            }
+          : context.recognizedText,
     }),
   },
   guards: {
@@ -92,7 +111,7 @@ export const speechRecognitionImpl = setup({
   initial: "idle",
   on: {
     error: {
-      actions: assign({ errorMsg: ({ event }) => event.errorMsg }),
+      actions: "setError",
       target: ".idle",
       reenter: true,
     },
@@ -103,135 +122,46 @@ export const speechRecognitionImpl = setup({
       on: {
         start: {
           guard: "hasTextAreaEl",
-          actions: [
-            assign({
-              isLoading: true,
-              errorMsg: null,
-            }),
-          ],
-          target: "gettingAudioStream",
+          actions: "spawnAzure",
+          target: "loading",
         },
       },
     },
-    gettingAudioStream: {
-      invoke: {
-        src: "audioStreamActor",
-        onDone: {
-          actions: assign({
-            audioStream: ({ event }) => event.output,
-          }),
-          target: "creatingRecognizer",
+    loading: {
+      on: {
+        ready: {
+          actions: "setReady",
+          target: "listening",
         },
-        onError: {
-          actions: raise(({ event }) => ({
-            type: "error",
-            errorMsg: (event.error as Error).message,
-          })),
+        error: {
+          actions: "setError",
+          target: "idle",
         },
-      },
-    },
-    creatingRecognizer: {
-      invoke: {
-        src: "speechRecognizerActor",
-        input: ({ context }) => context.audioStream!,
-        onDone: {
-          actions: assign({
-            speechRecognizer: ({ event }) => event.output,
-          }),
-          target: "settingUpRecognizer",
-        },
-        onError: {
-          actions: raise(({ event }) => ({
-            type: "error",
-            errorMsg: (event.error as Error).message,
-          })),
-        },
-      },
-    },
-    settingUpRecognizer: {
-      entry: ({ context, self }) => {
-        const recognizer = context.speechRecognizer!
-
-        // Set up event handlers for the recognizer
-        recognizer.recognizing = (_s, e) => {
-          self.send({
-            type: "recognizing",
-            text: e.result.text,
-          })
-        }
-
-        recognizer.recognized = (_s, e) => {
-          self.send({
-            type: "recognized",
-            text: e.result.text,
-          })
-        }
-
-        recognizer.sessionStopped = (_s, _e) => {
-          self.send({ type: "stop" })
-        }
-
-        recognizer.canceled = (_s, e) => {
-          if (e.reason === CancellationReason.Error) {
-            self.send({ type: "error", errorMsg: e.errorDetails })
-          } else {
-            self.send({ type: "stop" })
-          }
-        }
-      },
-      always: {
-        target: "startingRecognition",
-      },
-    },
-    startingRecognition: {
-      entry: [
-        ({ context }) => {
-          context.speechRecognizer?.startContinuousRecognitionAsync()
-        },
-      ],
-      always: {
-        target: "listening",
       },
     },
     listening: {
-      entry: assign({ isListening: true, isLoading: false }),
+      entry: "setListening",
       after: {
         5000: {
+          actions: ["stopAzure", "setIdle"],
           target: "idle",
         },
       },
       on: {
         recognizing: {
-          actions: [
-            "read",
-            assign({
-              recognizedText: ({ context, event }) => ({
-                before: context.currentText.before,
-                text: event.text,
-                after: context.currentText.after,
-              }),
-            }),
-            "write",
-          ],
-          target: "listening",
+          actions: ["read", "updateRecognizing", "write"],
           reenter: true,
         },
         recognized: {
-          actions: [
-            "read",
-            assign({
-              recognizedText: ({ context, event }) => ({
-                before: context.currentText.before + event.text,
-                text: "",
-                after: context.currentText.after,
-              }),
-            }),
-            "write",
-          ],
-          target: "listening",
+          actions: ["read", "updateRecognized", "write"],
           reenter: true,
         },
         stop: {
+          actions: ["stopAzure", "setIdle"],
+          target: "idle",
+        },
+        error: {
+          actions: ["setError", "stopAzure", "setIdle"],
           target: "idle",
         },
       },
@@ -239,10 +169,4 @@ export const speechRecognitionImpl = setup({
   },
 })
 
-export const speechRecognitionMachineAzure = speechRecognitionImpl.provide({
-  actors: {
-    speechRecognizerActor: speechRecognizerActorAzure,
-  },
-})
-
-export default speechRecognitionMachineAzure
+export default speechRecognitionImpl

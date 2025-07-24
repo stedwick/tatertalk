@@ -1,5 +1,5 @@
 import { useActorRef, useSelector } from "@xstate/react"
-import { speechRecognitionMachineAzure } from "../lang/speechLogic"
+import speechRecognitionMachineAzure from "../lang/speechLogic"
 
 export const useSpeechRecognition = ({
   textAreaRef,
