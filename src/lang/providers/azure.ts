@@ -5,13 +5,18 @@ import {
   SpeechConfig,
   SpeechRecognizer,
 } from "microsoft-cognitiveservices-speech-sdk"
-import type { ActorRefFrom } from "xstate"
-import { assign, fromPromise, sendParent, setup } from "xstate"
+import type { ActorRefFrom, AnyActorRef } from "xstate"
+import { assign, fromPromise, sendTo, setup } from "xstate"
 import { getAzureCredentials } from "../../lib/azureConfig"
 
 interface AzureContext {
+  parentRef: AnyActorRef
   audioStream: MediaStream | null
   speechRecognizer: SpeechRecognizer | null
+}
+
+type AzureInput = {
+  parentRef: AnyActorRef
 }
 
 type AzureEvents = { type: "stop" }
@@ -47,6 +52,7 @@ const setupAzure = fromPromise(async () => {
 
 export const azureSpeechMachine = setup({
   types: {
+    input: {} as AzureInput,
     context: {} as AzureContext,
     events: {} as AzureEvents,
   },
@@ -56,25 +62,36 @@ export const azureSpeechMachine = setup({
   actions: {
     start: ({ context }) => {
       const recognizer = context.speechRecognizer!
+      const parentRef = context.parentRef
 
       recognizer.recognizing = (_s, event) => {
-        sendParent({ type: "recognizing", text: event.result.text })
+        parentRef.send({
+          type: "recognizing",
+          text: event.result.text,
+        })
       }
       recognizer.recognized = (_s, event) => {
-        sendParent({ type: "recognized", text: event.result.text })
+        parentRef.send({
+          type: "recognized",
+          text: event.result.text,
+        })
       }
       recognizer.sessionStopped = () => {
-        sendParent({ type: "stop" })
+        parentRef.send({ type: "stop" })
       }
       recognizer.canceled = (_s, event) => {
         if (event.reason === CancellationReason.Error) {
-          sendParent({ type: "error", errorMsg: event.errorDetails })
+          parentRef.send({
+            type: "error",
+            errorMsg: event.errorDetails,
+          })
         } else {
-          sendParent({ type: "stop" })
+          parentRef.send({ type: "stop" })
         }
       }
 
       recognizer.startContinuousRecognitionAsync()
+      parentRef.send({ type: "ready" })
     },
     cleanup: ({ context }) => {
       if (context.speechRecognizer) {
@@ -90,10 +107,11 @@ export const azureSpeechMachine = setup({
   },
 }).createMachine({
   id: "azureSpeech",
-  context: {
+  context: ({ input }) => ({
+    parentRef: input.parentRef,
     audioStream: null,
     speechRecognizer: null,
-  },
+  }),
   initial: "setup",
   on: {
     stop: {
@@ -112,10 +130,13 @@ export const azureSpeechMachine = setup({
           },
           onError: {
             actions: [
-              sendParent(({ event }) => ({
-                type: "error",
-                errorMsg: (event.error as Error).message,
-              })),
+              sendTo(
+                ({ context }) => context.parentRef,
+                ({ event }) => ({
+                  type: "error",
+                  errorMsg: (event.error as Error).message,
+                }),
+              ),
             ],
             target: "done",
           },

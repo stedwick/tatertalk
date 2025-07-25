@@ -66,9 +66,9 @@ export const speechRecognitionMachine = setup({
       errorMsg: ({ context }) => context.errorMsg,
     }),
     spawnRecognizer: assign({
-      recognizerActor: ({ context }) =>
+      recognizerActor: ({ context, self }) =>
         spawnChild(context.recognizerMachine, {
-          input: {},
+          input: { parentRef: self },
         }) as unknown as typeof context.recognizerActor,
     }),
     updateRecognizing: assign({
