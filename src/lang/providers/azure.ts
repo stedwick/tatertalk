@@ -94,9 +94,8 @@ export const azureSpeechMachine = setup({
         () => {
           parentRef.send({ type: "ready" })
         },
-        (err) => {
-          console.error("[azureSpeechMachine] Error starting recognizer", err)
-          parentRef.send({ type: "error", errorMsg: err })
+        (errorMsg) => {
+          parentRef.send({ type: "error", errorMsg })
         },
       )
     },
@@ -132,6 +131,7 @@ export const azureSpeechMachine = setup({
           src: "setupAzure",
           onDone: {
             actions: assign(({ event }) => event.output),
+            // doesn't work
             // guard: "hasRecognizer",
             target: "listen",
           },
@@ -143,7 +143,6 @@ export const azureSpeechMachine = setup({
                 errorMsg: (event.error as Error).message,
               }),
             ),
-
             target: "done",
           },
         },

@@ -98,7 +98,7 @@ export const speechRecognitionMachine = setup({
       },
     }),
     clearError: assign({
-      errorMsg: () => null,
+      errorMsg: null,
     }),
   },
   guards: {
