@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: machine will error if not available */
 import {
   AudioConfig,
   CancellationReason,
@@ -10,187 +11,128 @@ import { getAzureCredentials } from "../../lib/azureConfig"
 
 interface AzureContext {
   audioStream: MediaStream | null
-  recognizer: SpeechRecognizer | null
-  errorMsg: string | null
+  speechRecognizer: SpeechRecognizer | null
 }
 
-type AzureEvents =
-  | { type: "start" }
-  | { type: "stop" }
-  | { type: "ready" }
-  | { type: "recognizing"; text: string }
-  | { type: "recognized"; text: string }
-  | { type: "error"; errorMsg: string }
+type AzureEvents = { type: "stop" }
+
+const setupAzure = fromPromise(async () => {
+  const credentials = getAzureCredentials()
+  if (!credentials) {
+    throw new Error(
+      "Azure Speech Service credentials not configured. Please set AZURE_SPEECH_KEY and AZURE_SPEECH_REGION in localStorage.",
+    )
+  }
+  const speechConfig = SpeechConfig.fromSubscription(
+    credentials.key,
+    credentials.region,
+  )
+
+  const constraints = {
+    video: false,
+    audio: {
+      channelCount: 1,
+      sampleRate: 16000,
+      sampleSize: 16,
+      volume: 1,
+    },
+  }
+  const audioStream = await navigator.mediaDevices.getUserMedia(constraints)
+
+  const audioConfig = AudioConfig.fromStreamInput(audioStream)
+  const speechRecognizer = new SpeechRecognizer(speechConfig, audioConfig)
+
+  return { audioStream, speechRecognizer }
+})
 
 export const azureSpeechMachine = setup({
   types: {
     context: {} as AzureContext,
     events: {} as AzureEvents,
   },
+  actors: {
+    setupAzure,
+  },
   actions: {
-    cleanup: ({ context }: { context: AzureContext }) => {
-      if (context.recognizer) {
-        context.recognizer.close()
+    start: ({ context }) => {
+      const recognizer = context.speechRecognizer!
+
+      recognizer.recognizing = (_s, event) => {
+        sendParent({ type: "recognizing", text: event.result.text })
+      }
+      recognizer.recognized = (_s, event) => {
+        sendParent({ type: "recognized", text: event.result.text })
+      }
+      recognizer.sessionStopped = () => {
+        sendParent({ type: "stop" })
+      }
+      recognizer.canceled = (_s, event) => {
+        if (event.reason === CancellationReason.Error) {
+          sendParent({ type: "error", errorMsg: event.errorDetails })
+        } else {
+          sendParent({ type: "stop" })
+        }
+      }
+
+      recognizer.startContinuousRecognitionAsync()
+    },
+    cleanup: ({ context }) => {
+      if (context.speechRecognizer) {
+        context.speechRecognizer.close()
       }
       if (context.audioStream) {
-        context.audioStream
-          .getTracks()
-          .forEach((track: MediaStreamTrack) => track.stop())
+        context.audioStream.getTracks().forEach((track) => track.stop())
       }
     },
   },
-  actors: {
-    setupAzure: fromPromise(async () => {
-      const constraints = {
-        video: false,
-        audio: {
-          channelCount: 1,
-          sampleRate: 16000,
-          sampleSize: 16,
-          volume: 1,
-        },
-      }
-      const stream = await navigator.mediaDevices.getUserMedia(constraints)
-      const credentials = getAzureCredentials()
-      if (!credentials) {
-        throw new Error(
-          "Azure Speech Service credentials not configured. Please set AZURE_SPEECH_KEY and AZURE_SPEECH_REGION in localStorage.",
-        )
-      }
-      const speechConfig = SpeechConfig.fromSubscription(
-        credentials.key,
-        credentials.region,
-      )
-      const audioConfig = AudioConfig.fromStreamInput(stream)
-      const recognizer = new SpeechRecognizer(speechConfig, audioConfig)
-      return { stream, recognizer }
-    }),
+  guards: {
+    hasRecognizer: ({ context }) => context.speechRecognizer !== null,
   },
 }).createMachine({
   id: "azureSpeech",
-  initial: "loading",
   context: {
     audioStream: null,
-    recognizer: null,
-    errorMsg: null,
+    speechRecognizer: null,
+  },
+  initial: "setup",
+  on: {
+    stop: {
+      target: ".done",
+    },
   },
   states: {
-    loading: {
+    setup: {
       invoke: [
         {
           src: "setupAzure",
           onDone: {
-            actions: assign({
-              audioStream: (_ctx, event) =>
-                (event as any)?.data?.stream ?? null,
-              recognizer: (_ctx, event) =>
-                (event as any)?.data?.recognizer ?? null,
-              errorMsg: (_) => null,
-            }),
-            target: "ready",
+            actions: assign(({ event }) => event.output),
+            guard: "hasRecognizer",
+            target: "listen",
           },
           onError: {
             actions: [
-              assign({
-                errorMsg: (_ctx, event) =>
-                  (event as any)?.data?.message ?? "Unknown error",
-              }),
-              sendParent((_ctx, event) => ({
+              sendParent(({ event }) => ({
                 type: "error",
-                errorMsg: (event as any)?.data?.message ?? "Unknown error",
+                errorMsg: (event.error as Error).message,
               })),
-              "cleanup",
             ],
-            target: "error",
+            target: "done",
           },
         },
       ],
     },
-    ready: {
-      entry: sendParent(() => ({ type: "ready" })),
+    listen: {
+      entry: "start",
       on: {
-        start: {
-          target: "recognizing",
-        },
         stop: {
-          actions: "cleanup",
+          target: "done",
         },
       },
     },
-    recognizing: {
-      entry: [
-        ({ context }) => {
-          context.recognizer?.startContinuousRecognitionAsync()
-        },
-        ({ context, self }) => {
-          const recognizer = context.recognizer!
-          recognizer.recognizing = (
-            _s: unknown,
-            e: { result: { text: string } },
-          ) => {
-            self.send({ type: "recognizing", text: e.result.text })
-          }
-          recognizer.recognized = (
-            _s: unknown,
-            e: { result: { text: string } },
-          ) => {
-            self.send({ type: "recognized", text: e.result.text })
-          }
-          recognizer.sessionStopped = () => {
-            self.send({ type: "stop" })
-          }
-          recognizer.canceled = (
-            _s: unknown,
-            e: { reason: any; errorDetails: string },
-          ) => {
-            if (e.reason === CancellationReason.Error) {
-              self.send({ type: "error", errorMsg: e.errorDetails })
-            } else {
-              self.send({ type: "stop" })
-            }
-          }
-        },
-      ],
-      on: {
-        recognizing: {
-          actions: sendParent((_, event: any) => ({
-            type: "recognizing",
-            text: event.text,
-          })),
-          reenter: true,
-        },
-        recognized: {
-          actions: sendParent((_, event: any) => ({
-            type: "recognized",
-            text: event.text,
-          })),
-          reenter: true,
-        },
-        stop: {
-          actions: "cleanup",
-          target: "ready",
-        },
-        error: {
-          actions: [
-            assign({
-              errorMsg: (_ctx, event: any) =>
-                event?.errorMsg ?? "Unknown error",
-            }),
-            sendParent((_, event: any) => ({
-              type: "error",
-              errorMsg: event?.errorMsg ?? "Unknown error",
-            })),
-            "cleanup",
-          ],
-          target: "error",
-        },
-      },
-    },
-    error: {
-      on: {
-        start: "loading",
-      },
+    done: {
       entry: "cleanup",
+      type: "final",
     },
   },
 })
