@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: machine will error if not available */
-import { assertEvent, assign, setup, spawnChild } from "xstate"
+import { assertEvent, assign, setup } from "xstate"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
 import type { AzureActor } from "./providers/azure"
@@ -66,10 +66,10 @@ export const speechRecognitionMachine = setup({
       errorMsg: ({ context }) => context.errorMsg,
     }),
     spawnRecognizer: assign({
-      recognizerActor: ({ context, self }) =>
-        spawnChild(context.recognizerMachine, {
+      recognizerActor: ({ context, self, spawn }) =>
+        spawn(context.recognizerMachine, {
           input: { parentRef: self },
-        }) as unknown as typeof context.recognizerActor,
+        }),
     }),
     updateRecognizing: assign({
       recognizedText: ({ context, event }) => {
@@ -147,9 +147,13 @@ export const speechRecognitionMachine = setup({
       on: {
         recognizing: {
           actions: ["read", "updateRecognizing", "write"],
+          target: "listening",
+          reenter: true, // for the after 3000ms transition to idle
         },
         recognized: {
           actions: ["read", "updateRecognized", "write"],
+          target: "listening",
+          reenter: true, // for the after 3000ms transition to idle
         },
         stop: {
           target: "idle",

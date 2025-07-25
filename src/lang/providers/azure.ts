@@ -90,8 +90,15 @@ export const azureSpeechMachine = setup({
         }
       }
 
-      recognizer.startContinuousRecognitionAsync()
-      parentRef.send({ type: "ready" })
+      recognizer.startContinuousRecognitionAsync(
+        () => {
+          parentRef.send({ type: "ready" })
+        },
+        (err) => {
+          console.error("[azureSpeechMachine] Error starting recognizer", err)
+          parentRef.send({ type: "error", errorMsg: err })
+        },
+      )
     },
     cleanup: ({ context }) => {
       if (context.speechRecognizer) {
@@ -125,19 +132,18 @@ export const azureSpeechMachine = setup({
           src: "setupAzure",
           onDone: {
             actions: assign(({ event }) => event.output),
-            guard: "hasRecognizer",
+            // guard: "hasRecognizer",
             target: "listen",
           },
           onError: {
-            actions: [
-              sendTo(
-                ({ context }) => context.parentRef,
-                ({ event }) => ({
-                  type: "error",
-                  errorMsg: (event.error as Error).message,
-                }),
-              ),
-            ],
+            actions: sendTo(
+              ({ context }) => context.parentRef,
+              ({ event }) => ({
+                type: "error",
+                errorMsg: (event.error as Error).message,
+              }),
+            ),
+
             target: "done",
           },
         },
