@@ -1,44 +1,48 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: machine will error if not available */
-import { assign, setup, spawnChild, stopChild } from "xstate"
+import { assertEvent, assign, setup, spawnChild } from "xstate"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
 import type { AzureActor } from "./providers/azure"
 import { azureSpeechMachine } from "./providers/azure"
 
 interface SpeechContext {
-  isLoading: boolean
-  isListening: boolean
   currentText: TextAreaContext
   recognizedText: TextAreaContext
   textAreaRef: React.RefObject<HTMLTextAreaElement>
-  azureRef: AzureActor | null // child actor ref
+  recognizerMachine: typeof azureSpeechMachine
+  recognizerActor: AzureActor | null
   errorMsg: string | null
 }
 
 const initialContext: SpeechContext = {
-  isLoading: false,
-  isListening: false,
   currentText: { before: "", text: "", after: "" },
   recognizedText: { before: "", text: "", after: "" },
   textAreaRef: { current: null },
-  azureRef: null,
+  recognizerMachine: azureSpeechMachine,
+  recognizerActor: null,
   errorMsg: null,
 } as const
 
 const getInitialContext = () =>
-  JSON.parse(JSON.stringify(initialContext)) as SpeechContext
+  ({
+    ...JSON.parse(JSON.stringify(initialContext)),
+    recognizerMachine: azureSpeechMachine,
+  }) as SpeechContext
 
-type SpeechInput = { textAreaRef: React.RefObject<HTMLTextAreaElement> }
+type SpeechInput = {
+  textAreaRef: React.RefObject<HTMLTextAreaElement>
+  recognizerMachine: typeof azureSpeechMachine
+}
 
 type SpeechEvents =
   | { type: "start" }
-  | { type: "stop" }
   | { type: "ready" }
   | { type: "recognizing"; text: string }
   | { type: "recognized"; text: string }
+  | { type: "stop" }
   | { type: "error"; errorMsg: string }
 
-export const speechRecognitionImpl = setup({
+export const speechRecognitionMachine = setup({
   types: {
     input: {} as SpeechInput,
     context: {} as SpeechContext,
@@ -54,49 +58,47 @@ export const speechRecognitionImpl = setup({
     reset: assign({
       ...getInitialContext(),
       textAreaRef: ({ context }) => context.textAreaRef,
+      recognizerMachine: ({ context }) => context.recognizerMachine,
+      recognizerActor: ({ context }) => {
+        context.recognizerActor?.send({ type: "stop" })
+        return null
+      },
       errorMsg: ({ context }) => context.errorMsg,
-      azureRef: ({ context }) => {
-        if (context.azureRef) stopChild(context.azureRef)
-        return null
-      },
     }),
-    spawnAzure: assign({
-      azureRef: () =>
-        spawnChild(azureSpeechMachine, { input: {} }) as unknown as AzureActor,
-      isLoading: true,
-      errorMsg: null,
-    }),
-    stopAzure: assign({
-      azureRef: ({ context }) => {
-        if (context.azureRef) stopChild(context.azureRef)
-        return null
-      },
-    }),
-    setReady: assign({ isLoading: false }),
-    setListening: assign({ isListening: true }),
-    setIdle: assign({ isListening: false, isLoading: false }),
-    setError: assign({
-      errorMsg: ({ event }) => (event.type === "error" ? event.errorMsg : null),
+    spawnRecognizer: assign({
+      recognizerActor: ({ context }) =>
+        spawnChild(context.recognizerMachine, {
+          input: {},
+        }) as unknown as typeof context.recognizerActor,
     }),
     updateRecognizing: assign({
-      recognizedText: ({ context, event }) =>
-        event.type === "recognizing"
-          ? {
-              before: context.currentText.before,
-              text: event.text,
-              after: context.currentText.after,
-            }
-          : context.recognizedText,
+      recognizedText: ({ context, event }) => {
+        assertEvent(event, "recognizing")
+        return {
+          before: context.currentText.before,
+          text: event.text,
+          after: context.currentText.after,
+        }
+      },
     }),
     updateRecognized: assign({
-      recognizedText: ({ context, event }) =>
-        event.type === "recognized"
-          ? {
-              before: context.currentText.before + event.text,
-              text: "",
-              after: context.currentText.after,
-            }
-          : context.recognizedText,
+      recognizedText: ({ context, event }) => {
+        assertEvent(event, "recognized")
+        return {
+          before: context.currentText.before + event.text,
+          text: "",
+          after: context.currentText.after,
+        }
+      },
+    }),
+    setError: assign({
+      errorMsg: ({ event }) => {
+        assertEvent(event, "error")
+        return event.errorMsg
+      },
+    }),
+    clearError: assign({
+      errorMsg: () => null,
     }),
   },
   guards: {
@@ -107,6 +109,7 @@ export const speechRecognitionImpl = setup({
   context: ({ input }) => ({
     ...getInitialContext(),
     textAreaRef: input.textAreaRef,
+    recognizerMachine: input.recognizerMachine,
   }),
   initial: "idle",
   on: {
@@ -122,46 +125,33 @@ export const speechRecognitionImpl = setup({
       on: {
         start: {
           guard: "hasTextAreaEl",
-          actions: "spawnAzure",
+          actions: "clearError",
           target: "loading",
         },
       },
     },
     loading: {
+      entry: "spawnRecognizer",
       on: {
         ready: {
-          actions: "setReady",
           target: "listening",
-        },
-        error: {
-          actions: "setError",
-          target: "idle",
         },
       },
     },
     listening: {
-      entry: "setListening",
       after: {
-        5000: {
-          actions: ["stopAzure", "setIdle"],
+        3000: {
           target: "idle",
         },
       },
       on: {
         recognizing: {
           actions: ["read", "updateRecognizing", "write"],
-          reenter: true,
         },
         recognized: {
           actions: ["read", "updateRecognized", "write"],
-          reenter: true,
         },
         stop: {
-          actions: ["stopAzure", "setIdle"],
-          target: "idle",
-        },
-        error: {
-          actions: ["setError", "stopAzure", "setIdle"],
           target: "idle",
         },
       },
@@ -169,4 +159,4 @@ export const speechRecognitionImpl = setup({
   },
 })
 
-export default speechRecognitionImpl
+export default speechRecognitionMachine
