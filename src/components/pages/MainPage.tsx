@@ -6,6 +6,7 @@ import {
 import type React from "react"
 import { useRef, useState } from "react"
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
+import { azureSpeechMachine } from "../../lang/providers/azure"
 import ActionButton from "../atoms/ActionButton"
 import TextArea from "../atoms/TextArea"
 
@@ -16,6 +17,7 @@ const MainPage: React.FC = () => {
   const { isLoading, isListening, errorMsg, start, stop } =
     useSpeechRecognition({
       textAreaRef,
+      recognizerMachine: azureSpeechMachine,
     })
 
   const handleCutText = () => {
