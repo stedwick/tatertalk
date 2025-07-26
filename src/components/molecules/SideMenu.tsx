@@ -1,11 +1,12 @@
 import {
   ArrowRightStartOnRectangleIcon,
+  ArrowTopRightOnSquareIcon,
   Cog6ToothIcon,
   InformationCircleIcon,
-  QuestionMarkCircleIcon,
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
+import { PlayCircleIcon } from "@heroicons/react/24/solid"
 import type React from "react"
 import { useEffect } from "react"
 import { useSupabase } from "../../hooks/useSupabase"
@@ -22,6 +23,7 @@ interface MenuItem {
   onClick?: () => void
   href?: string
   variant?: "default" | "danger"
+  rightIcon?: React.ReactNode
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
@@ -75,9 +77,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
     },
     {
       id: "help",
-      label: "Help",
-      icon: <QuestionMarkCircleIcon className="w-5 h-5" />,
+      label: "1-Minute Tutorial",
+      icon: <PlayCircleIcon className="w-5 h-5" />,
       href: "https://youtu.be/47E8MYEPQrI",
+      rightIcon: <ArrowTopRightOnSquareIcon className="w-4 h-4" />,
     },
     {
       id: "about",
@@ -141,28 +144,34 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
+                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200 cursor-pointer ${
                         item.variant === "danger"
                           ? "hover:bg-error hover:text-error-content active:scale-95"
                           : "hover:bg-base-300 active:scale-95"
                       }`}
                       onClick={onClose}
                     >
-                      {item.icon}
-                      <span>{item.label}</span>
+                      <div className="flex items-center gap-3">
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </div>
+                      {item.rightIcon && item.rightIcon}
                     </a>
                   ) : (
                     <button
                       type="button"
                       onClick={item.onClick}
-                      className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
+                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200 cursor-pointer ${
                         item.variant === "danger"
                           ? "hover:bg-error hover:text-error-content active:scale-95"
                           : "hover:bg-base-300 active:scale-95"
                       }`}
                     >
-                      {item.icon}
-                      <span>{item.label}</span>
+                      <div className="flex items-center gap-3">
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </div>
+                      {item.rightIcon && item.rightIcon}
                     </button>
                   )}
                 </li>
