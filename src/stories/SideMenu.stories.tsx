@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
-import SideMenu from "../components/molecules/SideMenu"
 import { MemoryRouter } from "react-router"
+import SideMenu from "../components/molecules/SideMenu"
 
 const meta: Meta<typeof SideMenu> = {
   title: "Molecules/SideMenu",
