@@ -2,6 +2,7 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 import { useSupabase } from "../../hooks/useSupabase"
+import MountainBackground from "../atoms/MountainBackground"
 import LoginForm from "../molecules/LoginForm"
 import SignupForm from "../molecules/SignupForm"
 
@@ -28,7 +29,8 @@ const AuthPage: React.FC = () => {
   }, [user, navigate])
 
   return (
-    <div className="flex-1 bg-gradient-to-br from-primary to-secondary flex items-center justify-center p-2 sm:p-4">
+    <div className="flex-1 flex items-center justify-center p-2 sm:p-4 relative">
+      <MountainBackground />
       <div className="w-full max-w-sm sm:max-w-md flex flex-col items-center justify-center mb-20 sm:mb-0">
         {isLogin ? (
           <LoginForm onSwitchToSignup={handleSwitchToSignup} />

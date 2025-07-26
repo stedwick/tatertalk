@@ -3,15 +3,19 @@ import {
   MicrophoneIcon,
   ScissorsIcon,
 } from "@heroicons/react/24/outline"
+import clsx from "clsx"
 import type React from "react"
 import { useRef, useState } from "react"
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
+import { useTheme } from "../../hooks/useTheme"
 import { azureSpeechMachine } from "../../lang/providers/azure"
 import ActionButton from "../atoms/ActionButton"
+import MountainBackground from "../atoms/MountainBackground"
 import TextArea from "../atoms/TextArea"
 
 const MainPage: React.FC = () => {
   const [text, setText] = useState("")
+  const { theme } = useTheme()
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const { isLoading, isListening, errorMsg, start, stop } =
@@ -30,8 +34,10 @@ const MainPage: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 px-4 py-6 flex flex-col bg-gradient-to-br from-primary to-secondary">
-      <div className="flex-1 flex flex-col">
+    <div className="flex-1 px-4 py-6 flex flex-col relative">
+      <MountainBackground />
+
+      <div className="flex-1 flex flex-col z-10 max-w-2xl w-full mx-auto">
         <TextArea value={text} onChange={setText} ref={textAreaRef} />
         {errorMsg && (
           <div className="alert alert-error mt-4">
@@ -61,7 +67,9 @@ const MainPage: React.FC = () => {
 
         <ActionButton
           onClick={handleCutText}
-          className="btn-soft sm:btn-lg"
+          className={clsx("btn-soft sm:btn-lg", {
+            "text-white": theme === "light" && !text,
+          })}
           disabled={!text}
           icon={<ScissorsIcon className="w-6 h-6" />}
         >
