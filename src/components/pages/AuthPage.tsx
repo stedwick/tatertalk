@@ -1,5 +1,6 @@
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router"
 import { useSupabase } from "../../hooks/useSupabase"
 import LoginForm from "../molecules/LoginForm"
 import SignupForm from "../molecules/SignupForm"
@@ -7,6 +8,7 @@ import SignupForm from "../molecules/SignupForm"
 const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(false)
   const { user, clearMessages } = useSupabase()
+  const navigate = useNavigate()
 
   const handleSwitchToSignup = () => {
     setIsLogin(false)
@@ -19,9 +21,11 @@ const AuthPage: React.FC = () => {
   }
 
   // If user is already authenticated, redirect to main page
-  if (user) {
-    return null // This will be handled by the parent component
-  }
+  useEffect(() => {
+    if (user) {
+      navigate("/")
+    }
+  }, [user, navigate])
 
   return (
     <div className="flex-1 bg-gradient-to-br from-primary to-secondary flex items-center justify-center p-2 sm:p-4">
