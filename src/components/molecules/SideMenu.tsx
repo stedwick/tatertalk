@@ -2,6 +2,7 @@ import {
   ArrowRightStartOnRectangleIcon,
   ArrowTopRightOnSquareIcon,
   Cog6ToothIcon,
+  HomeIcon,
   InformationCircleIcon,
   UserIcon,
   XMarkIcon,
@@ -10,24 +11,15 @@ import { PlayCircleIcon } from "@heroicons/react/24/solid"
 import type React from "react"
 import { useEffect } from "react"
 import { useSupabase } from "../../hooks/useSupabase"
+import MenuItemComponent, { type MenuItem } from "../atoms/MenuItem"
 
 interface SideMenuProps {
   isOpen: boolean
   onClose: () => void
 }
 
-interface MenuItem {
-  id: string
-  label: string
-  icon: React.ReactNode
-  onClick?: () => void
-  href?: string
-  variant?: "default" | "danger"
-  rightIcon?: React.ReactNode
-}
-
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
-  const { user, signOut, clearMessages } = useSupabase()
+  const { user } = useSupabase()
 
   // Handle escape key globally when menu is open
   useEffect(() => {
@@ -46,16 +38,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen, onClose])
 
-  const handleLogout = async () => {
-    try {
-      await signOut()
-      clearMessages()
-      onClose()
-    } catch (error) {
-      console.error("Error signing out:", error)
-    }
-  }
-
   const menuItems: MenuItem[] = [
     {
       id: "user-info",
@@ -65,6 +47,12 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
         console.log("User info clicked")
         onClose()
       },
+    },
+    {
+      id: "home",
+      label: "Home",
+      icon: <HomeIcon className="w-5 h-5" />,
+      href: "/",
     },
     {
       id: "settings",
@@ -81,18 +69,21 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
       icon: <PlayCircleIcon className="w-5 h-5" />,
       href: "https://youtu.be/47E8MYEPQrI",
       rightIcon: <ArrowTopRightOnSquareIcon className="w-4 h-4" />,
+      isExternal: true,
     },
     {
       id: "about",
       label: "About",
       icon: <InformationCircleIcon className="w-5 h-5" />,
       href: "https://phils.app",
+      rightIcon: <ArrowTopRightOnSquareIcon className="w-4 h-4" />,
+      isExternal: true,
     },
     {
       id: "logout",
       label: "Logout",
       icon: <ArrowRightStartOnRectangleIcon className="w-5 h-5" />,
-      onClick: handleLogout,
+      href: "/logout",
       variant: "danger",
     },
   ]
@@ -139,41 +130,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
             <ul className="space-y-2">
               {menuItems.map((item) => (
                 <li key={item.id}>
-                  {item.href ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200 cursor-pointer ${
-                        item.variant === "danger"
-                          ? "hover:bg-error hover:text-error-content active:scale-95"
-                          : "hover:bg-base-300 active:scale-95"
-                      }`}
-                      onClick={onClose}
-                    >
-                      <div className="flex items-center gap-3">
-                        {item.icon}
-                        <span>{item.label}</span>
-                      </div>
-                      {item.rightIcon && item.rightIcon}
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={item.onClick}
-                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200 cursor-pointer ${
-                        item.variant === "danger"
-                          ? "hover:bg-error hover:text-error-content active:scale-95"
-                          : "hover:bg-base-300 active:scale-95"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        {item.icon}
-                        <span>{item.label}</span>
-                      </div>
-                      {item.rightIcon && item.rightIcon}
-                    </button>
-                  )}
+                  <MenuItemComponent item={item} onClose={onClose} />
                 </li>
               ))}
             </ul>

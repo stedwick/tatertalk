@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react"
+import { MemoryRouter } from "react-router"
 import AuthPage from "../components/pages/AuthPage"
 
 const meta: Meta<typeof AuthPage> = {
@@ -8,6 +9,13 @@ const meta: Meta<typeof AuthPage> = {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 }
 
 export default meta
