@@ -3,6 +3,7 @@ import MainPage from "./components/pages/MainPage"
 import "./App.css"
 import { BrowserRouter, Route, Routes } from "react-router"
 import Layout from "./components/layout"
+import LogoutPage from "./components/pages/LogoutPage"
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route element={<Layout />}>
           <Route index element={<MainPage />} />
           <Route path="login" element={<AuthPage />} />
+          <Route path="logout" element={<LogoutPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
