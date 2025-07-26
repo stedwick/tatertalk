@@ -30,7 +30,7 @@ const MainPage: React.FC = () => {
   }
 
   return (
-    <main className="flex-1 container mx-auto px-4 py-6 flex flex-col">
+    <div className="flex-1 px-4 py-6 flex flex-col bg-gradient-to-br from-primary to-secondary">
       <div className="flex-1 flex flex-col">
         <TextArea value={text} onChange={setText} ref={textAreaRef} />
         {errorMsg && (
@@ -44,9 +44,7 @@ const MainPage: React.FC = () => {
         <ActionButton
           onClick={isListening ? stop : start}
           className={
-            isListening
-              ? "btn-error sm:btn-lg"
-              : "btn-outline btn-primary sm:btn-lg"
+            isListening ? "btn-error sm:btn-lg" : "btn-primary sm:btn-lg"
           }
           icon={
             isLoading ? (
@@ -63,14 +61,14 @@ const MainPage: React.FC = () => {
 
         <ActionButton
           onClick={handleCutText}
-          className="btn-outline sm:btn-lg"
+          className="btn-soft sm:btn-lg"
           disabled={!text}
           icon={<ScissorsIcon className="w-6 h-6" />}
         >
           Cut Text
         </ActionButton>
       </div>
-    </main>
+    </div>
   )
 }
 
