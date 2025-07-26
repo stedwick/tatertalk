@@ -3,7 +3,7 @@ import { useTheme } from "../hooks/useTheme"
 
 // Component that demonstrates the useTheme hook
 const ThemeDemo = () => {
-  const { isDarkMode, toggleTheme } = useTheme()
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <div className="p-4">
@@ -11,7 +11,8 @@ const ThemeDemo = () => {
       <div className="space-y-4">
         <div>
           <p className="mb-2">
-            Current theme: <strong>{isDarkMode ? "Dark" : "Light"}</strong>
+            Current theme:{" "}
+            <strong>{theme === "dark" ? "Dark" : "Light"}</strong>
           </p>
           <button
             type="button"
@@ -25,7 +26,7 @@ const ThemeDemo = () => {
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h3 className="card-title">Theme State</h3>
-            <p>isDarkMode: {isDarkMode.toString()}</p>
+            <p>theme: {theme}</p>
             <p>
               data-theme attribute:{" "}
               {document.documentElement.getAttribute("data-theme")}

@@ -7,7 +7,7 @@ import SideMenu from "../molecules/SideMenu"
 
 const Header: React.FC = () => {
   const { user } = useSupabase()
-  const { isDarkMode, toggleTheme } = useTheme()
+  const { theme, toggleTheme } = useTheme()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleMenuClick = () => {
@@ -45,7 +45,7 @@ const Header: React.FC = () => {
             onClick={toggleTheme}
             aria-label="Toggle theme"
           >
-            {isDarkMode ? (
+            {theme === "dark" ? (
               <SunIcon className="w-5 h-5" />
             ) : (
               <MoonIcon className="w-5 h-5" />
