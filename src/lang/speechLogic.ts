@@ -4,6 +4,7 @@ import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
 import type { AzureActor } from "./providers/azure"
 import { azureSpeechMachine } from "./providers/azure"
+import { minPunctuate, punctuateText } from "./punctuation"
 
 interface SpeechContext {
   currentText: TextAreaContext
@@ -71,9 +72,9 @@ export const speechRecognitionMachine = setup({
           input: { parentRef: self },
         }),
     }),
-    updateRecognizing: assign({
+    updateRecognize: assign({
       recognizedText: ({ context, event }) => {
-        assertEvent(event, "recognizing")
+        assertEvent(event, ["recognizing", "recognized"])
         return {
           before: context.currentText.before,
           text: event.text,
@@ -81,15 +82,20 @@ export const speechRecognitionMachine = setup({
         }
       },
     }),
-    updateRecognized: assign({
-      recognizedText: ({ context, event }) => {
-        assertEvent(event, "recognized")
-        return {
-          before: context.currentText.before + event.text,
-          text: "",
-          after: context.currentText.after,
-        }
-      },
+    punctuate: assign({
+      recognizedText: ({ context }) => ({
+        before:
+          context.recognizedText.before + punctuateText(context.recognizedText),
+        text: "",
+        after: context.recognizedText.after,
+      }),
+    }),
+    minPunctuate: assign({
+      recognizedText: ({ context }) => ({
+        before: context.recognizedText.before,
+        text: minPunctuate(context.recognizedText),
+        after: context.recognizedText.after,
+      }),
     }),
     setError: assign({
       errorMsg: ({ event }) => {
@@ -146,12 +152,12 @@ export const speechRecognitionMachine = setup({
       },
       on: {
         recognizing: {
-          actions: ["read", "updateRecognizing", "write"],
+          actions: ["read", "updateRecognize", "minPunctuate", "write"],
           target: "listening",
           reenter: true, // for the after 3000ms transition to idle
         },
         recognized: {
-          actions: ["read", "updateRecognized", "write"],
+          actions: ["read", "updateRecognize", "punctuate", "write"],
           target: "listening",
           reenter: true, // for the after 3000ms transition to idle
         },

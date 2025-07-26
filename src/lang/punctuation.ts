@@ -259,6 +259,10 @@ export const punctuate = (
   after: string = "",
 ): string => punctuateText({ before, text, after })
 
+// Add spaces before and after while recognized text is not finalized, so doesn't fully punctuate yet.
+export const minPunctuate = (input: TextAreaContext): string =>
+  pipe(input, trimText, addSpaceBefore, addSpaceAfter).text
+
 // Example usage:
 // const result = punctuate("hello comma world", "Hello", " there")
 // console.log(result) // "Hello, world"
