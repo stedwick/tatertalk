@@ -2,7 +2,6 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 import { useSupabase } from "../../hooks/useSupabase"
-import MountainBackground from "../atoms/MountainBackground"
 import LoginForm from "../molecules/LoginForm"
 import SignupForm from "../molecules/SignupForm"
 
