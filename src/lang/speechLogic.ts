@@ -98,6 +98,14 @@ export const speechRecognitionMachine = setup({
         after: context.recognizedText.after,
       }),
     }),
+    minPunctuateFinal: assign({
+      recognizedText: ({ context }) => ({
+        before:
+          context.recognizedText.before + minPunctuate(context.recognizedText),
+        text: "",
+        after: context.recognizedText.after,
+      }),
+    }),
     setError: assign({
       errorMsg: ({ event }) => {
         assertEvent(event, "error")
@@ -162,10 +170,10 @@ export const speechRecognitionMachine = setup({
           actions: enqueueActions(({ enqueue, check }) => {
             enqueue("read")
             enqueue("updateRecognize")
-            if (check("shouldPunctuate")) {
+            if (check({ type: "shouldPunctuate" })) {
               enqueue("punctuate")
             } else {
-              enqueue("minPunctuate")
+              enqueue("minPunctuateFinal")
             }
             enqueue("write")
           }),
