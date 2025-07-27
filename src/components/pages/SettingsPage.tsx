@@ -279,11 +279,11 @@ const SettingsPage: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex gap-4 justify-end">
-            <Link to="/" className="btn btn-outline">
+            <Link to="/" className="btn btn-outline xs:btn-lg">
               Back
             </Link>
 
-            <button type="submit" className="btn btn-primary gap-2">
+            <button type="submit" className="btn btn-primary xs:btn-lg gap-2">
               <CheckIcon className="w-5 h-5" />
               Save Settings
             </button>
