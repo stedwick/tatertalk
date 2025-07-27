@@ -18,14 +18,18 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-base-100 flex flex-col">
       <MountainBackground className="fixed inset-0 z-0" />
-      {loading ? (
-        <LoadingPage />
-      ) : (
-        <>
-          <Header />
-          <Outlet />
-        </>
-      )}
+      <div className="flex-1 px-4 py-6 pt-22 flex flex-col relative">
+        <div className="flex-1 flex flex-col z-10 max-w-2xl w-full mx-auto">
+          {loading ? (
+            <LoadingPage />
+          ) : (
+            <>
+              <Header />
+              <Outlet />
+            </>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
