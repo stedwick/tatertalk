@@ -58,10 +58,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
       id: "settings",
       label: "Settings",
       icon: <Cog6ToothIcon className="w-5 h-5" />,
-      onClick: () => {
-        console.log("Settings clicked")
-        onClose()
-      },
+      href: "/settings",
     },
     {
       id: "help",

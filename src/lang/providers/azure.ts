@@ -7,7 +7,7 @@ import {
 } from "microsoft-cognitiveservices-speech-sdk"
 import type { ActorRefFrom, AnyActorRef } from "xstate"
 import { assign, fromPromise, sendTo, setup } from "xstate"
-import { getAzureCredentials } from "../../lib/azureConfig"
+import { getAzureCredentials } from "./azureConfig"
 
 interface AzureContext {
   parentRef: AnyActorRef

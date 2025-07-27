@@ -1,5 +1,6 @@
 import AuthPage from "./components/pages/AuthPage"
 import MainPage from "./components/pages/MainPage"
+import SettingsPage from "./components/pages/SettingsPage"
 import "./App.css"
 import { BrowserRouter, Route, Routes } from "react-router"
 import Layout from "./components/layout"
@@ -13,6 +14,7 @@ function App() {
           <Route index element={<MainPage />} />
           <Route path="login" element={<AuthPage />} />
           <Route path="logout" element={<LogoutPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
