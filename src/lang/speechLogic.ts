@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: machine will error if not available */
-import { assertEvent, assign, setup } from "xstate"
+import { assertEvent, assign, enqueueActions, setup } from "xstate"
+import { getSettings } from "../lib/settings"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
 import type { AzureActor } from "./providers/azure"
@@ -109,6 +110,7 @@ export const speechRecognitionMachine = setup({
   },
   guards: {
     hasTextAreaEl: ({ context }) => context.textAreaRef.current !== null,
+    shouldPunctuate: () => getSettings().autoPunctuation === "false",
   },
 }).createMachine({
   id: "speechRecognition",
@@ -157,7 +159,16 @@ export const speechRecognitionMachine = setup({
           reenter: true, // for the after 3000ms transition to idle
         },
         recognized: {
-          actions: ["read", "updateRecognize", "punctuate", "write"],
+          actions: enqueueActions(({ enqueue, check }) => {
+            enqueue("read")
+            enqueue("updateRecognize")
+            if (check("shouldPunctuate")) {
+              enqueue("punctuate")
+            } else {
+              enqueue("minPunctuate")
+            }
+            enqueue("write")
+          }),
           target: "listening",
           reenter: true, // for the after 3000ms transition to idle
         },
