@@ -30,7 +30,6 @@ const AuthPage: React.FC = () => {
 
   return (
     <div className="flex-1 flex items-center justify-center p-2 sm:p-4 relative">
-      <MountainBackground />
       <div className="w-full max-w-sm sm:max-w-md flex flex-col items-center justify-center mb-20 sm:mb-0">
         {isLogin ? (
           <LoginForm onSwitchToSignup={handleSwitchToSignup} />
