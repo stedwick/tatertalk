@@ -15,12 +15,20 @@ export default defineConfig(async () => ({
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
       },
-      includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
+      includeAssets: [
+        "favicon.ico",
+        "apple-touch-icon-180x180.png",
+        "maskable-icon-512x512.png",
+        "pwa-64x64.png",
+        "pwa-192x192.png",
+        "pwa-512x512.png",
+      ],
       manifest: {
-        name: "My Awesome App",
-        short_name: "MyApp",
-        description: "My Awesome App description",
-        theme_color: "#ffffff",
+        name: "Tater 🎙️ Talk",
+        short_name: "TaterTalk",
+        description:
+          "Tater 🎙️ Talk is the easiest way to talk to your computer.",
+        theme_color: "#1d232a",
         icons: [
           {
             src: "pwa-64x64.png",
@@ -42,6 +50,12 @@ export default defineConfig(async () => ({
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
+          },
+          {
+            src: "pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
           },
         ],
       },
