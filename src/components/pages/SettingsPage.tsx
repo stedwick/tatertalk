@@ -16,6 +16,7 @@ import {
   type SettingsFormData,
   settingsSchema,
 } from "../../lib/validationSchemas"
+import { BackToHome } from "../atoms/BackToHome"
 import FormInput from "../atoms/FormInput"
 
 const SettingsPage: React.FC = () => {
@@ -48,8 +49,9 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="flex-1 px-4 py-6 flex flex-col relative">
       <div className="max-w-2xl w-full mx-auto">
+        <BackToHome className="mb-4" />
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-2">
           <div className="flex items-center gap-3">
             <Cog6ToothIcon className="w-8 h-8 text-primary" />
             <h1 className="text-3xl font-bold">Settings</h1>
@@ -66,8 +68,38 @@ const SettingsPage: React.FC = () => {
                   Speech Provider
                 </h2>
                 <p className="text-base-content/70 mb-4">
-                  Choose your preferred speech recognition provider
+                  Choose your preferred speech recognition provider.
                 </p>
+
+                <label className="flex items-center gap-3 cursor-pointer opacity-50">
+                  <input
+                    type="radio"
+                    value="google"
+                    className="radio radio-primary"
+                    disabled
+                    {...register("speechProvider")}
+                  />
+                  <div className="flex items-center gap-2">
+                    <CloudIcon className="w-5 h-5" />
+                    <span>Free in web browser (ie. Google Chrome)</span>
+                    <span className="badge badge-ghost hidden sm:block">
+                      Coming Soon
+                    </span>
+                  </div>
+                </label>
+                <div className="text-base-content/70 ml-10">
+                  <span>
+                    Free, less accurate, works best in Chrome.{" "}
+                    <a
+                      href="https://www.google.com/chrome/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="link"
+                    >
+                      Learn more about Google Chrome.
+                    </a>
+                  </span>
+                </div>
 
                 <div className="space-y-3">
                   <label className="flex items-center gap-3 cursor-pointer">
@@ -80,24 +112,24 @@ const SettingsPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <ServerIcon className="w-5 h-5" />
                       <span>Microsoft Azure</span>
-                      <span className="badge badge-primary">Default</span>
+                      <span className="badge badge-primary hidden sm:block">
+                        Default
+                      </span>
                     </div>
                   </label>
-
-                  <label className="flex items-center gap-3 cursor-pointer opacity-50">
-                    <input
-                      type="radio"
-                      value="google"
-                      className="radio radio-primary"
-                      disabled
-                      {...register("speechProvider")}
-                    />
-                    <div className="flex items-center gap-2">
-                      <CloudIcon className="w-5 h-5" />
-                      <span>Google Speech-to-Text</span>
-                      <span className="badge badge-ghost">Coming Soon</span>
-                    </div>
-                  </label>
+                  <div className="text-base-content/70 ml-10">
+                    <span>
+                      Best for custom word recognition.{" "}
+                      <a
+                        href="https://azure.microsoft.com/en-us/products/ai-services/ai-speech"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link"
+                      >
+                        Learn more about Microsoft Azure Speech-to-Text
+                      </a>
+                    </span>
+                  </div>
 
                   <label className="flex items-center gap-3 cursor-pointer opacity-50">
                     <input
@@ -110,9 +142,24 @@ const SettingsPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <ExclamationTriangleIcon className="w-5 h-5" />
                       <span>AssemblyAI</span>
-                      <span className="badge badge-ghost">Coming Soon</span>
+                      <span className="badge badge-ghost hidden sm:block">
+                        Coming Soon
+                      </span>
                     </div>
                   </label>
+                  <div className="text-base-content/70 ml-10">
+                    <span>
+                      Best for long-form writing with auto-punctuation.{" "}
+                      <a
+                        href="https://www.assemblyai.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link"
+                      >
+                        Learn more about AssemblyAI.
+                      </a>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -126,7 +173,7 @@ const SettingsPage: React.FC = () => {
                     Azure Speech Service Credentials
                   </h2>
                   <p className="text-base-content/70 mb-4">
-                    Configure your Azure Speech Service credentials
+                    Configure your Azure Speech Service credentials.
                   </p>
 
                   <div className="space-y-4">
@@ -153,7 +200,7 @@ const SettingsPage: React.FC = () => {
               <div className="card-body">
                 <h2 className="card-title">Punctuation</h2>
                 <p className="text-base-content/70 mb-4">
-                  Choose how punctuation should be handled
+                  Choose how punctuation should be handled.
                 </p>
 
                 <div className="space-y-3">
@@ -162,9 +209,15 @@ const SettingsPage: React.FC = () => {
                       type="radio"
                       value="true"
                       className="radio radio-primary"
+                      defaultChecked={getSettings().autoPunctuation}
                       {...register("autoPunctuation")}
                     />
-                    <span>Auto punctuation (recommended)</span>
+                    <p className="flex flex-col">
+                      <span>Auto punctuation</span>
+                      <span className="text-sm text-base-content/70">
+                        "I like pie" &rarr; I like pie.
+                      </span>
+                    </p>
                   </label>
 
                   <label className="flex items-center gap-3 cursor-pointer">
@@ -172,9 +225,15 @@ const SettingsPage: React.FC = () => {
                       type="radio"
                       value="false"
                       className="radio radio-primary"
+                      defaultChecked={!getSettings().autoPunctuation}
                       {...register("autoPunctuation")}
                     />
-                    <span>Manual punctuation</span>
+                    <p className="flex flex-col">
+                      <span>Verbal punctuation</span>
+                      <span className="text-sm text-base-content/70">
+                        "I like pie period" &rarr; I like pie.
+                      </span>
+                    </p>
                   </label>
                 </div>
               </div>
@@ -185,19 +244,17 @@ const SettingsPage: React.FC = () => {
               <div className="card-body">
                 <h2 className="card-title">Custom Words</h2>
                 <p className="text-base-content/70 mb-4">
-                  Add custom words or phrases to improve recognition accuracy
+                  Add custom words or phrases to recognize.
                 </p>
 
                 <div className="form-control w-full">
                   <label htmlFor="customWords" className="label">
-                    <span className="label-text">
-                      Custom Words (comma-separated)
-                    </span>
+                    <span className="label-text">(comma-separated)</span>
                   </label>
                   <textarea
                     id="customWords"
                     className="textarea textarea-bordered w-full"
-                    placeholder="e.g., tatertalk, speech recognition, voice dictation"
+                    placeholder="e.g., TaterTalk, Jabberwocky, supercalifragilisticexpialidocious"
                     rows={4}
                     {...register("customWords")}
                   />
