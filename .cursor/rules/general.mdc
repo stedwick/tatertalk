@@ -29,6 +29,6 @@ Use React Hook Form for forms with Zod for validation.
 
 Use clsx to pass class names to components.
 
-After each major change, fix warnings and errors by running: `bun run check && bun test && bun run build && bun run test-storybook`
+After each major change, fix warnings and errors by running: `bun i && bun run check && bun test && bun run build && bun run test-storybook`
 
 Use the src/hooks/useSupabase.ts hook for authentication-related operations.
