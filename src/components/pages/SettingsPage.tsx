@@ -26,12 +26,7 @@ const SettingsPage: React.FC = () => {
     defaultValues: getSettings(),
   })
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isDirty, isSubmitting },
-    watch,
-  } = methods
+  const { register, handleSubmit, watch } = methods
 
   const selectedProvider = watch("speechProvider")
 
@@ -126,7 +121,7 @@ const SettingsPage: React.FC = () => {
                         rel="noopener noreferrer"
                         className="link"
                       >
-                        Learn more about Microsoft Azure Speech-to-Text
+                        Learn more about Microsoft Azure Speech-to-Text.
                       </a>
                     </span>
                   </div>
@@ -268,11 +263,7 @@ const SettingsPage: React.FC = () => {
                 Back
               </Link>
 
-              <button
-                type="submit"
-                className="btn btn-primary gap-2"
-                disabled={isSubmitting || !isDirty}
-              >
+              <button type="submit" className="btn btn-primary gap-2">
                 <CheckIcon className="w-5 h-5" />
                 Save Settings
               </button>
