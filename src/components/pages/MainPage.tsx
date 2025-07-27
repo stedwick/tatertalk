@@ -5,10 +5,11 @@ import {
 } from "@heroicons/react/24/outline"
 import clsx from "clsx"
 import type React from "react"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
 import { useTheme } from "../../hooks/useTheme"
 import { azureSpeechMachine } from "../../lang/providers/azure"
+import { themedToastError } from "../../lib/themedToast"
 import ActionButton from "../atoms/ActionButton"
 import MountainBackground from "../atoms/MountainBackground"
 import TextArea from "../atoms/TextArea"
@@ -23,6 +24,12 @@ const MainPage: React.FC = () => {
       textAreaRef,
       recognizerMachine: azureSpeechMachine,
     })
+
+  useEffect(() => {
+    if (errorMsg) {
+      themedToastError(errorMsg)
+    }
+  }, [errorMsg])
 
   const handleCutText = () => {
     if (text) {
@@ -39,11 +46,6 @@ const MainPage: React.FC = () => {
 
       <div className="flex-1 flex flex-col z-10 max-w-2xl w-full mx-auto">
         <TextArea value={text} onChange={setText} ref={textAreaRef} />
-        {errorMsg && (
-          <div className="alert alert-error mt-4">
-            <span>{errorMsg}</span>
-          </div>
-        )}
       </div>
 
       <div className="flex gap-4 mt-6 justify-center">
