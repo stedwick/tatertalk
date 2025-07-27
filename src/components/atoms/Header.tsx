@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useSupabase } from "../../hooks/useSupabase"
 import { useTheme } from "../../hooks/useTheme"
 import SideMenu from "../molecules/SideMenu"
+import { Link } from "react-router"
 
 const Header: React.FC = () => {
   const { user } = useSupabase()
@@ -35,7 +36,7 @@ const Header: React.FC = () => {
         </div>
         <div className="navbar-center">
           <h1 className="text-xl sm:text-2xl font-bold text-primary">
-            Tater 🎙️ Talk
+            <Link to="/">Tater 🎙️ Talk</Link>
           </h1>
         </div>
         <div className="navbar-end">
