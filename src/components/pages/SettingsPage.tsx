@@ -1,10 +1,9 @@
 import {
+  BookOpenIcon,
+  ChatBubbleLeftRightIcon,
   CheckIcon,
-  CloudIcon,
   Cog6ToothIcon,
-  ExclamationTriangleIcon,
   MicrophoneIcon,
-  ServerIcon,
 } from "@heroicons/react/24/outline"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
@@ -26,12 +25,7 @@ const SettingsPage: React.FC = () => {
     defaultValues: getSettings(),
   })
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = methods
+  const { register, handleSubmit, watch } = methods
 
   const selectedProvider = watch("speechProvider")
 
@@ -80,16 +74,20 @@ const SettingsPage: React.FC = () => {
                     {...register("speechProvider")}
                   />
                   <div className="flex items-center gap-2">
-                    <CloudIcon className="w-5 h-5" />
+                    <img
+                      src="/icons/icons8-chrome.svg"
+                      alt="Chrome"
+                      className="w-5 h-5"
+                    />
                     <span>Free in web browser (ie. Google Chrome)</span>
                     <span className="badge badge-ghost hidden sm:block">
                       Coming Soon
                     </span>
                   </div>
                 </label>
-                <div className="text-base-content/70 ml-10">
+                <div className="text-base-content/70 ml-10 mb-6">
                   <span>
-                    Free, less accurate, works best in Chrome.{" "}
+                    Free, less accurate, works best in Chrome. <br />
                     <a
                       href="https://www.google.com/chrome/"
                       target="_blank"
@@ -110,16 +108,20 @@ const SettingsPage: React.FC = () => {
                       {...register("speechProvider")}
                     />
                     <div className="flex items-center gap-2">
-                      <ServerIcon className="w-5 h-5" />
+                      <img
+                        src="/icons/icons8-azure.svg"
+                        alt="Azure"
+                        className="w-5 h-5"
+                      />
                       <span>Microsoft Azure</span>
                       <span className="badge badge-primary hidden sm:block">
                         Default
                       </span>
                     </div>
                   </label>
-                  <div className="text-base-content/70 ml-10">
+                  <div className="text-base-content/70 ml-10 mb-6">
                     <span>
-                      Best for custom word recognition.{" "}
+                      Best for custom word recognition. <br />
                       <a
                         href="https://azure.microsoft.com/en-us/products/ai-services/ai-speech"
                         target="_blank"
@@ -140,7 +142,11 @@ const SettingsPage: React.FC = () => {
                       {...register("speechProvider")}
                     />
                     <div className="flex items-center gap-2">
-                      <ExclamationTriangleIcon className="w-5 h-5" />
+                      <img
+                        src="/icons/assemblyai.png"
+                        alt="AssemblyAI"
+                        className="w-5 h-5"
+                      />
                       <span>AssemblyAI</span>
                       <span className="badge badge-ghost hidden sm:block">
                         Coming Soon
@@ -149,7 +155,7 @@ const SettingsPage: React.FC = () => {
                   </label>
                   <div className="text-base-content/70 ml-10">
                     <span>
-                      Best for long-form writing with auto-punctuation.{" "}
+                      Best for long-form writing with auto-punctuation. <br />
                       <a
                         href="https://www.assemblyai.com/"
                         target="_blank"
@@ -169,7 +175,11 @@ const SettingsPage: React.FC = () => {
               <div className="card bg-base-100 shadow-xl">
                 <div className="card-body">
                   <h2 className="card-title flex items-center gap-2">
-                    <ServerIcon className="w-5 h-5" />
+                    <img
+                      src="/icons/icons8-azure.svg"
+                      alt="Azure"
+                      className="w-5 h-5"
+                    />
                     Azure Speech Service Credentials
                   </h2>
                   <p className="text-base-content/70 mb-4">
@@ -198,7 +208,10 @@ const SettingsPage: React.FC = () => {
             {/* Punctuation Settings */}
             <div className="card bg-base-100 shadow-xl">
               <div className="card-body">
-                <h2 className="card-title">Punctuation</h2>
+                <h2 className="card-title flex items-center gap-2">
+                  <ChatBubbleLeftRightIcon className="w-5 h-5" />
+                  Punctuation
+                </h2>
                 <p className="text-base-content/70 mb-4">
                   Choose how punctuation should be handled.
                 </p>
@@ -209,10 +222,8 @@ const SettingsPage: React.FC = () => {
                       type="radio"
                       value="true"
                       className="radio radio-primary"
-                      defaultChecked={getSettings().autoPunctuation}
-                      {...register("autoPunctuation", {
-                        setValueAs: (value) => value === "true",
-                      })}
+                      defaultChecked={getSettings().autoPunctuation === "true"}
+                      {...register("autoPunctuation")}
                     />
                     <p className="flex flex-col">
                       <span>Auto punctuation</span>
@@ -227,10 +238,8 @@ const SettingsPage: React.FC = () => {
                       type="radio"
                       value="false"
                       className="radio radio-primary"
-                      defaultChecked={!getSettings().autoPunctuation}
-                      {...register("autoPunctuation", {
-                        setValueAs: (value) => value === "true",
-                      })}
+                      defaultChecked={getSettings().autoPunctuation === "false"}
+                      {...register("autoPunctuation")}
                     />
                     <p className="flex flex-col">
                       <span>Verbal punctuation</span>
@@ -246,7 +255,10 @@ const SettingsPage: React.FC = () => {
             {/* Custom Words */}
             <div className="card bg-base-100 shadow-xl">
               <div className="card-body">
-                <h2 className="card-title">Custom Words</h2>
+                <h2 className="card-title flex items-center gap-2">
+                  <BookOpenIcon className="w-5 h-5" />
+                  Custom Words
+                </h2>
                 <p className="text-base-content/70 mb-4">
                   Add custom words or phrases to recognize.
                 </p>
