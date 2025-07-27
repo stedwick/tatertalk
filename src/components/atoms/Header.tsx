@@ -21,7 +21,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="bg-base-100 shadow-lg">
+      <header className="bg-base-100 shadow-lg fixed top-0 left-0 right-0 z-20">
         <div className="navbar max-w-2xl w-full mx-auto">
           <div className="navbar-start">
             {user && (

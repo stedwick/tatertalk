@@ -11,7 +11,6 @@ import { useTheme } from "../../hooks/useTheme"
 import { azureSpeechMachine } from "../../lang/providers/azure"
 import { themedToastError } from "../../lib/themedToast"
 import ActionButton from "../atoms/ActionButton"
-import MountainBackground from "../atoms/MountainBackground"
 import TextArea from "../atoms/TextArea"
 
 const MainPage: React.FC = () => {
@@ -41,9 +40,7 @@ const MainPage: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 px-4 py-6 flex flex-col relative">
-      <MountainBackground />
-
+    <div className="flex-1 px-4 py-6 pt-22 flex flex-col relative">
       <div className="flex-1 flex flex-col z-10 max-w-2xl w-full mx-auto">
         <TextArea value={text} onChange={setText} ref={textAreaRef} />
       </div>
