@@ -29,6 +29,7 @@ export default defineConfig(async () => ({
         description:
           "Tater 🎙️ Talk is the easiest way to talk to your computer.",
         theme_color: "#1d232a",
+        background_color: "#1d232a",
         icons: [
           {
             src: "pwa-64x64.png",
