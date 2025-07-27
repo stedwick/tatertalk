@@ -20,14 +20,15 @@ Don't forget to check for existing components before creating new ones. There's 
 
 Write and update Storybook stories for each component.
 
-Use Zustand for state and Immer for modifying it.
+Use Jotai for global state.
+Use Immer (if needed) for modifying it.
 
-Use Heroicons for all the icons.
+Use Heroicons for the icons.
 
 Use React Hook Form for forms with Zod for validation.
 
 Use clsx to pass class names to components.
 
-Run `bun run check` and `bun test` after each change and fix warnings and errors.
+After each major change, fix warnings and errors by running: `bun run check && bun test && bun run build && bun run test-storybook`
 
 Use the src/hooks/useSupabase.ts hook for authentication-related operations.

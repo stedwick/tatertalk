@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { Meta, StoryObj } from "@storybook/react"
+import { useEffect } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { z } from "zod"
 import FormInput from "../components/atoms/FormInput"
@@ -29,10 +30,12 @@ const FormInputWrapper = ({
     },
   })
 
-  // Trigger validation to show error
-  if (showError) {
-    methods.trigger(field)
-  }
+  // Trigger validation to show error after component mounts
+  useEffect(() => {
+    if (showError) {
+      methods.trigger(field)
+    }
+  }, [showError, field, methods])
 
   return (
     <FormProvider {...methods}>

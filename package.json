@@ -11,7 +11,8 @@
     "storybook": "storybook dev -p 6006 --quiet --no-open",
     "build-storybook": "storybook build",
     "check": "biome check --write --unsafe .",
-    "check:ci": "biome check ."
+    "check:ci": "biome check .",
+    "test-storybook": "vitest --project=storybook --no-watch"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
