@@ -146,7 +146,7 @@ export const speechRecognitionMachine = setup({
     },
     listening: {
       after: {
-        3000: {
+        4000: {
           target: "idle",
         },
       },
