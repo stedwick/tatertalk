@@ -26,7 +26,12 @@ const SettingsPage: React.FC = () => {
     defaultValues: getSettings(),
   })
 
-  const { register, handleSubmit, watch } = methods
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = methods
 
   const selectedProvider = watch("speechProvider")
 
@@ -205,7 +210,9 @@ const SettingsPage: React.FC = () => {
                       value="true"
                       className="radio radio-primary"
                       defaultChecked={getSettings().autoPunctuation}
-                      {...register("autoPunctuation")}
+                      {...register("autoPunctuation", {
+                        setValueAs: (value) => value === "true",
+                      })}
                     />
                     <p className="flex flex-col">
                       <span>Auto punctuation</span>
@@ -221,7 +228,9 @@ const SettingsPage: React.FC = () => {
                       value="false"
                       className="radio radio-primary"
                       defaultChecked={!getSettings().autoPunctuation}
-                      {...register("autoPunctuation")}
+                      {...register("autoPunctuation", {
+                        setValueAs: (value) => value === "true",
+                      })}
                     />
                     <p className="flex flex-col">
                       <span>Verbal punctuation</span>
