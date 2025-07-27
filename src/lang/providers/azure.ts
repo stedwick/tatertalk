@@ -2,12 +2,12 @@
 import {
   AudioConfig,
   CancellationReason,
-  SpeechConfig,
   SpeechRecognizer,
 } from "microsoft-cognitiveservices-speech-sdk"
 import type { ActorRefFrom, AnyActorRef } from "xstate"
 import { assign, fromPromise, sendTo, setup } from "xstate"
-import { getAzureCredentials } from "./azureConfig"
+import { getAudioStream } from "./audioConfig"
+import { addCustomPhrases, configureSpeech } from "./azureConfig"
 
 interface AzureContext {
   parentRef: AnyActorRef
@@ -22,30 +22,13 @@ type AzureInput = {
 type AzureEvents = { type: "stop" }
 
 const setupAzure = fromPromise(async () => {
-  const credentials = getAzureCredentials()
-  if (!credentials) {
-    throw new Error(
-      "Azure Speech Service credentials not configured. Please set AZURE_SPEECH_KEY and AZURE_SPEECH_REGION in localStorage.",
-    )
-  }
-  const speechConfig = SpeechConfig.fromSubscription(
-    credentials.key,
-    credentials.region,
-  )
-
-  const constraints = {
-    video: false,
-    audio: {
-      channelCount: 1,
-      sampleRate: 16000,
-      sampleSize: 16,
-      volume: 1,
-    },
-  }
-  const audioStream = await navigator.mediaDevices.getUserMedia(constraints)
-
+  const speechConfig = configureSpeech()
+  const audioStream = await getAudioStream()
   const audioConfig = AudioConfig.fromStreamInput(audioStream)
   const speechRecognizer = new SpeechRecognizer(speechConfig, audioConfig)
+
+  // Add custom phrases
+  addCustomPhrases(speechRecognizer)
 
   return { audioStream, speechRecognizer }
 })
