@@ -47,7 +47,7 @@ const MainPage: React.FC = () => {
         <ActionButton
           onClick={isListening ? stop : start}
           className={
-            isListening ? "btn-error sm:btn-lg" : "btn-primary sm:btn-lg"
+            isListening ? "btn-error xs:btn-lg" : "btn-primary xs:btn-lg"
           }
           icon={
             isLoading ? (
@@ -64,7 +64,7 @@ const MainPage: React.FC = () => {
 
         <ActionButton
           onClick={handleCutText}
-          className={clsx("btn-soft sm:btn-lg", {
+          className={clsx("btn-soft xs:btn-lg", {
             "text-white": theme === "light" && !text,
           })}
           disabled={!text}
