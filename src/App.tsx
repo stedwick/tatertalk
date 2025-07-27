@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast"
 import AuthPage from "./components/pages/AuthPage"
 import MainPage from "./components/pages/MainPage"
 import SettingsPage from "./components/pages/SettingsPage"
@@ -8,16 +9,19 @@ import LogoutPage from "./components/pages/LogoutPage"
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route index element={<MainPage />} />
-          <Route path="login" element={<AuthPage />} />
-          <Route path="logout" element={<LogoutPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <>
+      <Toaster />
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<MainPage />} />
+            <Route path="login" element={<AuthPage />} />
+            <Route path="logout" element={<LogoutPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </>
   )
 }
 
