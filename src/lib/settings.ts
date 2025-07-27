@@ -2,7 +2,7 @@ export interface AppSettings {
   speechProvider: "microsoft" | "google" | "assemblyai"
   azureSpeechKey: string
   azureSpeechRegion: string
-  autoPunctuation: boolean
+  autoPunctuation: "true" | "false"
   customWords: string
 }
 
@@ -10,7 +10,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   speechProvider: "microsoft",
   azureSpeechKey: "",
   azureSpeechRegion: "",
-  autoPunctuation: true,
+  autoPunctuation: "true",
   customWords: "",
 }
 

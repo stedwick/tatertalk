@@ -21,37 +21,39 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="navbar bg-base-100 shadow-lg">
-        <div className="navbar-start">
-          {user && (
+      <header className="bg-base-100 shadow-lg">
+        <div className="navbar max-w-2xl w-full mx-auto">
+          <div className="navbar-start">
+            {user && (
+              <button
+                type="button"
+                className="btn btn-ghost btn-circle"
+                onClick={handleMenuClick}
+                aria-label="Menu"
+              >
+                <Bars3Icon className="w-6 h-6" />
+              </button>
+            )}
+          </div>
+          <div className="navbar-center">
+            <h1 className="text-xl sm:text-2xl font-bold text-primary">
+              <Link to="/">Tater 🎙️ Talk</Link>
+            </h1>
+          </div>
+          <div className="navbar-end">
             <button
               type="button"
               className="btn btn-ghost btn-circle"
-              onClick={handleMenuClick}
-              aria-label="Menu"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
             >
-              <Bars3Icon className="w-6 h-6" />
+              {theme === "dark" ? (
+                <SunIcon className="w-5 h-5" />
+              ) : (
+                <MoonIcon className="w-5 h-5" />
+              )}
             </button>
-          )}
-        </div>
-        <div className="navbar-center">
-          <h1 className="text-xl sm:text-2xl font-bold text-primary">
-            <Link to="/">Tater 🎙️ Talk</Link>
-          </h1>
-        </div>
-        <div className="navbar-end">
-          <button
-            type="button"
-            className="btn btn-ghost btn-circle"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? (
-              <SunIcon className="w-5 h-5" />
-            ) : (
-              <MoonIcon className="w-5 h-5" />
-            )}
-          </button>
+          </div>
         </div>
       </header>
 

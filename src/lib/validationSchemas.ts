@@ -31,22 +31,32 @@ export const settingsSchema = z
     speechProvider: z.enum(["microsoft", "google", "assemblyai"]),
     azureSpeechKey: z.string(),
     azureSpeechRegion: z.string(),
-    autoPunctuation: z.boolean(),
+    autoPunctuation: z.enum(["true", "false"]),
     customWords: z.string(),
   })
   .refine(
     (data) => {
       if (data.speechProvider === "microsoft") {
-        return (
-          data.azureSpeechKey.length > 0 && data.azureSpeechRegion.length > 0
-        )
+        return data.azureSpeechKey.length > 0
+      }
+      return true
+    },
+    {
+      message: "Azure Speech Key is required when using the Microsoft provider",
+      path: ["azureSpeechKey"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.speechProvider === "microsoft") {
+        return data.azureSpeechRegion.length > 0
       }
       return true
     },
     {
       message:
-        "Azure Speech Key and Region are required when using the Microsoft provider",
-      path: ["azureSpeechKey", "azureSpeechRegion"],
+        "Azure Speech Region is required when using the Microsoft provider",
+      path: ["azureSpeechRegion"],
     },
   )
 
