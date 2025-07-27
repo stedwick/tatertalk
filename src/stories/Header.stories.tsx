@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react"
+import { BrowserRouter } from "react-router"
 import Header from "../components/atoms/Header"
 
 const meta: Meta<typeof Header> = {
@@ -8,19 +9,27 @@ const meta: Meta<typeof Header> = {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
-  argTypes: {
-    onMenuClick: { action: "menu clicked" },
-    onThemeToggle: { action: "theme toggled" },
-  },
+  decorators: [
+    (Story) => (
+      <BrowserRouter>
+        <Story />
+      </BrowserRouter>
+    ),
+  ],
 }
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const WithoutMenu: Story = {
-  args: {
-    onThemeToggle: () => console.log("Theme toggled"),
-    isDarkMode: false,
-    showMenu: false,
+export const Default: Story = {}
+
+export const WithUser: Story = {
+  parameters: {
+    mockData: {
+      user: {
+        id: "test-user-id",
+        email: "test@example.com",
+      },
+    },
   },
 }
