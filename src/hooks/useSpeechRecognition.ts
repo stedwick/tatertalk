@@ -1,6 +1,7 @@
 import { useActorRef, useSelector } from "@xstate/react"
 import type { SnapshotFrom } from "xstate"
 import type { azureSpeechMachine } from "../lang/providers/azure"
+import type { webSpeechMachine } from "../lang/providers/webSpeechApi"
 import speechRecognitionMachine from "../lang/speechLogic"
 
 const loadingSelector = (
@@ -18,7 +19,7 @@ export const useSpeechRecognition = ({
   recognizerMachine,
 }: {
   textAreaRef: React.RefObject<HTMLTextAreaElement>
-  recognizerMachine: typeof azureSpeechMachine
+  recognizerMachine: typeof azureSpeechMachine | typeof webSpeechMachine
 }) => {
   const speechActor = useActorRef(speechRecognitionMachine, {
     input: { textAreaRef, recognizerMachine },

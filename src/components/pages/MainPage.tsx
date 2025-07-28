@@ -8,7 +8,7 @@ import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
 import { useTheme } from "../../hooks/useTheme"
-import { azureSpeechMachine } from "../../lang/providers/azure"
+import { webSpeechMachine } from "../../lang/providers/webSpeechApi"
 import { themedToastError } from "../../lib/themedToast"
 import ActionButton from "../atoms/ActionButton"
 import TextArea from "../atoms/TextArea"
@@ -21,7 +21,8 @@ const MainPage: React.FC = () => {
   const { isLoading, isListening, errorMsg, start, stop } =
     useSpeechRecognition({
       textAreaRef,
-      recognizerMachine: azureSpeechMachine,
+      // recognizerMachine: azureSpeechMachine,
+      recognizerMachine: webSpeechMachine,
     })
 
   useEffect(() => {

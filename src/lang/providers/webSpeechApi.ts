@@ -35,8 +35,7 @@ public <phrase> = ${customPhrases.join(" | ")};`
 
       try {
         const SpeechGrammarList =
-          window.webkitSpeechGrammarList ||
-          window.SpeechGrammarList
+          window.webkitSpeechGrammarList || window.SpeechGrammarList
         if (SpeechGrammarList) {
           const grammar = new SpeechGrammarList()
           grammar.addFromString(grammarText, 1.0)

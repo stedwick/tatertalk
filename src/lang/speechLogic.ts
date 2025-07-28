@@ -3,16 +3,17 @@ import { assertEvent, assign, enqueueActions, setup } from "xstate"
 import { getSettings } from "../lib/settings"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
-import type { AzureActor } from "./providers/azure"
-import { azureSpeechMachine } from "./providers/azure"
+import type { AzureActor, azureSpeechMachine } from "./providers/azure"
+import type { WebSpeechActor } from "./providers/webSpeechApi"
+import { webSpeechMachine } from "./providers/webSpeechApi"
 import { minPunctuate, punctuateText } from "./punctuation"
 
 interface SpeechContext {
   currentText: TextAreaContext
   recognizedText: TextAreaContext
   textAreaRef: React.RefObject<HTMLTextAreaElement>
-  recognizerMachine: typeof azureSpeechMachine
-  recognizerActor: AzureActor | null
+  recognizerMachine: typeof azureSpeechMachine | typeof webSpeechMachine
+  recognizerActor: AzureActor | WebSpeechActor | null
   errorMsg: string | null
 }
 
@@ -20,7 +21,7 @@ const initialContext: SpeechContext = {
   currentText: { before: "", text: "", after: "" },
   recognizedText: { before: "", text: "", after: "" },
   textAreaRef: { current: null },
-  recognizerMachine: azureSpeechMachine,
+  recognizerMachine: webSpeechMachine,
   recognizerActor: null,
   errorMsg: null,
 } as const
@@ -28,12 +29,12 @@ const initialContext: SpeechContext = {
 const getInitialContext = () =>
   ({
     ...JSON.parse(JSON.stringify(initialContext)),
-    recognizerMachine: azureSpeechMachine,
+    recognizerMachine: webSpeechMachine,
   }) as SpeechContext
 
 type SpeechInput = {
   textAreaRef: React.RefObject<HTMLTextAreaElement>
-  recognizerMachine: typeof azureSpeechMachine
+  recognizerMachine: typeof azureSpeechMachine | typeof webSpeechMachine
 }
 
 type SpeechEvents =
@@ -71,7 +72,7 @@ export const speechRecognitionMachine = setup({
       recognizerActor: ({ context, self, spawn }) =>
         spawn(context.recognizerMachine, {
           input: { parentRef: self },
-        }),
+        }) as AzureActor | WebSpeechActor,
     }),
     updateRecognize: assign({
       recognizedText: ({ context, event }) => {
