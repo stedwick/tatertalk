@@ -91,9 +91,6 @@ export const azureSpeechMachine = setup({
       }
     },
   },
-  guards: {
-    hasRecognizer: ({ context }) => context.speechRecognizer !== null,
-  },
 }).createMachine({
   id: "azureSpeech",
   context: ({ input }) => ({
@@ -114,8 +111,6 @@ export const azureSpeechMachine = setup({
           src: "setupAzure",
           onDone: {
             actions: assign(({ event }) => event.output),
-            // doesn't work
-            // guard: "hasRecognizer",
             target: "listen",
           },
           onError: {
