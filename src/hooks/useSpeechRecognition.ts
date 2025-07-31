@@ -1,28 +1,21 @@
 import { useActorRef, useSelector } from "@xstate/react"
 import type { SnapshotFrom } from "xstate"
-import type { azureSpeechMachine } from "../lang/providers/azure"
-import type { webSpeechMachine } from "../lang/providers/webSpeechApi"
-import speechRecognitionMachine from "../lang/speechLogic"
+import type { SpeechRecognitionMachineImpl } from "../lang/speechLogic"
 
-const loadingSelector = (
-  state: SnapshotFrom<typeof speechRecognitionMachine>,
-) => state.matches("loading")
-const listeningSelector = (
-  state: SnapshotFrom<typeof speechRecognitionMachine>,
-) => state.matches("listening")
-const errorMsgSelector = (
-  state: SnapshotFrom<typeof speechRecognitionMachine>,
-) => state.context.errorMsg
+type Snapshot = SnapshotFrom<SpeechRecognitionMachineImpl>
+const loadingSelector = (state: Snapshot) => state.matches("loading")
+const listeningSelector = (state: Snapshot) => state.matches("listening")
+const errorMsgSelector = (state: Snapshot) => state.context.errorMsg
 
 export const useSpeechRecognition = ({
   textAreaRef,
-  recognizerMachine,
+  speechRecognitionMachine,
 }: {
   textAreaRef: React.RefObject<HTMLTextAreaElement>
-  recognizerMachine: typeof azureSpeechMachine | typeof webSpeechMachine
+  speechRecognitionMachine: SpeechRecognitionMachineImpl
 }) => {
   const speechActor = useActorRef(speechRecognitionMachine, {
-    input: { textAreaRef, recognizerMachine },
+    input: { textAreaRef },
   })
 
   // Selectors for state values

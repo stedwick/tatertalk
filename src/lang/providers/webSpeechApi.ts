@@ -194,4 +194,5 @@ export const webSpeechMachine = setup({
   },
 })
 
-export type WebSpeechActor = ActorRefFrom<typeof webSpeechMachine>
+export type WebSpeechMachine = typeof webSpeechMachine
+export type WebSpeechActor = ActorRefFrom<WebSpeechMachine>

@@ -3,8 +3,9 @@ import { assertEvent, assign, enqueueActions, setup } from "xstate"
 import { getSettings } from "../lib/settings"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
-import type { AzureActor, azureSpeechMachine } from "./providers/azure"
-import type { WebSpeechActor } from "./providers/webSpeechApi"
+import type { AzureActor, AzureSpeechMachine } from "./providers/azure"
+import { azureSpeechMachine } from "./providers/azure"
+import type { WebSpeechActor, WebSpeechMachine } from "./providers/webSpeechApi"
 import { webSpeechMachine } from "./providers/webSpeechApi"
 import { minPunctuate, punctuateText } from "./punctuation"
 
@@ -12,7 +13,7 @@ interface SpeechContext {
   currentText: TextAreaContext
   recognizedText: TextAreaContext
   textAreaRef: React.RefObject<HTMLTextAreaElement>
-  recognizerMachine: typeof azureSpeechMachine | typeof webSpeechMachine
+  recognizerMachine: AzureSpeechMachine | WebSpeechMachine
   recognizerActor: AzureActor | WebSpeechActor | null
   errorMsg: string | null
 }
@@ -34,7 +35,6 @@ const getInitialContext = () =>
 
 type SpeechInput = {
   textAreaRef: React.RefObject<HTMLTextAreaElement>
-  recognizerMachine: typeof azureSpeechMachine | typeof webSpeechMachine
 }
 
 type SpeechEvents =
@@ -45,7 +45,7 @@ type SpeechEvents =
   | { type: "stop" }
   | { type: "error"; errorMsg: string }
 
-export const speechRecognitionMachine = setup({
+export const speechRecognitionMachineImpl = setup({
   types: {
     input: {} as SpeechInput,
     context: {} as SpeechContext,
@@ -67,6 +67,9 @@ export const speechRecognitionMachine = setup({
         return null
       },
       errorMsg: ({ context }) => context.errorMsg,
+    }),
+    getRecognizerMachine: assign({
+      recognizerMachine: webSpeechMachine,
     }),
     spawnRecognizer: assign({
       recognizerActor: ({ context, self, spawn }) =>
@@ -119,14 +122,13 @@ export const speechRecognitionMachine = setup({
   },
   guards: {
     hasTextAreaEl: ({ context }) => context.textAreaRef.current !== null,
-    shouldPunctuate: () => getSettings().autoPunctuation === "false",
+    shouldPunctuate: () => false,
   },
 }).createMachine({
   id: "speechRecognition",
   context: ({ input }) => ({
     ...getInitialContext(),
     textAreaRef: input.textAreaRef,
-    recognizerMachine: input.recognizerMachine,
   }),
   initial: "idle",
   on: {
@@ -148,7 +150,7 @@ export const speechRecognitionMachine = setup({
       },
     },
     loading: {
-      entry: "spawnRecognizer",
+      entry: ["getRecognizerMachine", "spawnRecognizer"],
       on: {
         ready: {
           target: "listening",
@@ -157,7 +159,7 @@ export const speechRecognitionMachine = setup({
     },
     listening: {
       after: {
-        4000: {
+        10000: {
           target: "idle",
         },
       },
@@ -165,7 +167,7 @@ export const speechRecognitionMachine = setup({
         recognizing: {
           actions: ["read", "updateRecognize", "minPunctuate", "write"],
           target: "listening",
-          reenter: true, // for the after 3000ms transition to idle
+          reenter: true, // for the after delayed transition to idle
         },
         recognized: {
           actions: enqueueActions(({ enqueue, check }) => {
@@ -179,7 +181,7 @@ export const speechRecognitionMachine = setup({
             enqueue("write")
           }),
           target: "listening",
-          reenter: true, // for the after 3000ms transition to idle
+          reenter: true, // for the after delayed transition to idle
         },
         stop: {
           target: "idle",
@@ -189,4 +191,23 @@ export const speechRecognitionMachine = setup({
   },
 })
 
-export default speechRecognitionMachine
+export type SpeechRecognitionMachineImpl = typeof speechRecognitionMachineImpl
+
+export const taterMachine = speechRecognitionMachineImpl.provide({
+  actions: {
+    getRecognizerMachine: assign({
+      recognizerMachine: () => {
+        const settings = getSettings()
+        if (settings.speechProvider === "microsoft") {
+          return azureSpeechMachine
+        }
+        return webSpeechMachine
+      },
+    }),
+  },
+  guards: {
+    shouldPunctuate: () => getSettings().autoPunctuation === "false",
+  },
+})
+
+export type TaterMachine = typeof taterMachine

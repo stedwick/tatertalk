@@ -141,4 +141,5 @@ export const azureSpeechMachine = setup({
   },
 })
 
-export type AzureActor = ActorRefFrom<typeof azureSpeechMachine>
+export type AzureSpeechMachine = typeof azureSpeechMachine
+export type AzureActor = ActorRefFrom<AzureSpeechMachine>
