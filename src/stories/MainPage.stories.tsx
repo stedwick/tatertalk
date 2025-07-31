@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react"
+import { Provider } from "jotai"
 import MainPage from "../components/pages/MainPage"
 
 const meta: Meta<typeof MainPage> = {
@@ -10,9 +11,11 @@ const meta: Meta<typeof MainPage> = {
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <div className="bg-base-100">
-        <Story />
-      </div>
+      <Provider>
+        <div className="bg-base-100 min-h-screen">
+          <Story />
+        </div>
+      </Provider>
     ),
   ],
 }
