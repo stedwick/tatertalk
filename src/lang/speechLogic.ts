@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: machine will error if not available */
 import { assertEvent, assign, enqueueActions, setup } from "xstate"
 import { getSettings } from "../lib/settings"
 import type { TextAreaContext } from "../lib/textarea"

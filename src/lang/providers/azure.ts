@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: machine will error if not available */
 import {
   AudioConfig,
   CancellationReason,

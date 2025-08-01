@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: machine will error if not available */
 import type { ActorRefFrom, AnyActorRef } from "xstate"
 import { assign, fromPromise, sendTo, setup } from "xstate"
 import { getSettings } from "../../lib/settings"
