@@ -84,13 +84,19 @@ export const webSpeechMachine = setup({
       }
 
       recognition.onerror = (event) => {
+        let msg = ""
         if (event.error === "no-speech") {
           // Ignore no-speech errors as they're common
           return
+        } else if (event.error === "network") {
+          // Ignore network errors as they're common
+          msg = `Error! Are you using Google Chrome and on Wifi?`
+        } else {
+          msg = `Speech recognition error: ${event.error}`
         }
         parentRef.send({
           type: "error",
-          errorMsg: `Speech recognition error: ${event.error}`,
+          errorMsg: msg,
         })
       }
 
