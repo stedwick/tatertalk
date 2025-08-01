@@ -25,9 +25,9 @@ const setupWebSpeech = fromPromise(async () => {
 
   // Configure recognition settings
   recognition.continuous = true
-  recognition.lang = "en-US" // Enable language configuration
+  // recognition.lang = "en-US" // Enable language configuration
   recognition.interimResults = true
-  recognition.maxAlternatives = 1
+  // recognition.maxAlternatives = 1
 
   // Add custom phrases
   addCustomPhrases(recognition)
