@@ -29,6 +29,7 @@ public <phrase> = ${customPhrases.join(" | ")};`
         }
       } catch (error) {
         console.warn("Could not add custom phrases grammar:", error)
+        // Don't throw - just log the warning and continue without custom phrases
       }
     }
   }

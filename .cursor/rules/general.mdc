@@ -1,6 +1,9 @@
 ---
 alwaysApply: true
 ---
+
+NUMBER ONE RULE: Only do what the user asks! Don't go off the rails and start building other stuff for no reason.
+
 Use bun instead of npm in this project.
 
 Use Tailwind CSS and Daisy UI for the React components in this project.
