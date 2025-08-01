@@ -83,6 +83,8 @@ const SettingsPage: React.FC = () => {
               <div className="text-base-content/70 ml-10 mb-6">
                 <span>
                   Free, less accurate, works best in Chrome. <br />
+                  <em>Auto-punctuation and custom words may not work.</em>
+                  <br />
                   <a
                     href="https://www.google.com/chrome/"
                     target="_blank"
@@ -147,7 +149,7 @@ const SettingsPage: React.FC = () => {
                 </label>
                 <div className="text-base-content/70 ml-10">
                   <span>
-                    Best for long-form writing with auto-punctuation. <br />
+                    Best for auto-punctuation and long-form writing. <br />
                     <a
                       href="https://www.assemblyai.com/"
                       target="_blank"

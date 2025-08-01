@@ -40,15 +40,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
 
   const menuItems: MenuItem[] = [
     {
-      id: "user-info",
-      label: user?.email || "User",
-      icon: <UserIcon className="w-5 h-5" />,
-      onClick: () => {
-        console.log("User info clicked")
-        onClose()
-      },
-    },
-    {
       id: "home",
       label: "Home",
       icon: <HomeIcon className="w-5 h-5" />,
@@ -76,14 +67,33 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
       rightIcon: <ArrowTopRightOnSquareIcon className="w-4 h-4" />,
       isExternal: true,
     },
-    {
+  ]
+
+  if (user) {
+    menuItems.unshift({
+      id: "user-info",
+      label: user?.email || "User",
+      icon: <UserIcon className="w-5 h-5" />,
+      onClick: () => {
+        console.log("User info clicked")
+        onClose()
+      },
+    })
+    menuItems.push({
       id: "logout",
       label: "Logout",
       icon: <ArrowRightStartOnRectangleIcon className="w-5 h-5" />,
       href: "/logout",
       variant: "danger",
-    },
-  ]
+    })
+  } else {
+    menuItems.unshift({
+      id: "login",
+      label: "Signup / Login",
+      icon: <ArrowRightStartOnRectangleIcon className="w-5 h-5" />,
+      href: "/login",
+    })
+  }
 
   return (
     <>

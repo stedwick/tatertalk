@@ -10,7 +10,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   speechProvider: "browser",
   azureSpeechKey: "",
   azureSpeechRegion: "",
-  autoPunctuation: "true",
+  autoPunctuation: "false",
   customWords: "",
 }
 
