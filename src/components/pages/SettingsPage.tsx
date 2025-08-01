@@ -64,12 +64,11 @@ const SettingsPage: React.FC = () => {
                 Choose your preferred speech recognition provider.
               </p>
 
-              <label className="flex items-center gap-3 cursor-pointer opacity-50">
+              <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="radio"
-                  value="google"
+                  value="browser"
                   className="radio radio-primary"
-                  disabled
                   {...register("speechProvider")}
                 />
                 <div className="flex items-center gap-2">
@@ -79,9 +78,6 @@ const SettingsPage: React.FC = () => {
                     className="w-5 h-5"
                   />
                   <span>Free in web browser (ie. Google Chrome)</span>
-                  <span className="badge badge-ghost hidden sm:block">
-                    Coming Soon
-                  </span>
                 </div>
               </label>
               <div className="text-base-content/70 ml-10 mb-6">
@@ -113,9 +109,6 @@ const SettingsPage: React.FC = () => {
                       className="w-5 h-5"
                     />
                     <span>Microsoft Azure</span>
-                    <span className="badge badge-primary hidden sm:block">
-                      Default
-                    </span>
                   </div>
                 </label>
                 <div className="text-base-content/70 ml-10 mb-6">

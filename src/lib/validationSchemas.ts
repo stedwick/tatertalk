@@ -28,7 +28,7 @@ export const signupSchema = z
 
 export const settingsSchema = z
   .object({
-    speechProvider: z.enum(["microsoft", "google", "assemblyai"]),
+    speechProvider: z.enum(["microsoft", "browser", "assemblyai"]),
     azureSpeechKey: z.string(),
     azureSpeechRegion: z.string(),
     autoPunctuation: z.enum(["true", "false"]),
