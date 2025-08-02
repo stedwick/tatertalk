@@ -50,6 +50,7 @@ export const webSpeechMachine = setup({
       const recognition = context.recognition!
       const parentRef = context.parentRef
 
+      // NOTE: On mobile, this leads to multiple duplicate results.
       recognition.onresult = (event) => {
         // Handle speech recognition results
         // https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognitionResultList

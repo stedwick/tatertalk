@@ -41,6 +41,7 @@ const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
  * @param context The PunctuationContext object representing the original state.
  */
 
+// NOTE: On mobile, we'd like the keyboard NOT to show up when dictating.
 export const writeToTextArea = (
   element: HTMLTextAreaElement,
   context: TextAreaContext,
