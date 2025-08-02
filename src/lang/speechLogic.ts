@@ -157,6 +157,7 @@ export const speechRecognitionMachineImpl = setup({
       },
     },
     listening: {
+      // NOTE: Can we make this timeout configurable?
       after: {
         10000: {
           target: "idle",
