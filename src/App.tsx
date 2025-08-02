@@ -11,8 +11,8 @@ import { SupabaseListener } from "./lib/SupabaseListener"
 function App() {
   return (
     <>
-      <SupabaseListener />
       <Toaster />
+      <SupabaseListener />
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
