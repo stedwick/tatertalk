@@ -1,16 +1,15 @@
 import type React from "react"
 import { useEffect } from "react"
 import { useNavigate } from "react-router"
-import { useSupabase } from "../../hooks/useSupabase"
+import { signOut } from "../../lib/auth"
 
 const LogoutPage: React.FC = () => {
-  const { supabase } = useSupabase()
   const navigate = useNavigate()
   useEffect(() => {
-    supabase.auth.signOut().then(() => {
+    signOut().then(() => {
       navigate("/login")
     })
-  }, [supabase, navigate])
+  }, [navigate])
   return null
 }
 

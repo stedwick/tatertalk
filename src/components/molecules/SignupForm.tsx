@@ -1,12 +1,10 @@
-import {
-  ArrowPathIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-} from "@heroicons/react/24/outline"
+import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useAtomValue } from "jotai"
 import type React from "react"
 import { FormProvider, useForm } from "react-hook-form"
-import { useSupabase } from "../../hooks/useSupabase"
+import { signUpLoadingAtom } from "../../atoms/authAtoms"
+import { signUp } from "../../lib/auth"
 import { type SignupFormData, signupSchema } from "../../lib/validationSchemas"
 import FormInput from "../atoms/FormInput"
 
@@ -15,18 +13,14 @@ interface SignupFormProps {
 }
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
-  const { signUp, signUpLoading, error, success } = useSupabase()
+  const signUpLoading = useAtomValue(signUpLoadingAtom)
 
   const methods = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   })
 
   const onSubmit = async (data: SignupFormData) => {
-    try {
-      await signUp(data.email, data.password)
-    } catch (_error) {
-      // Error is handled by the hook
-    }
+    await signUp(data.email, data.password)
   }
 
   return (
@@ -35,20 +29,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
         <h2 className="card-title text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6">
           Sign Up
         </h2>
-
-        {error && (
-          <div className="alert alert-error mb-3 sm:mb-4">
-            <ExclamationTriangleIcon className="stroke-current shrink-0 h-4 w-4 sm:h-6 sm:w-6" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        {success && (
-          <div className="alert alert-success mb-3 sm:mb-4">
-            <CheckCircleIcon className="stroke-current shrink-0 h-4 w-4 sm:h-6 sm:w-6" />
-            <span>{success}</span>
-          </div>
-        )}
 
         <FormProvider {...methods}>
           <form

@@ -6,10 +6,12 @@ import "./App.css"
 import { BrowserRouter, Route, Routes } from "react-router"
 import Layout from "./components/layout"
 import LogoutPage from "./components/pages/LogoutPage"
+import { SupabaseListener } from "./lib/SupabaseListener"
 
 function App() {
   return (
     <>
+      <SupabaseListener />
       <Toaster />
       <BrowserRouter>
         <Routes>

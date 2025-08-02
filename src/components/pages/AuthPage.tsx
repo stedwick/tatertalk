@@ -1,23 +1,22 @@
+import { useAtomValue } from "jotai"
 import type React from "react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import { useSupabase } from "../../hooks/useSupabase"
+import { userAtom } from "../../atoms/authAtoms"
 import LoginForm from "../molecules/LoginForm"
 import SignupForm from "../molecules/SignupForm"
 
 const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(false)
-  const { user, clearMessages } = useSupabase()
+  const user = useAtomValue(userAtom)
   const navigate = useNavigate()
 
   const handleSwitchToSignup = () => {
     setIsLogin(false)
-    clearMessages()
   }
 
   const handleSwitchToLogin = () => {
     setIsLogin(true)
-    clearMessages()
   }
 
   // If user is already authenticated, redirect to main page

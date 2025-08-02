@@ -11,7 +11,6 @@ Use Tailwind CSS and Daisy UI for the React components in this project.
 Use Stately Xstate in this project.
 
 When creating React components use Atomic Design in the following directory structure:
-
 src/components
 ├── atoms
 ├── molecules
@@ -21,7 +20,7 @@ src/components
 
 Don't forget to check for existing components before creating new ones. There's no need to create components for native Daisy UI components, like buttons or inputs.
 
-Write and update Storybook stories for each component.
+Write and update default Storybook stories for each component.
 
 Use Jotai for global state.
 Use Immer (if needed) for modifying it.
@@ -34,4 +33,4 @@ Use clsx to pass class names to components.
 
 After each major change, fix warnings and errors by running: `bun i && bun run check && bun test && bun run build && bun run test-storybook`
 
-Use the src/hooks/useSupabase.ts hook for authentication-related operations.
+Use src/atoms/authAtoms.ts and src/lib/auth.ts for authentication-related operations.

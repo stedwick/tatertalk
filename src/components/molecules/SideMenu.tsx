@@ -8,9 +8,10 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline"
 import { PlayCircleIcon } from "@heroicons/react/24/solid"
+import { useAtomValue } from "jotai"
 import type React from "react"
 import { useEffect } from "react"
-import { useSupabase } from "../../hooks/useSupabase"
+import { userAtom } from "../../atoms/authAtoms"
 import MenuItemComponent, { type MenuItem } from "../atoms/MenuItem"
 
 interface SideMenuProps {
@@ -19,7 +20,7 @@ interface SideMenuProps {
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
-  const { user } = useSupabase()
+  const user = useAtomValue(userAtom)
 
   // Handle escape key globally when menu is open
   useEffect(() => {
