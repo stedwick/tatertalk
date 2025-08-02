@@ -59,6 +59,7 @@ export const configureSpeech = (): SpeechConfig => {
       ServicePropertyChannel.UriQueryParameter,
     )
   }
+  // TODO: Can we force a final transcript within like three seconds?
   return speechConfig
 }
 

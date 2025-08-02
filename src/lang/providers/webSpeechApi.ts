@@ -32,6 +32,7 @@ const setupWebSpeech = fromPromise(async () => {
   // Add custom phrases
   addCustomPhrases(recognition)
 
+  // TODO: Can we force a final transcript within like three seconds?
   return { recognition }
 })
 
