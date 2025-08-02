@@ -48,7 +48,11 @@ export const writeToTextArea = (
   const { before, after, text } = context
   const newValue = `${before}${text}${after}`
 
-  nativeInputValueSetter?.call(element, newValue)
+  if (nativeInputValueSetter) {
+    nativeInputValueSetter.call(element, newValue)
+  } else {
+    element.value = newValue
+  }
 
   // Set the cursor position after the newly inserted text
   const newCursorPosition = (before + text).length
