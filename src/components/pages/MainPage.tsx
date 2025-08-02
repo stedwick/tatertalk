@@ -4,9 +4,10 @@ import {
   ScissorsIcon,
 } from "@heroicons/react/24/outline"
 import clsx from "clsx"
-import { useAtomValue } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import type React from "react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
+import { textAreaAtom } from "../../atoms/textAreaAtom"
 import { themeAtom } from "../../atoms/themeAtom"
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
 import { taterMachine } from "../../lang/speechLogic"
@@ -15,7 +16,7 @@ import ActionButton from "../atoms/ActionButton"
 import TextArea from "../atoms/TextArea"
 
 const MainPage: React.FC = () => {
-  const [text, setText] = useState("")
+  const [text, setText] = useAtom(textAreaAtom)
   const theme = useAtomValue(themeAtom)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
