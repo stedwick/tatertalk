@@ -20,6 +20,16 @@ const MainPage: React.FC = () => {
   const theme = useAtomValue(themeAtom)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
+  // Scroll to the end of the text area if necessary
+  useEffect(() => {
+    const textArea = textAreaRef.current
+    if (textArea) {
+      const length = textArea.value.length
+      textArea.setSelectionRange(length, length)
+    }
+    textArea?.focus()
+  }, [])
+
   const { isLoading, isListening, errorMsg, start, stop } =
     useSpeechRecognition({
       textAreaRef,

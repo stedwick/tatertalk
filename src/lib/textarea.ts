@@ -58,6 +58,8 @@ export const writeToTextArea = (
   const newCursorPosition = (before + text).length
   element.selectionStart = before.length
   element.selectionEnd = newCursorPosition
+  // scrolls to new text
+  element.blur()
   element.focus()
 
   const event = new Event("input", { bubbles: true })
