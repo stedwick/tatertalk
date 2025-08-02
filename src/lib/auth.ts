@@ -1,6 +1,8 @@
 import {
+  sessionAtom,
   signInLoadingAtom,
   signUpLoadingAtom,
+  userAtom,
   userLoadingAtom,
 } from "../atoms/authAtoms"
 import store from "../atoms/store"
@@ -9,52 +11,40 @@ import { themedToastError, themedToastSuccess } from "./themedToast"
 
 export const signIn = async (email: string, password: string) => {
   store.set(signInLoadingAtom, true)
-  try {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    if (error) {
-      themedToastError(error.message)
-    }
-    return { error }
-  } finally {
-    store.set(signInLoadingAtom, false)
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+  if (error) {
+    themedToastError(error.message)
   }
+  store.set(signInLoadingAtom, false)
 }
 
 export const signUp = async (email: string, password: string) => {
   store.set(signUpLoadingAtom, true)
-  try {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-    if (error) {
-      themedToastError(error.message)
-    } else {
-      themedToastSuccess("Check your email for the confirmation link!")
-    }
-    return { error }
-  } finally {
-    store.set(signUpLoadingAtom, false)
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+  })
+  if (error) {
+    themedToastError(error.message)
+  } else {
+    themedToastSuccess("Check your email for the confirmation link!")
   }
+  store.set(signUpLoadingAtom, false)
 }
 
 export const signOut = async () => {
   store.set(userLoadingAtom, true)
-  try {
-    await supabase.auth.signOut({
-      scope: "local",
-    })
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      themedToastError(error.message)
-    } else {
-      themedToastError("Unknown error")
-    }
-    console.error("Error signing out:", error)
-  } finally {
-    store.set(userLoadingAtom, false)
+  console.log("signing out")
+  const { error } = await supabase.auth.signOut({
+    scope: "local",
+  })
+  if (error) {
+    localStorage.removeItem(`sb-${import.meta.env.VITE_SUPABASE_ID}-auth-token`)
+    store.set(userAtom, null)
+    store.set(sessionAtom, null)
   }
+  store.set(userLoadingAtom, false)
 }
