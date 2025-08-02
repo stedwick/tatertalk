@@ -1,5 +1,6 @@
+import { useAtomValue } from "jotai"
 import type React from "react"
-import { useTheme } from "../../hooks/useTheme"
+import { themeAtom } from "../../atoms/themeAtom"
 
 interface MountainBackgroundProps {
   className?: string
@@ -8,7 +9,7 @@ interface MountainBackgroundProps {
 const MountainBackground: React.FC<MountainBackgroundProps> = ({
   className = "",
 }) => {
-  const { theme } = useTheme()
+  const [theme] = useAtomValue(themeAtom)
 
   return (
     <svg

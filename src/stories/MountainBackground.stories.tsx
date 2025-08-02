@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react"
+import { useAtom } from "jotai"
+import { themeAtom } from "../atoms/themeAtom"
 import MountainBackground from "../components/atoms/MountainBackground"
-import { useTheme } from "../hooks/useTheme"
 
 // Component that demonstrates theme switching
 const MountainBackgroundWithTheme = () => {
-  const { theme, toggleTheme } = useTheme()
+  const [theme, setTheme] = useAtom(themeAtom)
 
   return (
     <div className="relative w-full h-screen">
@@ -20,7 +21,11 @@ const MountainBackgroundWithTheme = () => {
               : "Beautiful pastel colors"}
           </p>
         </div>
-        <button type="button" className="btn btn-primary" onClick={toggleTheme}>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
           Switch to {theme === "dark" ? "Light" : "Dark"} Mode
         </button>
       </div>

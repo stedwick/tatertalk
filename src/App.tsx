@@ -7,12 +7,14 @@ import { BrowserRouter, Route, Routes } from "react-router"
 import Layout from "./components/layout"
 import LogoutPage from "./components/pages/LogoutPage"
 import { SupabaseListener } from "./lib/SupabaseListener"
+import { ThemeListener } from "./lib/ThemeListener"
 
 function App() {
   return (
     <>
       <Toaster />
       <SupabaseListener />
+      <ThemeListener />
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>

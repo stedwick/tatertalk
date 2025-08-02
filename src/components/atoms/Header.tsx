@@ -1,12 +1,13 @@
 import { Bars3Icon, MoonIcon, SunIcon } from "@heroicons/react/24/outline"
+import { useAtom } from "jotai"
 import type React from "react"
 import { useState } from "react"
 import { Link } from "react-router"
-import { useTheme } from "../../hooks/useTheme"
+import { themeAtom } from "../../atoms/themeAtom"
 import SideMenu from "../molecules/SideMenu"
 
 const Header: React.FC = () => {
-  const { theme, toggleTheme } = useTheme()
+  const [theme, setTheme] = useAtom(themeAtom)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleMenuClick = () => {
@@ -40,7 +41,7 @@ const Header: React.FC = () => {
             <button
               type="button"
               className="btn btn-ghost btn-circle"
-              onClick={toggleTheme}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               aria-label="Toggle theme"
             >
               {theme === "dark" ? (

@@ -1,9 +1,9 @@
-import { useAtom } from "jotai"
+import { useAtomValue } from "jotai"
 import { useEffect } from "react"
 import { themeAtom } from "../atoms/themeAtom"
 
-export const useTheme = () => {
-  const [theme, setTheme] = useAtom(themeAtom)
+export const ThemeListener = () => {
+  const [theme] = useAtomValue(themeAtom)
 
   useEffect(() => {
     // Update document theme when theme changes
@@ -11,13 +11,5 @@ export const useTheme = () => {
     html.setAttribute("data-theme", theme)
   }, [theme])
 
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark")
-  }
-
-  return {
-    theme,
-    setTheme,
-    toggleTheme,
-  }
+  return null
 }
