@@ -11,6 +11,7 @@ export default function Layout() {
   const userLoading = useAtomValue(userLoadingAtom)
 
   return (
+    // TODO: On mobile, the tab bar takes up space, and pushes TaterTalk down, so the buttons are off screen. Let's make the text area and main viewport take up the visible height, not the entire window height.
     <div className="min-h-screen bg-base-100 flex flex-col">
       <MountainBackground className="fixed inset-0 z-0" />
       <div className="flex-1 px-4 py-6 pt-22 flex flex-col relative">

@@ -39,6 +39,7 @@ const FormInput: React.FC<FormInputProps> = ({
       />
       {error && (
         <label htmlFor={name} className="label">
+          {/* NOTE: Errors don't wrap, and on mobile can go off the screen. */}
           <span className="label-text-alt text-error">
             {error.message?.toString()}
           </span>
