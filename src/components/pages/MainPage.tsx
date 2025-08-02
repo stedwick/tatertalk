@@ -16,7 +16,7 @@ import TextArea from "../atoms/TextArea"
 
 const MainPage: React.FC = () => {
   const [text, setText] = useState("")
-  const [theme] = useAtomValue(themeAtom)
+  const theme = useAtomValue(themeAtom)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const { isLoading, isListening, errorMsg, start, stop } =

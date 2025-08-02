@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { themeAtom } from "../atoms/themeAtom"
 
 export const ThemeListener = () => {
-  const [theme] = useAtomValue(themeAtom)
+  const theme = useAtomValue(themeAtom)
 
   useEffect(() => {
     // Update document theme when theme changes

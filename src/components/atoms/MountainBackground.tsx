@@ -9,7 +9,7 @@ interface MountainBackgroundProps {
 const MountainBackground: React.FC<MountainBackgroundProps> = ({
   className = "",
 }) => {
-  const [theme] = useAtomValue(themeAtom)
+  const theme = useAtomValue(themeAtom)
 
   return (
     <svg
