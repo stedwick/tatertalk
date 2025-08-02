@@ -182,6 +182,7 @@ export const speechRecognitionMachineImpl = setup({
           target: "listening",
           reenter: true, // for the after delayed transition to idle
         },
+        // BUG: If the mic is on and you navigate away to settings, it gets stuck on.
         stop: {
           target: "idle",
         },
