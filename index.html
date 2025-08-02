@@ -12,6 +12,7 @@
   <meta name="theme-color" content="#1d232a" />
   <script>
     // Initialize theme immediately to prevent flash
+    // NOTE: If the user later changes their preferred color scheme, this does not update, because the theme is saved to localStorage on the initial load.
     (function () {
       const savedTheme = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
