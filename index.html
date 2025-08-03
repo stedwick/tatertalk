@@ -1,31 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-K4J7545NT7"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tater 🎙️ Talk</title>
-  <meta name="description" content="The easiest way to talk to your computer." />
-  <link rel="icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" sizes="180x180" />
-  <link rel="mask-icon" href="/maskable-icon-512x512.png" color="#FFFFFF" />
-  <meta name="theme-color" content="#1d232a" />
-  <script>
-    // Initialize theme immediately to prevent flash
-    // NOTE: If the user later changes their preferred color scheme, this does not update, because the theme is saved to localStorage on the initial load.
-    (function () {
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('theme', theme);
-    })();
-  </script>
-</head>
+      gtag("config", "G-K4J7545NT7");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tater 🎙️ Talk</title>
+    <meta
+      name="description"
+      content="The easiest way to talk to your computer."
+    />
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      href="/apple-touch-icon-180x180.png"
+      sizes="180x180"
+    />
+    <link rel="mask-icon" href="/maskable-icon-512x512.png" color="#FFFFFF" />
+    <meta name="theme-color" content="#1d232a" />
+    <script>
+      // Initialize theme immediately to prevent flash
+      // NOTE: If the user later changes their preferred color scheme, this does not update, because the theme is saved to localStorage on the initial load.
+      (function () {
+        const savedTheme = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        const theme = savedTheme || (prefersDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+      })();
+    </script>
+  </head>
 
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
-
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
