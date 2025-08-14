@@ -2,7 +2,7 @@ export interface AppSettings {
   speechProvider: "microsoft" | "browser" | "assemblyai"
   azureSpeechKey: string
   azureSpeechRegion: string
-  assemblyAIToken: string
+  assemblyAIKey: string
   autoPunctuation: "true" | "false"
   customWords: string
 }
@@ -11,7 +11,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   speechProvider: "browser",
   azureSpeechKey: "",
   azureSpeechRegion: "",
-  assemblyAIToken: "",
+  assemblyAIKey: "",
   autoPunctuation: "false",
   customWords: "",
 }

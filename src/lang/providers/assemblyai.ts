@@ -1,4 +1,5 @@
 // Using AssemblyAI's streaming SDK
+import { AssemblyAI } from "assemblyai"
 import { RealtimeTranscriber } from "assemblyai/streaming"
 import RecordRTC from "recordrtc"
 import type { ActorRefFrom, AnyActorRef } from "xstate"
@@ -30,11 +31,44 @@ const getWordBoost = (): string[] => {
 
 const setupAssemblyAI = fromPromise(async () => {
   const settings = getSettings()
-  const token = settings.assemblyAIToken
-  if (!token) {
+  const apiKey = settings.assemblyAIKey
+  if (!apiKey) {
     throw new Error(
-      "AssemblyAI token not configured. Please set it in Settings.",
+      "AssemblyAI API key not configured. Please set it in Settings.",
     )
+  }
+
+  // Generate temporary token for browser compatibility
+  let token: string
+  if (import.meta.env.DEV) {
+    // In development, use our proxy
+    const response = await fetch("/api/assemblyai/v2/realtime/token", {
+      method: "POST",
+      headers: {
+        Authorization: apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        expires_in: 480, // 8 minutes
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to generate token: ${response.status} ${response.statusText}`,
+      )
+    }
+
+    const tokenData = await response.json()
+    token =
+      typeof tokenData === "string" ? tokenData : tokenData.token || tokenData
+  } else {
+    // In production, use the SDK directly
+    const client = new AssemblyAI({ apiKey })
+    const tokenData = await client.realtime.createTemporaryToken({
+      expires_in: 480, // 8 minutes
+    })
+    token = tokenData
   }
 
   const audioStream = await getAudioStream()

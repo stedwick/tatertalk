@@ -31,7 +31,7 @@ export const settingsSchema = z
     speechProvider: z.enum(["microsoft", "browser", "assemblyai"]),
     azureSpeechKey: z.string(),
     azureSpeechRegion: z.string(),
-    assemblyAIToken: z.string(),
+    assemblyAIKey: z.string(),
     autoPunctuation: z.enum(["true", "false"]),
     customWords: z.string(),
   })
@@ -63,13 +63,13 @@ export const settingsSchema = z
   .refine(
     (data) => {
       if (data.speechProvider === "assemblyai") {
-        return (data.assemblyAIToken ?? "").length > 0
+        return (data.assemblyAIKey ?? "").length > 0
       }
       return true
     },
     {
-      message: "AssemblyAI token is required when using AssemblyAI provider",
-      path: ["assemblyAIToken"],
+      message: "AssemblyAI API key is required when using AssemblyAI provider",
+      path: ["assemblyAIKey"],
     },
   )
 

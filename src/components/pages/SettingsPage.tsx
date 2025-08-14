@@ -208,15 +208,15 @@ const SettingsPage: React.FC = () => {
                   AssemblyAI Credentials
                 </h2>
                 <p className="text-base-content/70 mb-4">
-                  Configure your AssemblyAI API token.
+                  Configure your AssemblyAI API key.
                 </p>
 
                 <div className="space-y-4">
                   <FormInput
-                    name="assemblyAIToken"
-                    label="AssemblyAI Token"
+                    name="assemblyAIKey"
+                    label="AssemblyAI API Key"
                     type="password"
-                    placeholder="Enter your AssemblyAI API token"
+                    placeholder="Enter your AssemblyAI API key"
                   />
                 </div>
               </div>
