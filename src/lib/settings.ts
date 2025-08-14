@@ -4,6 +4,7 @@ export interface AppSettings {
   azureSpeechRegion: string
   autoPunctuation: "true" | "false"
   customWords: string
+  assemblyAIToken?: string
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -12,6 +13,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   azureSpeechRegion: "",
   autoPunctuation: "false",
   customWords: "",
+  assemblyAIToken: "",
 }
 
 const SETTINGS_KEY = "tatertalk_settings"
