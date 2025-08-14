@@ -31,6 +31,7 @@ export const settingsSchema = z
     speechProvider: z.enum(["microsoft", "browser", "assemblyai"]),
     azureSpeechKey: z.string(),
     azureSpeechRegion: z.string(),
+    assemblyAIToken: z.string(),
     autoPunctuation: z.enum(["true", "false"]),
     customWords: z.string(),
   })
@@ -57,6 +58,18 @@ export const settingsSchema = z
       message:
         "Azure Speech Region is required when using the Microsoft provider",
       path: ["azureSpeechRegion"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.speechProvider === "assemblyai") {
+        return (data.assemblyAIToken ?? "").length > 0
+      }
+      return true
+    },
+    {
+      message: "AssemblyAI token is required when using AssemblyAI provider",
+      path: ["assemblyAIToken"],
     },
   )
 
