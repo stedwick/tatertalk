@@ -22,12 +22,20 @@ const MainPage: React.FC = () => {
 
   // Scroll to the end of the text area if necessary
   useEffect(() => {
-    const textArea = textAreaRef.current
-    if (textArea) {
+    const setupTextArea = (textArea: HTMLTextAreaElement) => {
       const length = textArea.value.length
       textArea.setSelectionRange(length, length)
+      textArea.focus()
     }
-    textArea?.focus()
+
+    const textArea = textAreaRef.current
+    if (textArea) {
+      setupTextArea(textArea)
+    } else {
+      setTimeout(() => {
+        setupTextArea(textAreaRef.current!)
+      }, 1000)
+    }
   }, [])
 
   const { isLoading, isListening, errorMsg, start, stop } =
