@@ -1,6 +1,6 @@
 import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
-import { defineConfig } from "vite"
+import { defineConfig, type HttpProxy, type ProxyOptions } from "vite"
 import { VitePWA } from "vite-plugin-pwa"
 
 const host = process.env.TAURI_DEV_HOST
@@ -86,8 +86,8 @@ export default defineConfig(async () => ({
       "/api/assemblyai": {
         target: "https://api.assemblyai.com",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/assemblyai/, ""),
-        configure: (proxy, _options) => {
+        rewrite: (path: string) => path.replace(/^\/api\/assemblyai/, ""),
+        configure: (proxy: HttpProxy.Server, _options: ProxyOptions) => {
           proxy.on("error", (err, _req, _res) => {
             console.log("proxy error", err)
           })
