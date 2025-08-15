@@ -15,7 +15,8 @@
       "src/**/*.js",
       "src/**/*.jsx",
       "./*.json",
-      "./*.ts"
+      "./*.ts",
+      "supabase/functions/**/*.ts"
     ]
   },
   "formatter": {
