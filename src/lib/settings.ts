@@ -46,3 +46,11 @@ export const saveSettings = (newSettings: Partial<AppSettings>): void => {
     console.error("Error saving settings:", error)
   }
 }
+
+export const getCustomWords = (): string[] => {
+  const settings = getSettings()
+  return settings.customWords
+    .split(",")
+    .map((word) => word.trim())
+    .filter((word) => word.length > 0)
+}
