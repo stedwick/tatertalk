@@ -1,0 +1,112 @@
+// @deno-types="npm:@types/node"
+
+// Follow this setup guide to integrate the Deno language server with your editor:
+// https://deno.land/manual/getting_started/setup_your_environment
+// This enables autocomplete, go to definition, etc.
+
+import { createClient } from "npm:@supabase/supabase-js@2"
+import { AssemblyAI } from "npm:assemblyai@4"
+
+// Function to get appropriate CORS origin
+function getCorsOrigin(request: Request): string {
+  const origin = request.headers.get("Origin")
+  if (!origin) return "*"
+  
+  // Allow production domain
+  if (origin === "https://tatertalk.app") return origin
+  
+  // Allow Netlify preview URLs (pattern: https://xxx--tatertalk.netlify.app)
+  if (origin.match(/^https:\/\/[a-zA-Z0-9-]+--tatertalk\.netlify\.app$/)) return origin
+  
+  // Allow localhost for development
+  if (origin.match(/^https?:\/\/localhost(:\d+)?$/)) return origin
+  
+  return "*"
+}
+
+const corsHeaders = {
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+}
+
+console.log('Function "assemblyai-token" up and running!')
+
+Deno.serve(async (req: Request) => {
+  // Get dynamic CORS headers based on request origin
+  const dynamicCorsHeaders = {
+    ...corsHeaders,
+    "Access-Control-Allow-Origin": getCorsOrigin(req),
+  }
+
+  // This is needed if you're planning to invoke your function from a browser.
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: dynamicCorsHeaders })
+  }
+
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { ...dynamicCorsHeaders, "Content-Type": "application/json" },
+    })
+  }
+
+  try {
+    // Create a Supabase client with the Auth context of the logged in user.
+    const supabaseClient = createClient(
+      // Supabase API URL - env var exported by default.
+      Deno.env.get("SUPABASE_URL") ?? "",
+      // Supabase API ANON KEY - env var exported by default.
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      // Create client with Auth context of the user that called the function.
+      // This way your row-level-security (RLS) policies are applied.
+      {
+        global: {
+          headers: { Authorization: req.headers.get("Authorization")! },
+        },
+      },
+    )
+
+    // Get the user from the Authorization header
+    const {
+      data: { user },
+      error: userError,
+    } = await supabaseClient.auth.getUser()
+
+    if (userError || !user) {
+      throw new Error("Unauthorized")
+    }
+
+    // Ensure this is not an anonymous user
+    const isAnonymous =
+      (user as any).is_anonymous === true ||
+      (user.identities ?? []).some((id) => id.provider === "anonymous")
+
+    if (isAnonymous) {
+      throw new Error("Anonymous users not allowed")
+    }
+
+    // Parse request body
+    const { apiKey, expires_in = 480 } = await req.json()
+
+    if (!apiKey) {
+      throw new Error("Missing AssemblyAI API key in request body")
+    }
+
+    // Generate temporary AssemblyAI token
+    const client = new AssemblyAI({ apiKey })
+    const token = await client.realtime.createTemporaryToken({
+      expires_in,
+    })
+
+    return new Response(JSON.stringify({ token }), {
+      headers: { ...dynamicCorsHeaders, "Content-Type": "application/json" },
+      status: 200,
+    })
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...dynamicCorsHeaders, "Content-Type": "application/json" },
+      status: 400,
+    })
+  }
+})

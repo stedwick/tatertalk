@@ -1,10 +1,10 @@
 // Using AssemblyAI's streaming SDK
-import { AssemblyAI } from "assemblyai"
 import { RealtimeTranscriber } from "assemblyai/streaming"
 import RecordRTC from "recordrtc"
 import type { ActorRefFrom, AnyActorRef } from "xstate"
 import { assign, fromPromise, sendTo, setup } from "xstate"
 import { getCustomWords, getSettings } from "../../lib/settings"
+import { supabase } from "../../lib/supabase"
 import { getAudioStream } from "./audioConfig"
 
 interface AssemblyAIContext {
@@ -54,12 +54,17 @@ const setupAssemblyAI = fromPromise(async () => {
     token =
       typeof tokenData === "string" ? tokenData : tokenData.token || tokenData
   } else {
-    // In production, use the SDK directly
-    const client = new AssemblyAI({ apiKey })
-    const tokenData = await client.realtime.createTemporaryToken({
-      expires_in: 480, // 8 minutes
-    })
-    token = tokenData
+    // In production, request a token from our Supabase Edge Function using the authenticated client
+    const { data, error } = await supabase.functions.invoke(
+      "assemblyai-token",
+      {
+        body: { expires_in: 480, apiKey },
+      },
+    )
+    if (error) {
+      throw new Error(`Failed to generate token (edge): ${error.message}`)
+    }
+    token = typeof data === "string" ? data : data.token || data
   }
 
   const audioStream = await getAudioStream()
