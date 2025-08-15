@@ -7,13 +7,23 @@
 import { createClient } from "npm:@supabase/supabase-js@2"
 import { AssemblyAI } from "npm:assemblyai@4"
 
+console.log('Function "assemblyai-token" up and running!')
+
+const corsHeaders = {
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+}
+
 // Function to get appropriate CORS origin
 function getCorsOrigin(request: Request): string {
+  const prodHost = "https://tatertalk.app"
+
   const origin = request.headers.get("Origin")
-  if (!origin) return "*"
+  if (!origin) return prodHost
 
   // Allow production domain
-  if (origin === "https://tatertalk.app") return origin
+  if (origin === prodHost) return origin
 
   // Allow Netlify preview URLs (pattern: https://xxx--tatertalk.netlify.app)
   if (origin.match(/^https:\/\/[a-zA-Z0-9-]+--tatertalk\.netlify\.app$/))
@@ -22,16 +32,8 @@ function getCorsOrigin(request: Request): string {
   // Allow localhost for development
   if (origin.match(/^https?:\/\/localhost(:\d+)?$/)) return origin
 
-  return "*"
+  return prodHost
 }
-
-const corsHeaders = {
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-}
-
-console.log('Function "assemblyai-token" up and running!')
 
 Deno.serve(async (req: Request) => {
   // Get dynamic CORS headers based on request origin
@@ -53,6 +55,13 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // Get the authorization key from request headers
+    const authHeader = req.headers.get("Authorization")
+
+    if (!authHeader) {
+      throw new Error("Missing Authorization header")
+    }
+
     // Create a Supabase client with the Auth context of the logged in user.
     const supabaseClient = createClient(
       // Supabase API URL - env var exported by default.
@@ -63,7 +72,7 @@ Deno.serve(async (req: Request) => {
       // This way your row-level-security (RLS) policies are applied.
       {
         global: {
-          headers: { Authorization: req.headers.get("Authorization")! },
+          headers: { Authorization: authHeader },
         },
       },
     )
@@ -105,7 +114,8 @@ Deno.serve(async (req: Request) => {
       status: 200,
     })
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...dynamicCorsHeaders, "Content-Type": "application/json" },
       status: 400,
     })
