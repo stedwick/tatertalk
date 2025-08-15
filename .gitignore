@@ -13,4 +13,4 @@ dist
 # Local Netlify folder
 .netlify
 
-supabase/
+supabase/.temp/
