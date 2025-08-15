@@ -11,16 +11,17 @@ import { AssemblyAI } from "npm:assemblyai@4"
 function getCorsOrigin(request: Request): string {
   const origin = request.headers.get("Origin")
   if (!origin) return "*"
-  
+
   // Allow production domain
   if (origin === "https://tatertalk.app") return origin
-  
+
   // Allow Netlify preview URLs (pattern: https://xxx--tatertalk.netlify.app)
-  if (origin.match(/^https:\/\/[a-zA-Z0-9-]+--tatertalk\.netlify\.app$/)) return origin
-  
+  if (origin.match(/^https:\/\/[a-zA-Z0-9-]+--tatertalk\.netlify\.app$/))
+    return origin
+
   // Allow localhost for development
   if (origin.match(/^https?:\/\/localhost(:\d+)?$/)) return origin
-  
+
   return "*"
 }
 
