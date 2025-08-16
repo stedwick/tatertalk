@@ -34,8 +34,7 @@ export function GoogleLogin() {
       if (window.google?.accounts?.id && buttonRef.current) {
         // Initialize Google Sign-In
         const config: IdConfiguration = {
-          client_id:
-            "90483529824-63c8lpst16tt136qm6j20gbk7f69mv4m.apps.googleusercontent.com",
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
           callback: handleSignInWithGoogle,
           auto_select: true,
           itp_support: true,
@@ -66,7 +65,7 @@ export function GoogleLogin() {
           clearInterval(checkGoogleLoaded)
           initializeGoogleSignIn()
         }
-      }, 100)
+      }, 300)
 
       // Cleanup interval on unmount
       return () => clearInterval(checkGoogleLoaded)
