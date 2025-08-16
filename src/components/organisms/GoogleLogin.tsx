@@ -7,6 +7,7 @@ import { useAtomValue } from "jotai"
 import { useEffect, useRef } from "react"
 import { themeAtom } from "../../atoms/themeAtom"
 import { supabase } from "../../lib/supabase"
+import styles from "./GoogleLogin.module.css"
 
 async function handleSignInWithGoogle(response: CredentialResponse) {
   const { data: _data, error: _error } = await supabase.auth.signInWithIdToken({
@@ -42,15 +43,6 @@ export function GoogleLogin() {
           logo_alignment: "left",
         }
         window.google.accounts.id.renderButton(buttonRef.current, buttonConfig)
-
-        // Force the iframe to be full width after rendering
-        setTimeout(() => {
-          const iframe = buttonRef.current?.querySelector("iframe")
-          if (iframe) {
-            iframe.style.width = "100%"
-            iframe.style.minWidth = "100%"
-          }
-        }, 100)
       }
     }
 
@@ -72,15 +64,6 @@ export function GoogleLogin() {
   }, [theme])
 
   return (
-    <div
-      ref={buttonRef}
-      className="w-full"
-      style={{
-        minHeight: "40px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    />
+    <div ref={buttonRef} className={`${styles.googleButtonWrapper} w-full`} />
   )
 }
