@@ -1,10 +1,9 @@
 // Using AssemblyAI's streaming SDK
-import { RealtimeTranscriber } from "assemblyai/streaming"
+import type { RealtimeTranscriber } from "assemblyai/streaming"
 import RecordRTC from "recordrtc"
 import type { ActorRefFrom, AnyActorRef } from "xstate"
 import { assign, fromPromise, sendTo, setup } from "xstate"
-import { getCustomWords, getSettings } from "../../lib/settings"
-import { supabase } from "../../lib/supabase"
+import { configureTranscriber } from "./assemblyaiConfig"
 import { getAudioStream } from "./audioConfig"
 
 interface AssemblyAIContext {
@@ -21,59 +20,8 @@ type AssemblyAIInput = {
 type AssemblyAIEvents = { type: "stop" }
 
 const setupAssemblyAI = fromPromise(async () => {
-  const settings = getSettings()
-  const apiKey = settings.assemblyAIKey
-  if (!apiKey) {
-    throw new Error(
-      "AssemblyAI API key not configured. Please set it in Settings.",
-    )
-  }
-
-  // Generate temporary token for browser compatibility
-  let token: string
-  if (import.meta.env.DEV) {
-    // In development, use our proxy
-    const response = await fetch("/api/assemblyai/v2/realtime/token", {
-      method: "POST",
-      headers: {
-        Authorization: apiKey,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        expires_in: 480, // 8 minutes
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to generate token: ${response.status} ${response.statusText}`,
-      )
-    }
-
-    const tokenData = await response.json()
-    token =
-      typeof tokenData === "string" ? tokenData : tokenData.token || tokenData
-  } else {
-    // In production, request a token from our Supabase Edge Function using the authenticated client
-    const { data, error } = await supabase.functions.invoke(
-      "assemblyai-token",
-      {
-        body: { expires_in: 480, apiKey },
-      },
-    )
-    if (error) {
-      throw new Error(`Failed to generate token (edge): ${error.message}`)
-    }
-    token = typeof data === "string" ? data : data.token || data
-  }
-
   const audioStream = await getAudioStream()
-
-  const transcriber = new RealtimeTranscriber({
-    token,
-    sampleRate: 16_000,
-    wordBoost: getCustomWords(),
-  })
+  const transcriber = await configureTranscriber()
 
   return { audioStream, transcriber }
 })
