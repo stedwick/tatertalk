@@ -1,5 +1,8 @@
 // Using AssemblyAI's streaming SDK
-import type { RealtimeTranscriber } from "assemblyai/streaming"
+import type {
+  RealtimeTranscriber,
+  RealtimeTranscript,
+} from "assemblyai/streaming"
 import RecordRTC from "recordrtc"
 import type { ActorRefFrom, AnyActorRef } from "xstate"
 import { assign, fromPromise, sendTo, setup } from "xstate"
@@ -52,11 +55,8 @@ export const assemblyAISpeechMachine = setup({
       const stream = context.audioStream!
 
       // Wire transcript events
-      type TranscriptEvent = { text?: string; message_type?: string }
-      transcriber.on("transcript", (t: TranscriptEvent) => {
-        const text = (t.text ?? "").trim()
-        if (!text) return
-
+      transcriber.on("transcript", (t: RealtimeTranscript) => {
+        const text = t.text
         const isFinal = t.message_type === "FinalTranscript"
         if (isFinal) {
           parentRef.send({ type: "recognized", text })
@@ -78,7 +78,6 @@ export const assemblyAISpeechMachine = setup({
 
       try {
         await transcriber.connect()
-        parentRef.send({ type: "ready" })
       } catch (error) {
         parentRef.send({ type: "error", errorMsg: String(error) })
         return
@@ -97,7 +96,7 @@ export const assemblyAISpeechMachine = setup({
         ondataavailable: async (blob: Blob) => {
           try {
             const buffer = await blob.arrayBuffer()
-            await transcriber.sendAudio(buffer)
+            transcriber.sendAudio(buffer)
           } catch (err) {
             parentRef.send({
               type: "error",
@@ -109,6 +108,8 @@ export const assemblyAISpeechMachine = setup({
 
       context.recorder = recorder
       recorder.startRecording()
+
+      parentRef.send({ type: "ready" })
     },
     cleanup: async ({ context }) => {
       try {
