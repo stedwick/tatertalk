@@ -75,7 +75,7 @@ export default defineConfig(async () => ({
     //   "localhost",
     //   "127.0.0.1",
     //   "0.0.0.0",
-    //   "khsfg98f4jql.share.zrok.io",
+    //   "c09c56922a938a.lhr.life",
     // ],
     hmr: host
       ? {
