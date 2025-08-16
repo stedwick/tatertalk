@@ -112,7 +112,9 @@ export const generateToken = async (apiKey: string): Promise<string> => {
       },
     )
     if (error) {
-      throw new Error(`Failed to generate AssemblyAI token: ${error.message}`)
+      throw new Error(
+        `Please login and set your AssemblyAI API key:\n\n${error.message}`,
+      )
     }
 
     token = typeof data === "string" ? data : data.token || data
