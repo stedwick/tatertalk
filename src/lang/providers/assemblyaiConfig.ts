@@ -11,7 +11,6 @@ import { supabase } from "../../lib/supabase"
  */
 export const getAssemblyAIKey = () => {
   const settings = getSettings()
-
   return settings.assemblyAIKey
 }
 
@@ -39,7 +38,7 @@ export const generateToken = async (apiKey: string): Promise<string> => {
 
     if (!response.ok) {
       throw new Error(
-        `Failed to generate token: ${response.status} ${response.statusText}`,
+        `Failed to generate AssemblyAI token: ${response.status} ${response.statusText}`,
       )
     }
 
@@ -56,7 +55,7 @@ export const generateToken = async (apiKey: string): Promise<string> => {
       },
     )
     if (error) {
-      throw new Error(`Failed to generate token (edge): ${error.message}`)
+      throw new Error(`Failed to generate AssemblyAI token: ${error.message}`)
     }
     return typeof data === "string" ? data : data.token || data
   }
