@@ -3,13 +3,13 @@ import type { RealtimeTranscriber } from "assemblyai/streaming"
 import RecordRTC from "recordrtc"
 import type { ActorRefFrom, AnyActorRef } from "xstate"
 import { assign, fromPromise, sendTo, setup } from "xstate"
+import { getCustomWords } from "../../lib/settings"
 import {
   configureTranscriber,
   generateToken,
   getAssemblyAIKey,
 } from "./assemblyaiConfig"
 import { getAudioStream } from "./audioConfig"
-import { getCustomWords } from "../../lib/settings"
 
 interface AssemblyAIContext {
   parentRef: AnyActorRef
