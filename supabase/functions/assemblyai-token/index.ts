@@ -89,7 +89,7 @@ Deno.serve(async (req: Request) => {
 
     // Ensure this is not an anonymous user
     const isAnonymous =
-      (user as any).is_anonymous === true ||
+      user.is_anonymous === true ||
       (user.identities ?? []).some((id) => id.provider === "anonymous")
 
     if (isAnonymous) {
