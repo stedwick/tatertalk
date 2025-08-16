@@ -62,5 +62,11 @@ export function GoogleLogin() {
     }
   }, [theme])
 
-  return <div ref={buttonRef} className="flex justify-center" />
+  return (
+    <div
+      ref={buttonRef}
+      className="flex justify-center"
+      style={{ colorScheme: "light" }}
+    />
+  )
 }
