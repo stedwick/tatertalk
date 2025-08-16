@@ -16,6 +16,7 @@ const corsHeaders = {
 }
 
 // Function to get appropriate CORS origin
+// ex: curl -i --request OPTIONS 'https://jgulmfdsurvjqzzxeent.supabase.co/functions/v1/assemblyai-token' -H "Origin: https://azure--tatertalk.netlify.app"
 function getCorsOrigin(request: Request): string {
   const prodHost = "https://tatertalk.app"
 
@@ -35,6 +36,9 @@ function getCorsOrigin(request: Request): string {
   return prodHost
 }
 
+// ex: curl -L -X POST 'https://jgulmfdsurvjqzzxeent.supabase.co/functions/v1/assemblyai-token' \
+// -H 'Authorization: Bearer long__JWT__' \
+// --data '{"apiKey":"assemblyai_api_key"}'
 Deno.serve(async (req: Request) => {
   // Get dynamic CORS headers based on request origin
   const dynamicCorsHeaders = {
@@ -84,7 +88,8 @@ Deno.serve(async (req: Request) => {
     } = await supabaseClient.auth.getUser()
 
     if (userError || !user) {
-      throw new Error("Unauthorized")
+      const message = userError?.message ?? "Unauthorized"
+      throw new Error(message)
     }
 
     // Ensure this is not an anonymous user

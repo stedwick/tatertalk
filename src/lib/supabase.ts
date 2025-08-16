@@ -9,3 +9,11 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+
+// Expose supabase for debugging
+declare global {
+  interface Window {
+    supabase?: typeof supabase
+  }
+}
+window.supabase = supabase
