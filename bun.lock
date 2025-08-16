@@ -11,6 +11,7 @@
         "@tauri-apps/api": "^2.6.0",
         "@tauri-apps/plugin-opener": "^2.4.0",
         "@types/dom-speech-recognition": "^0.0.6",
+        "@types/google-one-tap": "^1.2.6",
         "@xstate/react": "^6.0.0",
         "assemblyai": "^4.8.0",
         "clsx": "^2.1.1",
@@ -574,6 +575,8 @@
     "@types/dom-speech-recognition": ["@types/dom-speech-recognition@0.0.6", "", {}, "sha512-o7pAVq9UQPJL5RDjO1f/fcpfFHdgiMnR4PoIU2N/ZQrYOS3C5rzdOJMsrpqeBCbii2EE9mERXgqspQqPDdPahw=="],
 
     "@types/estree": ["@types/estree@1.0.8", "", {}, "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="],
+
+    "@types/google-one-tap": ["@types/google-one-tap@1.2.6", "", {}, "sha512-REmJsXVHvKb/sgI8DF+7IesMbDbcsEokHBqxU01ENZ8d98UPWdRLhUCtxEm9bhNFFg6PJGy7PNFdvovp0hK3jA=="],
 
     "@types/mdx": ["@types/mdx@2.0.13", "", {}, "sha512-+OWZQfAYyio6YkJb3HLxDrvnx6SWWDbC0zVPfBRzUk0/nqoDyf6dNxQi3eArPe8rJ473nobTMQ/8Zk+LxJ+Yuw=="],
 

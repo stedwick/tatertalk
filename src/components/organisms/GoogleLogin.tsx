@@ -1,46 +1,22 @@
+import type {
+  CredentialResponse,
+  GsiButtonConfiguration,
+  IdConfiguration,
+} from "google-one-tap"
 import { useAtomValue } from "jotai"
 import { useEffect, useRef } from "react"
 import { themeAtom } from "../../atoms/themeAtom"
 import { supabase } from "../../lib/supabase"
 
-// Define Google Sign-In types
-interface GoogleSignInConfig {
-  client_id: string
-  callback: (response: { credential: string }) => Promise<void>
-  auto_select?: boolean
-  itp_support?: boolean
-  use_fedcm_for_prompt?: boolean
-}
-
-interface GoogleButtonConfig {
-  type?: string
-  shape?: string
-  theme?: string
-  text?: string
-  size?: string
-  logo_alignment?: string
-}
-
 // Extend the Window interface to include handleSignInWithGoogle and google
 declare global {
   interface Window {
-    handleSignInWithGoogle: (response: { credential: string }) => Promise<void>
-    google?: {
-      accounts: {
-        id: {
-          initialize: (config: GoogleSignInConfig) => void
-          renderButton: (
-            element: HTMLElement,
-            config: GoogleButtonConfig,
-          ) => void
-          prompt: () => void
-        }
-      }
-    }
+    handleSignInWithGoogle: (response: CredentialResponse) => Promise<void>
+    google?: google.accounts
   }
 }
 
-async function handleSignInWithGoogle(response: { credential: string }) {
+async function handleSignInWithGoogle(response: CredentialResponse) {
   const { data: _data, error: _error } = await supabase.auth.signInWithIdToken({
     provider: "google",
     token: response.credential,
@@ -57,24 +33,26 @@ export function GoogleLogin() {
     const initializeGoogleSignIn = () => {
       if (window.google?.accounts?.id && buttonRef.current) {
         // Initialize Google Sign-In
-        window.google.accounts.id.initialize({
+        const config: IdConfiguration = {
           client_id:
             "90483529824-63c8lpst16tt136qm6j20gbk7f69mv4m.apps.googleusercontent.com",
           callback: handleSignInWithGoogle,
           auto_select: true,
           itp_support: true,
           use_fedcm_for_prompt: true,
-        })
+        }
+        window.google.accounts.id.initialize(config)
 
         // Render the button
-        window.google.accounts.id.renderButton(buttonRef.current, {
+        const buttonConfig: GsiButtonConfiguration = {
           type: "standard",
           shape: "rectangular",
-          theme: theme === "dark" ? "filled_black" : "filled_white",
+          theme: theme === "dark" ? "filled_black" : "outline",
           text: "signin_with",
           size: "large",
           logo_alignment: "left",
-        })
+        }
+        window.google.accounts.id.renderButton(buttonRef.current, buttonConfig)
       }
     }
 

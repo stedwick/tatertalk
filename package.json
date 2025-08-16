@@ -23,6 +23,7 @@
     "@tauri-apps/api": "^2.6.0",
     "@tauri-apps/plugin-opener": "^2.4.0",
     "@types/dom-speech-recognition": "^0.0.6",
+    "@types/google-one-tap": "^1.2.6",
     "@xstate/react": "^6.0.0",
     "assemblyai": "^4.8.0",
     "clsx": "^2.1.1",
