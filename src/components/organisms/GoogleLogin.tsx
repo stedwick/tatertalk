@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react"
-import { supabase } from "../../lib/supabase"
-import { themeAtom } from "../../atoms/themeAtom"
 import { useAtomValue } from "jotai"
+import { useEffect, useRef } from "react"
+import { themeAtom } from "../../atoms/themeAtom"
+import { supabase } from "../../lib/supabase"
 
 // Define Google Sign-In types
 interface GoogleSignInConfig {
