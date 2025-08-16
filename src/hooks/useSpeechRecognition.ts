@@ -1,5 +1,5 @@
 import { useActorRef, useSelector } from "@xstate/react"
-import type { ActorRefFrom, SnapshotFrom } from "xstate"
+import type { SnapshotFrom } from "xstate"
 import type { SpeechRecognitionMachineImpl } from "../lang/speechLogic"
 
 type Snapshot = SnapshotFrom<SpeechRecognitionMachineImpl>
@@ -14,13 +14,9 @@ export const useSpeechRecognition = ({
   textAreaRef: React.RefObject<HTMLTextAreaElement>
   speechRecognitionMachine: SpeechRecognitionMachineImpl
 }) => {
-  // BUG: Fix speechRecognitionMachine type
-  // biome-ignore lint/suspicious/noExplicitAny: Weird "Excessive stack depth comparing types"
-  const speechActorUnknown = useActorRef(speechRecognitionMachine as any, {
+  const speechActor = useActorRef(speechRecognitionMachine, {
     input: { textAreaRef },
   })
-  const speechActor =
-    speechActorUnknown as ActorRefFrom<SpeechRecognitionMachineImpl>
 
   // Selectors for state values
   const isLoading = useSelector(speechActor, loadingSelector)
