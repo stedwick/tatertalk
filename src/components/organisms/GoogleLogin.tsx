@@ -51,7 +51,7 @@ export function GoogleLogin() {
     } else {
       // Wait for the Google library to load
       const checkGoogleLoaded = setInterval(() => {
-        if (window.google?.accounts?.id) {
+        if (window.google?.accounts?.id && buttonRef.current) {
           clearInterval(checkGoogleLoaded)
           initializeGoogleSignIn()
         }
