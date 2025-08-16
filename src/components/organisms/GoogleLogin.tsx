@@ -7,7 +7,6 @@ import { useAtomValue } from "jotai"
 import { useEffect, useRef } from "react"
 import { themeAtom } from "../../atoms/themeAtom"
 import { supabase } from "../../lib/supabase"
-import styles from "./GoogleLogin.module.css"
 
 async function handleSignInWithGoogle(response: CredentialResponse) {
   const { data: _data, error: _error } = await supabase.auth.signInWithIdToken({
@@ -63,7 +62,5 @@ export function GoogleLogin() {
     }
   }, [theme])
 
-  return (
-    <div ref={buttonRef} className={`${styles.googleButtonWrapper} w-full`} />
-  )
+  return <div ref={buttonRef} className="flex justify-center" />
 }
