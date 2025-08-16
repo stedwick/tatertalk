@@ -99,18 +99,13 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
   return (
     <>
       {/* Backdrop with fade animation */}
-      <div
-        role="button"
-        tabIndex={0}
+      <button
+        type="button"
         className={`fixed inset-0 backdrop-blur-sm z-40 transition-all duration-300 ease-in-out ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            onClose()
-          }
-        }}
+        aria-label="Close side menu"
       />
 
       {/* Menu with slide animation */}
