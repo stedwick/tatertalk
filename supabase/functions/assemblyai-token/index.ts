@@ -30,6 +30,10 @@ function getCorsOrigin(request: Request): string {
   if (origin.match(/^https:\/\/[a-zA-Z0-9-]+--tatertalk\.netlify\.app$/))
     return origin
 
+  // v2: Allow Netlify preview URLs (pattern: https://xxx--tatertalk.netlify.app)
+  if (origin.match(/^https:\/\/[a-zA-Z0-9-]+--tatertalkv2\.netlify\.app$/))
+    return origin
+
   // Allow localhost for development
   if (origin.match(/^https?:\/\/localhost(:\d+)?$/)) return origin
 
