@@ -3,14 +3,15 @@ import type {
   RealtimeTranscriber,
   RealtimeTranscript,
 } from "assemblyai/streaming"
-import RecordRTC from "recordrtc"
+import type RecordRTC from "recordrtc"
 import type { ActorRefFrom, AnyActorRef } from "xstate"
-import { assign, fromPromise, sendTo, setup } from "xstate"
+import { assign, enqueueActions, fromPromise, sendTo, setup } from "xstate"
 import { getCustomWords } from "../../lib/settings"
 import {
   configureTranscriber,
   generateToken,
   getAssemblyAIKey,
+  setupRecorder,
 } from "./assemblyaiConfig"
 import { getAudioStream } from "./audioConfig"
 
@@ -49,7 +50,7 @@ export const assemblyAISpeechMachine = setup({
     setupAssemblyAI,
   },
   actions: {
-    start: async ({ context }) => {
+    start: enqueueActions(async ({ context, enqueue }) => {
       const parentRef = context.parentRef
       const transcriber = context.transcriber!
       const stream = context.audioStream!
@@ -83,34 +84,22 @@ export const assemblyAISpeechMachine = setup({
         return
       }
 
+      const audioHandler = (buffer: ArrayBuffer) => {
+        transcriber.sendAudio(buffer)
+      }
+      const errHandler = (err: Error) => {
+        parentRef.send({
+          type: "error",
+          errorMsg: `AssemblyAI error: ${err.message}`,
+        })
+      }
       // Start recording and stream audio chunks to AssemblyAI
-      const recorder = new RecordRTC(stream, {
-        type: "audio",
-        mimeType: "audio/webm;codecs=pcm",
-        recorderType: RecordRTC.StereoAudioRecorder,
-        timeSlice: 250,
-        desiredSampRate: 16000,
-        numberOfAudioChannels: 1,
-        bufferSize: 4096,
-        audioBitsPerSecond: 128000,
-        ondataavailable: async (blob: Blob) => {
-          try {
-            const buffer = await blob.arrayBuffer()
-            transcriber.sendAudio(buffer)
-          } catch (err) {
-            parentRef.send({
-              type: "error",
-              errorMsg: `Failed sending audio: ${String(err)}`,
-            })
-          }
-        },
-      })
-
-      context.recorder = recorder
+      const recorder = setupRecorder(stream, audioHandler, errHandler)
+      enqueue.assign({ recorder })
       recorder.startRecording()
 
       parentRef.send({ type: "ready" })
-    },
+    }),
     cleanup: async ({ context }) => {
       try {
         if (context.recorder) {

@@ -3,6 +3,7 @@
  */
 
 import { RealtimeTranscriber } from "assemblyai/streaming"
+import RecordRTC from "recordrtc"
 import { getSettings } from "../../lib/settings"
 import { supabase } from "../../lib/supabase"
 
@@ -80,4 +81,34 @@ export const configureTranscriber = async ({
   })
 
   return transcriber
+}
+
+/**
+ * Setup RecordRTC recorder for AssemblyAI audio streaming
+ */
+export const setupRecorder = (
+  stream: MediaStream,
+  audioHandler: (buffer: ArrayBuffer) => void,
+  errHandler: (err: Error) => void,
+): RecordRTC => {
+  const recorder = new RecordRTC(stream, {
+    type: "audio",
+    mimeType: "audio/webm;codecs=pcm",
+    recorderType: RecordRTC.StereoAudioRecorder,
+    timeSlice: 250,
+    desiredSampRate: 16000,
+    numberOfAudioChannels: 1,
+    bufferSize: 4096,
+    audioBitsPerSecond: 128000,
+    ondataavailable: async (blob: Blob) => {
+      try {
+        const buffer = await blob.arrayBuffer()
+        audioHandler(buffer)
+      } catch (err) {
+        errHandler(err as Error)
+      }
+    },
+  })
+
+  return recorder
 }
