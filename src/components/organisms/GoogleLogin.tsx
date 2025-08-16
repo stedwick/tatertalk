@@ -15,6 +15,7 @@ async function handleSignInWithGoogle(response: CredentialResponse) {
   })
 }
 
+// NOTE: For some reason after logging out, the Google login button doesn't work again until you refresh the page.
 export function GoogleLogin() {
   const theme = useAtomValue(themeAtom)
   const buttonRef = useRef<HTMLDivElement>(null)
