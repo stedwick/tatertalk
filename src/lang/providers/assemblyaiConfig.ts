@@ -100,6 +100,7 @@ export const setupRecorder = (
     numberOfAudioChannels: 1,
     bufferSize: 4096,
     audioBitsPerSecond: 128000,
+    disableLogs: true,
     ondataavailable: async (blob: Blob) => {
       try {
         const buffer = await blob.arrayBuffer()

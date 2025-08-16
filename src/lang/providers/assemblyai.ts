@@ -57,7 +57,8 @@ export const assemblyAISpeechMachine = setup({
 
       // Wire transcript events
       transcriber.on("transcript", (t: RealtimeTranscript) => {
-        const text = t.text
+        const text = t.text.trim()
+        if (!text) return
         const isFinal = t.message_type === "FinalTranscript"
         if (isFinal) {
           parentRef.send({ type: "recognized", text })
