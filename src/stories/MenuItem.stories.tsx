@@ -73,6 +73,13 @@ const withRightIcon: MenuItem = {
   rightIcon: <ArrowTopRightOnSquareIcon className="w-4 h-4" />,
 }
 
+const longTextItem: MenuItem = {
+  id: "long-text",
+  label: "user.with.very.long.email.address@example-domain.com",
+  icon: <UserIcon className="w-5 h-5" />,
+  onClick: () => console.log("Long text clicked"),
+}
+
 export const Default: Story = {
   args: {
     item: defaultItem,
@@ -103,6 +110,12 @@ export const WithRightIcon: Story = {
   },
 }
 
+export const LongText: Story = {
+  args: {
+    item: longTextItem,
+  },
+}
+
 export const AllVariants: Story = {
   render: () => (
     <div className="space-y-2">
@@ -111,6 +124,7 @@ export const AllVariants: Story = {
       <MenuItemComponent item={navItem} />
       <MenuItemComponent item={dangerItem} />
       <MenuItemComponent item={withRightIcon} />
+      <MenuItemComponent item={longTextItem} />
     </div>
   ),
 }
