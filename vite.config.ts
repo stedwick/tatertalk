@@ -71,6 +71,12 @@ export default defineConfig(async () => ({
     port: 1420,
     strictPort: true,
     host: host || false,
+    // allowedHosts: [
+    //   "localhost",
+    //   "127.0.0.1",
+    //   "0.0.0.0",
+    //   "khsfg98f4jql.share.zrok.io",
+    // ],
     hmr: host
       ? {
           protocol: "ws",
