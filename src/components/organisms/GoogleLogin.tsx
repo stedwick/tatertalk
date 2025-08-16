@@ -36,12 +36,21 @@ export function GoogleLogin() {
         const buttonConfig: GsiButtonConfiguration = {
           type: "standard",
           shape: "rectangular",
-          theme: theme === "dark" ? "filled_black" : "outline",
+          theme: theme === "dark" ? "filled_blue" : "outline",
           text: "signin_with",
           size: "large",
           logo_alignment: "left",
         }
         window.google.accounts.id.renderButton(buttonRef.current, buttonConfig)
+
+        // Force the iframe to be full width after rendering
+        setTimeout(() => {
+          const iframe = buttonRef.current?.querySelector("iframe")
+          if (iframe) {
+            iframe.style.width = "100%"
+            iframe.style.minWidth = "100%"
+          }
+        }, 100)
       }
     }
 
@@ -62,5 +71,16 @@ export function GoogleLogin() {
     }
   }, [theme])
 
-  return <div ref={buttonRef} className="w-full" />
+  return (
+    <div
+      ref={buttonRef}
+      className="w-full"
+      style={{
+        minHeight: "40px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    />
+  )
 }

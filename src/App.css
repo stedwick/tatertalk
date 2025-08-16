@@ -124,3 +124,40 @@ button {
     background-color: #0f0f0f69;
   }
 } */
+
+/* Google Sign-In Button Styling */
+.g_id_signin {
+  width: 100% !important;
+  min-width: 100% !important;
+  display: block !important;
+}
+
+.g_id_signin iframe {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+/* Ensure Google button container is full width */
+div[data-testid="google-signin"] {
+  width: 100% !important;
+}
+
+/* Target all Google iframes more broadly */
+iframe[src*="accounts.google.com"] {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+/* Fix for Google button in dark mode */
+[data-theme="dark"] .g_id_signin iframe,
+[data-theme="dark"] iframe[src*="accounts.google.com"] {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
