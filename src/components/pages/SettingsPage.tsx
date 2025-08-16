@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
+import { useId } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router"
 import { getSettings, saveSettings } from "../../lib/settings"
@@ -20,6 +21,7 @@ import FormInput from "../atoms/FormInput"
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate()
+  const customWordsId = useId()
   const methods = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: getSettings(),
@@ -282,11 +284,11 @@ const SettingsPage: React.FC = () => {
               </p>
 
               <div className="form-control w-full">
-                <label htmlFor="customWords" className="label">
+                <label htmlFor={customWordsId} className="label">
                   <span className="label-text">(comma-separated)</span>
                 </label>
                 <textarea
-                  id="customWords"
+                  id={customWordsId}
                   className="textarea textarea-bordered w-full"
                   placeholder="e.g., TaterTalk, Jabberwocky, supercalifragilisticexpialidocious"
                   rows={4}
