@@ -8,22 +8,12 @@ import { useEffect, useRef } from "react"
 import { themeAtom } from "../../atoms/themeAtom"
 import { supabase } from "../../lib/supabase"
 
-// Extend the Window interface to include handleSignInWithGoogle and google
-declare global {
-  interface Window {
-    handleSignInWithGoogle: (response: CredentialResponse) => Promise<void>
-    google?: google.accounts
-  }
-}
-
 async function handleSignInWithGoogle(response: CredentialResponse) {
   const { data: _data, error: _error } = await supabase.auth.signInWithIdToken({
     provider: "google",
     token: response.credential,
   })
 }
-
-window.handleSignInWithGoogle = handleSignInWithGoogle
 
 export function GoogleLogin() {
   const theme = useAtomValue(themeAtom)
