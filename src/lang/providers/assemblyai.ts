@@ -3,8 +3,13 @@ import type { RealtimeTranscriber } from "assemblyai/streaming"
 import RecordRTC from "recordrtc"
 import type { ActorRefFrom, AnyActorRef } from "xstate"
 import { assign, fromPromise, sendTo, setup } from "xstate"
-import { configureTranscriber } from "./assemblyaiConfig"
+import {
+  configureTranscriber,
+  generateToken,
+  getAssemblyAIKey,
+} from "./assemblyaiConfig"
 import { getAudioStream } from "./audioConfig"
+import { getCustomWords } from "../../lib/settings"
 
 interface AssemblyAIContext {
   parentRef: AnyActorRef
@@ -21,7 +26,12 @@ type AssemblyAIEvents = { type: "stop" }
 
 const setupAssemblyAI = fromPromise(async () => {
   const audioStream = await getAudioStream()
-  const transcriber = await configureTranscriber()
+  const apiKey = getAssemblyAIKey()
+  const token = await generateToken(apiKey)
+  const transcriber = await configureTranscriber({
+    token,
+    wordBoost: getCustomWords(),
+  })
 
   return { audioStream, transcriber }
 })

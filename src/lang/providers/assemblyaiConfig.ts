@@ -3,32 +3,27 @@
  */
 
 import { RealtimeTranscriber } from "assemblyai/streaming"
-import { getCustomWords, getSettings } from "../../lib/settings"
+import { getSettings } from "../../lib/settings"
 import { supabase } from "../../lib/supabase"
-
-export interface AssemblyAICredentials {
-  apiKey: string
-}
 
 /**
  * Get AssemblyAI credentials from localStorage
  */
-export const getAssemblyAICredentials = (): AssemblyAICredentials | null => {
+export const getAssemblyAIKey = () => {
   const settings = getSettings()
 
-  if (!settings.assemblyAIKey) {
-    return null
-  }
-
-  return {
-    apiKey: settings.assemblyAIKey,
-  }
+  return settings.assemblyAIKey
 }
 
 /**
  * Generate a temporary token for AssemblyAI streaming
  */
 export const generateToken = async (apiKey: string): Promise<string> => {
+  if (!apiKey) {
+    throw new Error(
+      "AssemblyAI API key not configured. Please set it in Settings.",
+    )
+  }
   if (import.meta.env.DEV) {
     // In development, use our proxy
     const response = await fetch("/api/assemblyai/v2/realtime/token", {
@@ -70,20 +65,19 @@ export const generateToken = async (apiKey: string): Promise<string> => {
 /**
  * Configure AssemblyAI RealtimeTranscriber with user settings
  */
-export const configureTranscriber = async (): Promise<RealtimeTranscriber> => {
-  const credentials = getAssemblyAICredentials()
-  if (!credentials) {
-    throw new Error(
-      "AssemblyAI API key not configured. Please set it in Settings.",
-    )
-  }
-
-  const token = await generateToken(credentials.apiKey)
-
+export const configureTranscriber = async ({
+  token,
+  wordBoost,
+  sampleRate = 16_000,
+}: {
+  token: string
+  wordBoost: string[]
+  sampleRate?: number
+}): Promise<RealtimeTranscriber> => {
   const transcriber = new RealtimeTranscriber({
     token,
-    sampleRate: 16_000,
-    wordBoost: getCustomWords(),
+    sampleRate,
+    wordBoost,
   })
 
   return transcriber
