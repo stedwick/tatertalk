@@ -8,6 +8,52 @@ import { getSettings } from "../../lib/settings"
 import { supabase } from "../../lib/supabase"
 
 /**
+ * Interface for cached token data
+ */
+interface CachedToken {
+  token: string
+  expiryTime: number // Unix timestamp in milliseconds
+}
+
+const ASSEMBLYAI_TOKEN_CACHE_KEY = "assemblyai_token_cache"
+
+/**
+ * Save token to localStorage with expiry time
+ */
+const saveTokenToCache = (token: string, expiresInSeconds: number): void => {
+  const expiryTime = Date.now() + expiresInSeconds * 1000
+  const cachedToken: CachedToken = {
+    token,
+    expiryTime,
+  }
+  localStorage.setItem(ASSEMBLYAI_TOKEN_CACHE_KEY, JSON.stringify(cachedToken))
+}
+
+/**
+ * Retrieve cached token from localStorage if it's still valid
+ * Returns null if no token exists or if it expires within 2 minutes
+ */
+const getCachedToken = (): string | null => {
+  const cachedData = localStorage.getItem(ASSEMBLYAI_TOKEN_CACHE_KEY)
+  if (!cachedData) {
+    return null
+  }
+
+  const cachedToken: CachedToken = JSON.parse(cachedData)
+  const now = Date.now()
+  const twoMinutesFromNow = now + 2 * 60 * 1000 // 2 minutes in milliseconds
+
+  // Check if token expires within 2 minutes
+  if (cachedToken.expiryTime <= twoMinutesFromNow) {
+    // Token is expired or will expire soon, remove it
+    localStorage.removeItem(ASSEMBLYAI_TOKEN_CACHE_KEY)
+    return null
+  }
+
+  return cachedToken.token
+}
+
+/**
  * Get AssemblyAI credentials from localStorage
  */
 export const getAssemblyAIKey = () => {
@@ -17,6 +63,7 @@ export const getAssemblyAIKey = () => {
 
 /**
  * Generate a temporary token for AssemblyAI streaming
+ * Uses cached token if available and not expiring within 2 minutes
  */
 export const generateToken = async (apiKey: string): Promise<string> => {
   if (!apiKey) {
@@ -24,6 +71,16 @@ export const generateToken = async (apiKey: string): Promise<string> => {
       "AssemblyAI API key not configured. Please set it in Settings.",
     )
   }
+
+  // Check for cached token first
+  const cachedToken = getCachedToken()
+  if (cachedToken) {
+    return cachedToken
+  }
+
+  const expiresInSeconds = 480 // 8 minutes
+  let token: string
+
   if (import.meta.env.DEV) {
     // In development, use our proxy
     const response = await fetch("/api/assemblyai/v2/realtime/token", {
@@ -33,7 +90,7 @@ export const generateToken = async (apiKey: string): Promise<string> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        expires_in: 480, // 8 minutes
+        expires_in: expiresInSeconds,
       }),
     })
 
@@ -44,22 +101,26 @@ export const generateToken = async (apiKey: string): Promise<string> => {
     }
 
     const tokenData = await response.json()
-    return typeof tokenData === "string"
-      ? tokenData
-      : tokenData.token || tokenData
+    token =
+      typeof tokenData === "string" ? tokenData : tokenData.token || tokenData
   } else {
     // In production, request a token from our Supabase Edge Function using the authenticated client
     const { data, error } = await supabase.functions.invoke(
       "assemblyai-token",
       {
-        body: { expires_in: 480, apiKey },
+        body: { expires_in: expiresInSeconds, apiKey },
       },
     )
     if (error) {
       throw new Error(`Failed to generate AssemblyAI token: ${error.message}`)
     }
-    return typeof data === "string" ? data : data.token || data
+
+    token = typeof data === "string" ? data : data.token || data
   }
+
+  // Cache the new token
+  saveTokenToCache(token, expiresInSeconds)
+  return token
 }
 
 /**
