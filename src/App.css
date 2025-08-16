@@ -3,6 +3,7 @@
 
 @theme {
   --breakpoint-xs: 30rem;
+  --breakpoint-xxs: 21rem;
 }
 
 /* .logo.vite:hover {

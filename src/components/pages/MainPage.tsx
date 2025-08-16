@@ -63,7 +63,7 @@ const MainPage: React.FC = () => {
     <>
       <TextArea value={text} onChange={setText} ref={textAreaRef} />
 
-      <div className="flex gap-4 mt-6 justify-center">
+      <div className="flex flex-col xxs:flex-row gap-4 mt-6 justify-center">
         <ActionButton
           onClick={isListening ? stop : start}
           className={
