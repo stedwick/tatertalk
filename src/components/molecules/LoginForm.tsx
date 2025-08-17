@@ -7,7 +7,7 @@ import { signInLoadingAtom } from "../../atoms/authAtoms"
 import { signIn } from "../../lib/auth"
 import { type LoginFormData, loginSchema } from "../../lib/validationSchemas"
 import FormInput from "../atoms/FormInput"
-import { GoogleLogin } from "../organisms/GoogleLogin"
+import { GoogleButton } from "../atoms/GoogleButton"
 
 interface LoginFormProps {
   onSwitchToSignup: () => void
@@ -31,7 +31,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
           Login
         </h2>
 
-        <GoogleLogin />
+        <GoogleButton />
+        {/* <GoogleLogin /> */}
         <div className="divider pt-4">Email</div>
 
         <FormProvider {...methods}>
