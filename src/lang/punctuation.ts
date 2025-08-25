@@ -94,7 +94,7 @@ const spaceComesNextRegex = new RegExp(
 )
 const spaceComesBeforeRegex = new RegExp(`^[^\\s${charsWithOnlySpaceAfter}]`)
 
-const debugLog = false
+const debugLog = import.meta.env.DEV
 
 // Text transformation functions
 const trimText = (context: TextAreaContext): TextAreaContext => ({
@@ -106,7 +106,8 @@ const preserveSpecialCases = (context: TextAreaContext): TextAreaContext => ({
   ...context,
   text: context.text
     .replace(/a\.m\./g, "xxAAMMxx")
-    .replace(/p\.m\./g, "xxPPMMxx"),
+    .replace(/p\.m\./g, "xxPPMMxx")
+    .replace(/^\n\n/, "xxPARAxx"),
 })
 
 const addSpaceBefore = (context: TextAreaContext): TextAreaContext => ({
@@ -191,7 +192,10 @@ const downcaseHashtags = (context: TextAreaContext): TextAreaContext => ({
 
 const restoreSpecialCases = (context: TextAreaContext): TextAreaContext => ({
   ...context,
-  text: context.text.replace(/xxAAMMxx/g, "a.m.").replace(/xxPPMMxx/g, "p.m."),
+  text: context.text
+    .replace(/xxAAMMxx/g, "a.m.")
+    .replace(/xxPPMMxx/g, "p.m.")
+    .replace(/xxPARAxx/g, "\n\n"),
 })
 
 const trimMultiLine = (context: TextAreaContext): TextAreaContext => ({
@@ -204,7 +208,7 @@ const debugLogStep =
   (stepName: string) =>
   (context: TextAreaContext): TextAreaContext => {
     if (debugLog) {
-      console.log(`${stepName}: [${context.text}]`)
+      console.log(`${stepName}: [${JSON.stringify(context.text)}]`)
     }
     return context
   }
@@ -218,9 +222,11 @@ const pipe = <T>(value: T, ...functions: Array<(arg: T) => T>): T => {
 export const punctuateText = (input: TextAreaContext): string => {
   const result = pipe(
     input,
-    trimText,
+    debugLogStep("input"),
     preserveSpecialCases,
     debugLogStep("A.M.P.M."),
+    trimText,
+    debugLogStep("trim"),
     addSpaceBefore,
     debugLogStep("space ."),
     addSpaceAfter,
