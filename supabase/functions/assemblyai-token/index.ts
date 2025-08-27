@@ -18,7 +18,7 @@ const corsHeaders = {
 // Function to get appropriate CORS origin
 // ex: curl -i --request OPTIONS 'https://jgulmfdsurvjqzzxeent.supabase.co/functions/v1/assemblyai-token' -H "Origin: https://azure--tatertalk.netlify.app"
 function getCorsOrigin(request: Request): string {
-  const prodHost = "https://tatertalk.app"
+  const prodHost = "https://v2.tatertalk.app"
 
   const origin = request.headers.get("Origin")
   if (!origin) return prodHost
