@@ -93,8 +93,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // Ensure this is not an anonymous user
-    const isAnonymous =
-      user.is_anonymous === true
+    const isAnonymous = user.is_anonymous === true
 
     if (isAnonymous) {
       throw new Error("Anonymous users not allowed")
