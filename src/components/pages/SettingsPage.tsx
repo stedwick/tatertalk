@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
+import { useId } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router"
 import { getSettings, saveSettings } from "../../lib/settings"
@@ -20,6 +21,7 @@ import FormInput from "../atoms/FormInput"
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate()
+  const customWordsId = useId()
   const methods = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: getSettings(),
@@ -127,12 +129,11 @@ const SettingsPage: React.FC = () => {
                   </span>
                 </div>
 
-                <label className="flex items-center gap-3 cursor-pointer opacity-50">
+                <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="radio"
                     value="assemblyai"
                     className="radio radio-primary"
-                    disabled
                     {...register("speechProvider")}
                   />
                   <div className="flex items-center gap-2">
@@ -142,9 +143,6 @@ const SettingsPage: React.FC = () => {
                       className="w-5 h-5"
                     />
                     <span>AssemblyAI</span>
-                    <span className="badge badge-ghost hidden sm:block">
-                      Coming Soon
-                    </span>
                   </div>
                 </label>
                 <div className="text-base-content/70 ml-10">
@@ -193,6 +191,34 @@ const SettingsPage: React.FC = () => {
                     label="Azure Speech Region"
                     type="text"
                     placeholder="e.g., eastus, westus2"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* AssemblyAI Credentials */}
+          {selectedProvider === "assemblyai" && (
+            <div className="card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h2 className="card-title flex items-center gap-2">
+                  <img
+                    src="/icons/assemblyai.png"
+                    alt="AssemblyAI"
+                    className="w-5 h-5"
+                  />
+                  AssemblyAI Credentials
+                </h2>
+                <p className="text-base-content/70 mb-4">
+                  Configure your AssemblyAI API key.
+                </p>
+
+                <div className="space-y-4">
+                  <FormInput
+                    name="assemblyAIKey"
+                    label="AssemblyAI API Key"
+                    type="password"
+                    placeholder="Enter your AssemblyAI API key"
                   />
                 </div>
               </div>
@@ -258,11 +284,11 @@ const SettingsPage: React.FC = () => {
               </p>
 
               <div className="form-control w-full">
-                <label htmlFor="customWords" className="label">
+                <label htmlFor={customWordsId} className="label">
                   <span className="label-text">(comma-separated)</span>
                 </label>
                 <textarea
-                  id="customWords"
+                  id={customWordsId}
                   className="textarea textarea-bordered w-full"
                   placeholder="e.g., TaterTalk, Jabberwocky, supercalifragilisticexpialidocious"
                   rows={4}

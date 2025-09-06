@@ -8,7 +8,7 @@ import {
   SpeechConfig,
   type SpeechRecognizer,
 } from "microsoft-cognitiveservices-speech-sdk"
-import { getSettings } from "../../lib/settings"
+import { getCustomWords, getSettings } from "../../lib/settings"
 
 export interface AzureCredentials {
   key: string
@@ -67,17 +67,13 @@ export const configureSpeech = (): SpeechConfig => {
  * Add custom phrases to the speech recognizer
  */
 export const addCustomPhrases = (speechRecognizer: SpeechRecognizer): void => {
-  const settings = getSettings()
+  const customWords = getCustomWords()
 
   // Add custom phrases if provided
-  if (settings.customWords.trim()) {
+  if (customWords.length > 0) {
     const phraseList = PhraseListGrammar.fromRecognizer(speechRecognizer)
-    const customPhrases = settings.customWords
-      .split(",")
-      .map((phrase) => phrase.trim())
-      .filter((phrase) => phrase.length > 0)
 
-    for (const phrase of customPhrases) {
+    for (const phrase of customWords) {
       phraseList.addPhrase(phrase)
     }
   }

@@ -88,4 +88,9 @@ describe("Punctuation System", () => {
     const result = punctuate("the score was 10 dash sign 5")
     expect(result).toBe("The score was 10–5")
   })
+
+  test("New paragraph at beginning", () => {
+    const result = punctuate("new paragraph hello world")
+    expect(result).toBe("\n\nHello world")
+  })
 })

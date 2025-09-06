@@ -1,6 +1,6 @@
 import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
-import { defineConfig } from "vite"
+import { defineConfig, type HttpProxy, type ProxyOptions } from "vite"
 import { VitePWA } from "vite-plugin-pwa"
 
 const host = process.env.TAURI_DEV_HOST
@@ -71,6 +71,12 @@ export default defineConfig(async () => ({
     port: 1420,
     strictPort: true,
     host: host || false,
+    // allowedHosts: [
+    //   "localhost",
+    //   "127.0.0.1",
+    //   "0.0.0.0",
+    //   "c09c56922a938a.lhr.life",
+    // ],
     hmr: host
       ? {
           protocol: "ws",
@@ -81,6 +87,28 @@ export default defineConfig(async () => ({
     watch: {
       // 3. tell vite to ignore watching `src-tauri`
       ignored: ["**/src-tauri/**"],
+    },
+    proxy: {
+      "/api/assemblyai": {
+        target: "https://api.assemblyai.com",
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/api\/assemblyai/, ""),
+        configure: (proxy: HttpProxy.Server, _options: ProxyOptions) => {
+          proxy.on("error", (err, _req, _res) => {
+            console.log("proxy error", err)
+          })
+          proxy.on("proxyReq", (_proxyReq, req, _res) => {
+            console.log("Sending Request to the Target:", req.method, req.url)
+          })
+          proxy.on("proxyRes", (proxyRes, req, _res) => {
+            console.log(
+              "Received Response from the Target:",
+              proxyRes.statusCode,
+              req.url,
+            )
+          })
+        },
+      },
     },
   },
   build: {

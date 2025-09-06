@@ -1,5 +1,6 @@
 import { useAtomValue } from "jotai"
 import type React from "react"
+import { useId } from "react"
 import { themeAtom } from "../../atoms/themeAtom"
 
 interface MountainBackgroundProps {
@@ -10,6 +11,10 @@ const MountainBackground: React.FC<MountainBackgroundProps> = ({
   className = "",
 }) => {
   const theme = useAtomValue(themeAtom)
+  const skyGradientId = useId()
+  const mountain1Id = useId()
+  const mountain2Id = useId()
+  const mountain3Id = useId()
 
   return (
     <svg
@@ -25,24 +30,30 @@ const MountainBackground: React.FC<MountainBackgroundProps> = ({
         {theme === "dark" ? (
           // Dark mode gradients
           <>
-            <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient
+              id={skyGradientId}
+              x1="0%"
+              y1="0%"
+              x2="0%"
+              y2="100%"
+            >
               <stop offset="0%" stopColor="#1a1a2e" /> {/* Dark navy */}
               <stop offset="30%" stopColor="#16213e" /> {/* Dark blue */}
               <stop offset="60%" stopColor="#0f3460" /> {/* Deep blue */}
               <stop offset="100%" stopColor="#0a0a0a" /> {/* Near black */}
             </linearGradient>
 
-            <linearGradient id="mountain1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={mountain1Id} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#2d2d2d" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#1a1a1a" stopOpacity="0.6" />
             </linearGradient>
 
-            <linearGradient id="mountain2" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={mountain2Id} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#252525" stopOpacity="0.7" />
               <stop offset="100%" stopColor="#151515" stopOpacity="0.5" />
             </linearGradient>
 
-            <linearGradient id="mountain3" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={mountain3Id} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#1e1e1e" stopOpacity="0.6" />
               <stop offset="100%" stopColor="#0f0f0f" stopOpacity="0.4" />
             </linearGradient>
@@ -50,24 +61,30 @@ const MountainBackground: React.FC<MountainBackgroundProps> = ({
         ) : (
           // Light mode gradients
           <>
-            <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient
+              id={skyGradientId}
+              x1="0%"
+              y1="0%"
+              x2="0%"
+              y2="100%"
+            >
               <stop offset="0%" stopColor="#FFE5E5" /> {/* Pastel pink */}
               <stop offset="30%" stopColor="#FFE8D6" /> {/* Pastel orange */}
               <stop offset="60%" stopColor="#E8D5FF" /> {/* Pastel purple */}
               <stop offset="100%" stopColor="#D1E8FF" /> {/* Pastel blue */}
             </linearGradient>
 
-            <linearGradient id="mountain1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={mountain1Id} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#A8A8A8" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#6B6B6B" stopOpacity="0.6" />
             </linearGradient>
 
-            <linearGradient id="mountain2" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={mountain2Id} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#9A9A9A" stopOpacity="0.7" />
               <stop offset="100%" stopColor="#5A5A5A" stopOpacity="0.5" />
             </linearGradient>
 
-            <linearGradient id="mountain3" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={mountain3Id} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#8C8C8C" stopOpacity="0.6" />
               <stop offset="100%" stopColor="#4A4A4A" stopOpacity="0.4" />
             </linearGradient>
@@ -76,24 +93,24 @@ const MountainBackground: React.FC<MountainBackgroundProps> = ({
       </defs>
 
       {/* Background sky */}
-      <rect width="100%" height="100%" fill="url(#skyGradient)" />
+      <rect width="100%" height="100%" fill={`url(#${skyGradientId})`} />
 
       {/* Distant mountains (back layer) */}
       <path
         d="M0,600 L200,400 L400,500 L600,350 L800,450 L1000,300 L1200,400 L1200,800 L0,800 Z"
-        fill="url(#mountain3)"
+        fill={`url(#${mountain3Id})`}
       />
 
       {/* Middle mountains */}
       <path
         d="M0,650 L150,500 L300,550 L450,450 L600,500 L750,400 L900,450 L1050,350 L1200,400 L1200,800 L0,800 Z"
-        fill="url(#mountain2)"
+        fill={`url(#${mountain2Id})`}
       />
 
       {/* Foreground mountains */}
       <path
         d="M0,700 L100,550 L250,600 L400,500 L550,550 L700,450 L850,500 L1000,400 L1150,450 L1200,400 L1200,800 L0,800 Z"
-        fill="url(#mountain1)"
+        fill={`url(#${mountain1Id})`}
       />
 
       {/* Celestial body - Moon in dark mode, Sun in light mode */}

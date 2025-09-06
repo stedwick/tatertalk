@@ -2,6 +2,11 @@ import { assertEvent, assign, enqueueActions, setup } from "xstate"
 import { getSettings } from "../lib/settings"
 import type { TextAreaContext } from "../lib/textarea"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
+import type {
+  AssemblyAIActor,
+  AssemblyAISpeechMachine,
+} from "./providers/assemblyai"
+import { assemblyAISpeechMachine } from "./providers/assemblyai"
 import type { AzureActor, AzureSpeechMachine } from "./providers/azure"
 import { azureSpeechMachine } from "./providers/azure"
 import type { WebSpeechActor, WebSpeechMachine } from "./providers/webSpeechApi"
@@ -12,8 +17,11 @@ interface SpeechContext {
   currentText: TextAreaContext
   recognizedText: TextAreaContext
   textAreaRef: React.RefObject<HTMLTextAreaElement>
-  recognizerMachine: AzureSpeechMachine | WebSpeechMachine
-  recognizerActor: AzureActor | WebSpeechActor | null
+  recognizerMachine:
+    | AzureSpeechMachine
+    | WebSpeechMachine
+    | AssemblyAISpeechMachine
+  recognizerActor: AzureActor | WebSpeechActor | AssemblyAIActor | null
   errorMsg: string | null
 }
 
@@ -74,7 +82,7 @@ export const speechRecognitionMachineImpl = setup({
       recognizerActor: ({ context, self, spawn }) =>
         spawn(context.recognizerMachine, {
           input: { parentRef: self },
-        }) as AzureActor | WebSpeechActor,
+        }) as AzureActor | WebSpeechActor | AssemblyAIActor,
     }),
     updateRecognize: assign({
       recognizedText: ({ context, event }) => {
@@ -201,6 +209,9 @@ export const taterMachine = speechRecognitionMachineImpl.provide({
         const settings = getSettings()
         if (settings.speechProvider === "microsoft") {
           return azureSpeechMachine
+        }
+        if (settings.speechProvider === "assemblyai") {
+          return assemblyAISpeechMachine
         }
         return webSpeechMachine
       },

@@ -32,9 +32,9 @@ const MenuItemComponent: React.FC<MenuItemProps> = ({ item, onClose }) => {
           }`}
           onClick={onClose}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             {item.icon}
-            <span>{item.label}</span>
+            <span className="truncate">{item.label}</span>
           </div>
           {item.rightIcon && item.rightIcon}
         </a>
@@ -54,9 +54,9 @@ const MenuItemComponent: React.FC<MenuItemProps> = ({ item, onClose }) => {
           }
           onClick={onClose}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             {item.icon}
-            <span>{item.label}</span>
+            <span className="truncate">{item.label}</span>
           </div>
           {item.rightIcon && item.rightIcon}
         </NavLink>
@@ -74,9 +74,9 @@ const MenuItemComponent: React.FC<MenuItemProps> = ({ item, onClose }) => {
           : "hover:bg-base-300 active:scale-95"
       }`}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
         {item.icon}
-        <span>{item.label}</span>
+        <span className="truncate">{item.label}</span>
       </div>
       {item.rightIcon && item.rightIcon}
     </button>

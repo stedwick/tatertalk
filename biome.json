@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -15,7 +15,8 @@
       "src/**/*.js",
       "src/**/*.jsx",
       "./*.json",
-      "./*.ts"
+      "./*.ts",
+      "supabase/functions/**/*.ts"
     ]
   },
   "formatter": {
@@ -27,6 +28,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "suspicious": {
+        "useIterableCallbackReturn": "off"
+      },
       "style": {
         "noNonNullAssertion": "off"
       }

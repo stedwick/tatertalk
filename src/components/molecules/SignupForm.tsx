@@ -7,6 +7,7 @@ import { signUpLoadingAtom } from "../../atoms/authAtoms"
 import { signUp } from "../../lib/auth"
 import { type SignupFormData, signupSchema } from "../../lib/validationSchemas"
 import FormInput from "../atoms/FormInput"
+import { GoogleButton } from "../atoms/GoogleButton"
 
 interface SignupFormProps {
   onSwitchToLogin: () => void
@@ -29,6 +30,10 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
         <h2 className="card-title text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6">
           Sign Up
         </h2>
+
+        <GoogleButton />
+        {/* <GoogleLogin /> */}
+        <div className="divider pt-4">Email</div>
 
         <FormProvider {...methods}>
           <form
