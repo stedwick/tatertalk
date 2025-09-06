@@ -318,7 +318,7 @@ const SettingsPage: React.FC = () => {
                 AI Proofreading
               </h2>
               <p className="text-base-content/70 mb-4">
-                The AI can punctuate and fix your grammar for you.
+                The AI can punctuate and fix your grammar for you (openai/gpt-4.1-mini).
               </p>
 
               <div className="space-y-4">
