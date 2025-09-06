@@ -5,6 +5,8 @@ export interface AppSettings {
   assemblyAIKey: string
   autoPunctuation: "true" | "false"
   customWords: string
+  openRouterApiKey: string
+  aiProofreadingPrompt: string
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -14,6 +16,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   assemblyAIKey: "",
   autoPunctuation: "false",
   customWords: "",
+  openRouterApiKey: "",
+  aiProofreadingPrompt: "You are a helpful proofreading assistant. Please review and improve the following text for clarity, grammar, and style while maintaining the original meaning and tone.",
 }
 
 const SETTINGS_KEY = "tatertalk_settings"

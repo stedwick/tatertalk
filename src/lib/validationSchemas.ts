@@ -34,6 +34,8 @@ export const settingsSchema = z
     assemblyAIKey: z.string(),
     autoPunctuation: z.enum(["true", "false"]),
     customWords: z.string(),
+    openRouterApiKey: z.string(),
+    aiProofreadingPrompt: z.string(),
   })
   .refine(
     (data) => {

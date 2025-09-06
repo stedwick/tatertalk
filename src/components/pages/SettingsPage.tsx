@@ -4,6 +4,7 @@ import {
   CheckIcon,
   Cog6ToothIcon,
   MicrophoneIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
@@ -22,6 +23,7 @@ import FormInput from "../atoms/FormInput"
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate()
   const customWordsId = useId()
+  const aiPromptId = useId()
   const methods = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: getSettings(),
@@ -294,6 +296,46 @@ const SettingsPage: React.FC = () => {
                   rows={4}
                   {...register("customWords")}
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* AI Proofreading */}
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <h2 className="card-title flex items-center gap-2">
+                <SparklesIcon className="w-5 h-5" />
+                AI Proofreading
+              </h2>
+              <p className="text-base-content/70 mb-4">
+                The AI can fix your grammar for you.
+              </p>
+
+              <div className="space-y-4">
+                <FormInput
+                  name="openRouterApiKey"
+                  label="OpenRouter API Key"
+                  type="password"
+                  placeholder="Enter your OpenRouter API key"
+                />
+
+                <div className="form-control w-full">
+                  <label htmlFor={aiPromptId} className="label">
+                    <span className="label-text">System Prompt</span>
+                  </label>
+                  <textarea
+                    id={aiPromptId}
+                    className="textarea textarea-bordered w-full"
+                    placeholder="Enter a custom system prompt for the AI proofreader..."
+                    rows={4}
+                    {...register("aiProofreadingPrompt")}
+                  />
+                  <label htmlFor={aiPromptId} className="label">
+                    <span className="label-text-alt text-base-content/70">
+                      Customize how the AI should proofread and improve your text
+                    </span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
