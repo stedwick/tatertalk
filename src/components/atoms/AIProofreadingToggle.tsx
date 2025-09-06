@@ -30,18 +30,20 @@ const AIProofreadingToggle: React.FC<AIProofreadingToggleProps> = ({
           canEnable ? "cursor-pointer" : "!cursor-not-allowed",
         )}
       >
-        {isLoading ? (
-          <span className="loading loading-spinner loading-sm text-primary" />
-        ) : (
-          <input
-            id={checkboxId}
-            type="checkbox"
-            className="checkbox checkbox-primary"
-            checked={isEnabled}
-            onChange={(e) => setIsEnabled(e.target.checked)}
-            disabled={!canEnable || isLoading}
-          />
-        )}
+        <div className="w-6 h-6 flex items-center justify-center">
+          {isLoading ? (
+            <span className="loading loading-spinner text-primary w-6 h-6" />
+          ) : (
+            <input
+              id={checkboxId}
+              type="checkbox"
+              className="checkbox checkbox-primary w-6 h-6"
+              checked={isEnabled}
+              onChange={(e) => setIsEnabled(e.target.checked)}
+              disabled={!canEnable || isLoading}
+            />
+          )}
+        </div>
         <span
           className={clsx(
             "label-text flex items-center gap-2",
