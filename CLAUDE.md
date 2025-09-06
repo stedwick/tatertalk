@@ -122,3 +122,16 @@ Key transformations include:
 - `tsconfig.json` - Strict TypeScript configuration
 - `src-tauri/tauri.conf.json` - Tauri application configuration
 - `.cursor/rules/` - Contains project-specific rules for bun, XState, and DaisyUI usage
+
+## Important Patterns
+
+### AI Integration
+- OpenRouter API for proofreading (model: `openai/gpt-4.1-mini`)
+- Settings persist in localStorage, toggle state in Jotai atom
+- Auto-proofreading triggers when speech recognition stops
+
+### UI Best Practices
+- Prevent layout shift: Wrap dynamic elements in fixed-size containers
+- Export defaults as constants for reset functionality
+- Use `htmlFor` + `id` for accessibility
+- Storybook: Use `MemoryRouter` wrapper for Router components
