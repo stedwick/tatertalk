@@ -70,7 +70,7 @@ export const useAIProofreading = (props: UseAIProofreadingProps = {}) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              model: "meta-llama/llama-3.2-3b-instruct:free",
+              model: "openai/gpt-4.1-mini",
               messages: [
                 {
                   role: "system",

@@ -1,4 +1,5 @@
 import {
+  ArrowPathIcon,
   BookOpenIcon,
   ChatBubbleLeftRightIcon,
   CheckIcon,
@@ -11,7 +12,11 @@ import type React from "react"
 import { useId } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router"
-import { getSettings, saveSettings } from "../../lib/settings"
+import {
+  DEFAULT_AI_PROMPT,
+  getSettings,
+  saveSettings,
+} from "../../lib/settings"
 import { themedToastError, themedToastSuccess } from "../../lib/themedToast"
 import {
   type SettingsFormData,
@@ -29,7 +34,7 @@ const SettingsPage: React.FC = () => {
     defaultValues: getSettings(),
   })
 
-  const { register, handleSubmit, watch } = methods
+  const { register, handleSubmit, watch, setValue } = methods
 
   const selectedProvider = watch("speechProvider")
 
@@ -42,6 +47,11 @@ const SettingsPage: React.FC = () => {
     } catch (error) {
       themedToastError(`Error saving settings: ${error}`)
     }
+  }
+
+  const handleResetPrompt = () => {
+    setValue("aiProofreadingPrompt", DEFAULT_AI_PROMPT)
+    themedToastSuccess("System prompt reset to default")
   }
 
   return (
@@ -320,9 +330,19 @@ const SettingsPage: React.FC = () => {
                 />
 
                 <div className="form-control w-full">
-                  <label htmlFor={aiPromptId} className="label">
-                    <span className="label-text">System Prompt</span>
-                  </label>
+                  <div className="flex justify-between items-center">
+                    <label htmlFor={aiPromptId} className="label">
+                      <span className="label-text">System Prompt</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleResetPrompt}
+                      className="btn btn-ghost btn-xs gap-1"
+                    >
+                      <ArrowPathIcon className="w-3 h-3" />
+                      Reset to Default
+                    </button>
+                  </div>
                   <textarea
                     id={aiPromptId}
                     className="textarea textarea-bordered w-full"
