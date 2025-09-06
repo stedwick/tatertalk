@@ -9,6 +9,7 @@ import type React from "react"
 import { useEffect, useRef } from "react"
 import { textAreaAtom } from "../../atoms/textAreaAtom"
 import { themeAtom } from "../../atoms/themeAtom"
+import { useAIProofreading } from "../../hooks/useAIProofreading"
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
 import { taterMachine } from "../../lang/speechLogic"
 import { themedToastError } from "../../lib/themedToast"
@@ -45,6 +46,13 @@ const MainPage: React.FC = () => {
       speechRecognitionMachine: taterMachine,
     })
 
+  // Use AI proofreading hook with all necessary props
+  const aiProofreading = useAIProofreading({
+    textAreaRef,
+    isListening,
+    onTextUpdate: setText,
+  })
+
   useEffect(() => {
     if (errorMsg) {
       themedToastError(errorMsg)
@@ -64,7 +72,13 @@ const MainPage: React.FC = () => {
     <>
       <TextArea value={text} onChange={setText} ref={textAreaRef} />
 
-      <AIProofreadingToggle className="mt-4" />
+      <AIProofreadingToggle
+        className="mt-4"
+        isEnabled={aiProofreading.isEnabled}
+        setIsEnabled={aiProofreading.setIsEnabled}
+        canEnable={aiProofreading.canEnable}
+        isLoading={aiProofreading.isLoading}
+      />
 
       <div className="flex flex-col xxs:flex-row gap-4 mt-4 justify-center">
         <ActionButton

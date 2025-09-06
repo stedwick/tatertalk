@@ -3,16 +3,22 @@ import clsx from "clsx"
 import type React from "react"
 import { useId } from "react"
 import { Link } from "react-router"
-import { useAIProofreading } from "../../hooks/useAIProofreading"
 
 interface AIProofreadingToggleProps {
   className?: string
+  isEnabled: boolean
+  setIsEnabled: (enabled: boolean) => void
+  canEnable: boolean
+  isLoading: boolean
 }
 
 const AIProofreadingToggle: React.FC<AIProofreadingToggleProps> = ({
   className = "",
+  isEnabled,
+  setIsEnabled,
+  canEnable,
+  isLoading,
 }) => {
-  const { isEnabled, setIsEnabled, canEnable, isLoading } = useAIProofreading()
   const checkboxId = useId()
 
   return (

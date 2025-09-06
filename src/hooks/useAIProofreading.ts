@@ -1,10 +1,19 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { getSettings } from "../lib/settings"
+import { readFromTextArea, writeToTextArea } from "../lib/textarea"
 
-export const useAIProofreading = () => {
+interface UseAIProofreadingProps {
+  textAreaRef?: React.RefObject<HTMLTextAreaElement>
+  isListening?: boolean
+  onTextUpdate?: (text: string) => void
+}
+
+export const useAIProofreading = (props: UseAIProofreadingProps = {}) => {
+  const { textAreaRef, isListening, onTextUpdate } = props
   const [isEnabled, setIsEnabled] = useState(false)
   const [canEnable, setCanEnable] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const wasListeningRef = useRef(false)
 
   useEffect(() => {
     // Check settings on mount and when they might change
@@ -42,53 +51,92 @@ export const useAIProofreading = () => {
     }
   }, [isEnabled])
 
-  const proofreadText = async (text: string): Promise<string> => {
-    if (!isEnabled || !canEnable) {
-      return text
-    }
-
-    setIsLoading(true)
-
-    try {
-      const settings = getSettings()
-      const response = await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${settings.openRouterApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "meta-llama/llama-3.2-3b-instruct:free",
-            messages: [
-              {
-                role: "system",
-                content: settings.aiProofreadingPrompt,
-              },
-              {
-                role: "user",
-                content: text,
-              },
-            ],
-          }),
-        },
-      )
-
-      if (!response.ok) {
-        console.error("AI proofreading failed:", response.statusText)
+  const proofreadText = useCallback(
+    async (text: string): Promise<string> => {
+      if (!isEnabled || !canEnable) {
         return text
       }
 
-      const data = await response.json()
-      return data.choices[0]?.message?.content || text
-    } catch (error) {
-      console.error("AI proofreading error:", error)
-      return text
-    } finally {
-      setIsLoading(false)
+      setIsLoading(true)
+
+      try {
+        const settings = getSettings()
+        const response = await fetch(
+          "https://openrouter.ai/api/v1/chat/completions",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${settings.openRouterApiKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "meta-llama/llama-3.2-3b-instruct:free",
+              messages: [
+                {
+                  role: "system",
+                  content: settings.aiProofreadingPrompt,
+                },
+                {
+                  role: "user",
+                  content: text,
+                },
+              ],
+            }),
+          },
+        )
+
+        if (!response.ok) {
+          console.error("AI proofreading failed:", response.statusText)
+          return text
+        }
+
+        const data = await response.json()
+        return data.choices[0]?.message?.content || text
+      } catch (error) {
+        console.error("AI proofreading error:", error)
+        return text
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [isEnabled, canEnable],
+  )
+
+  // Handle automatic proofreading when speech recognition stops
+  useEffect(() => {
+    const handleAutoProofreading = async () => {
+      // Check if isListening changed from true to false
+      if (
+        wasListeningRef.current &&
+        !isListening &&
+        isEnabled &&
+        textAreaRef?.current
+      ) {
+        const context = readFromTextArea(textAreaRef.current)
+        const fullText = `${context.before}${context.text}${context.after}`
+
+        if (fullText.trim()) {
+          const proofreadResult = await proofreadText(fullText)
+
+          if (proofreadResult !== fullText) {
+            // Update the text area with the proofread text
+            writeToTextArea(textAreaRef.current, {
+              before: "",
+              text: proofreadResult,
+              after: "",
+            })
+            // Call the callback to update React state
+            onTextUpdate?.(proofreadResult)
+          }
+        }
+      }
+
+      // Update the ref for next comparison
+      wasListeningRef.current = isListening || false
     }
-  }
+
+    handleAutoProofreading()
+  }, [isListening, isEnabled, textAreaRef, onTextUpdate, proofreadText])
 
   return {
     isEnabled,
