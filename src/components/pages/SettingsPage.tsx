@@ -318,7 +318,7 @@ const SettingsPage: React.FC = () => {
                 AI Proofreading
               </h2>
               <p className="text-base-content/70 mb-4">
-                The AI can fix your grammar for you.
+                The AI can punctuate and fix your grammar for you.
               </p>
 
               <div className="space-y-4">
@@ -330,7 +330,7 @@ const SettingsPage: React.FC = () => {
                 />
 
                 <div className="form-control w-full">
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center flex-wrap">
                     <label htmlFor={aiPromptId} className="label">
                       <span className="label-text">System Prompt</span>
                     </label>

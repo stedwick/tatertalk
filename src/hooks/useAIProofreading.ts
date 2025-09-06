@@ -123,8 +123,8 @@ export const useAIProofreading = (props: UseAIProofreadingProps = {}) => {
           if (proofreadResult !== fullText) {
             // Update the text area with the proofread text
             writeToTextArea(textAreaRef.current, {
-              before: "",
-              text: proofreadResult,
+              before: proofreadResult,
+              text: "",
               after: "",
             })
             // Call the callback to update React state
