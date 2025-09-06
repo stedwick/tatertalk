@@ -13,6 +13,7 @@ import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
 import { taterMachine } from "../../lang/speechLogic"
 import { themedToastError } from "../../lib/themedToast"
 import ActionButton from "../atoms/ActionButton"
+import AIProofreadingToggle from "../atoms/AIProofreadingToggle"
 import TextArea from "../atoms/TextArea"
 
 const MainPage: React.FC = () => {
@@ -63,7 +64,9 @@ const MainPage: React.FC = () => {
     <>
       <TextArea value={text} onChange={setText} ref={textAreaRef} />
 
-      <div className="flex flex-col xxs:flex-row gap-4 mt-6 justify-center">
+      <AIProofreadingToggle className="mt-4" />
+
+      <div className="flex flex-col xxs:flex-row gap-4 mt-4 justify-center">
         <ActionButton
           onClick={isListening ? stop : start}
           className={

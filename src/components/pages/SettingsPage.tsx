@@ -332,7 +332,8 @@ const SettingsPage: React.FC = () => {
                   />
                   <label htmlFor={aiPromptId} className="label">
                     <span className="label-text-alt text-base-content/70">
-                      Customize how the AI should proofread and improve your text
+                      Customize how the AI should proofread and improve your
+                      text
                     </span>
                   </label>
                 </div>

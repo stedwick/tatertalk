@@ -17,7 +17,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   autoPunctuation: "false",
   customWords: "",
   openRouterApiKey: "",
-  aiProofreadingPrompt: "You are a helpful proofreading assistant. Please review and improve the following text for clarity, grammar, and style while maintaining the original meaning and tone.",
+  aiProofreadingPrompt:
+    "You are a helpful proofreading assistant. Please review and improve the following text for clarity, grammar, and style while maintaining the original meaning and tone.",
 }
 
 const SETTINGS_KEY = "tatertalk_settings"
