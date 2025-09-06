@@ -351,7 +351,7 @@ const SettingsPage: React.FC = () => {
                     {...register("aiProofreadingPrompt")}
                   />
                   <label htmlFor={aiPromptId} className="label">
-                    <span className="label-text-alt text-base-content/70">
+                    <span className="label-text-alt text-base-content/70 whitespace-normal">
                       Customize how the AI should proofread and improve your
                       text
                     </span>
