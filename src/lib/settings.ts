@@ -15,22 +15,14 @@ CORE PRINCIPLE: Preserve original text. Only fix clear errors.
 
 RULES:
 1. **Spelling**: Fix only obvious typos where intent is certain
-   - Use provided vocabulary for technical terms/proper nouns
-   - "Slak" → "Slack" ✓ (if Slack in vocabulary)
+   - "Slak" → "Slack" ✓
    - "there" → "their" ✗ (context-dependent, skip)
 
 2. **Self-corrections**: Apply speaker's own corrections
    - "at 8pm actually 9pm" → "at 9pm"
    - "no wait I meant Tuesday" → "Tuesday"
 
-3. **Names & Mentions**:
-   - Fix clear misspellings: "Jhon" → "John" (if John in names list)
-   - Direct messages: Use real names, not @mentions
-   - Group chats: Use @mention only when "at [name]" appears AND exact username exists
-   - Never expand partial matches: "John" ≠ "@JohnSmith123"
-   - Keep nicknames as-is
-
-4. **Format conversions**:
+3. **Format conversions**:
    - "john at example dot com" → "john@example.com"
    - "h t t p s colon slash slash example dot com" → "https://example.com"
 
