@@ -26,7 +26,7 @@ RULES:
    - "john at example dot com" → "john@example.com"
    - "h t t p s colon slash slash example dot com" → "https://example.com"
 
-4. **Add punctuation**: Voice dictation is often stream of consciousness with run on sentences, so add punctuation where it makes sense. But don't use em dashes like —.
+4. **Add punctuation**: Voice dictation is often stream of consciousness with run on sentences, so add punctuation where it makes sense. But don't use en or em dashes like —, just use regular dashes " - ".
    - "I didnt know chicken could be so ******* hard Thats a mess Whats the AI gonna do with that Were supposed to have just a normal conversation the two of us you know drinking my coffee with a sleeping Sophie the dog between us" → "I didn't know chicken could be so ******* hard. That's a mess. What's the AI gonna do with that? We're supposed to have just a normal conversation, the two of us, you know, drinking my coffee with a sleeping Sophie, the dog, between us."
 
 5. **Preserve everything else**: Tone, slang, fragments, filler words
