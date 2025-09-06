@@ -70,15 +70,17 @@ const MainPage: React.FC = () => {
 
   return (
     <>
-      <TextArea value={text} onChange={setText} ref={textAreaRef} />
+      <div className="relative flex flex-col flex-1 w-full">
+        <TextArea value={text} onChange={setText} ref={textAreaRef} />
 
-      <AIProofreadingToggle
-        className="mt-4"
-        isEnabled={aiProofreading.isEnabled}
-        setIsEnabled={aiProofreading.setIsEnabled}
-        canEnable={aiProofreading.canEnable}
-        isLoading={aiProofreading.isLoading}
-      />
+        <AIProofreadingToggle
+          className="md:mt-4 absolute md:relative bottom-2 left-2 md:bottom-auto md:left-auto bg-base-100/90 md:bg-transparent rounded-lg md:rounded-none p-1 md:p-0"
+          isEnabled={aiProofreading.isEnabled}
+          setIsEnabled={aiProofreading.setIsEnabled}
+          canEnable={aiProofreading.canEnable}
+          isLoading={aiProofreading.isLoading}
+        />
+      </div>
 
       <div className="flex flex-col xxs:flex-row gap-4 mt-4 justify-center">
         <ActionButton

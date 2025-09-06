@@ -51,14 +51,37 @@ const AIProofreadingToggle: React.FC<AIProofreadingToggleProps> = ({
           )}
         >
           <SparklesIcon className="w-4 h-4" />
-          AI Proofreading
-          {!canEnable && !isLoading && (
-            <Link
-              to="/settings"
-              className="link text-base-content/50 cursor-pointer hover:text-primary"
-            >
-              (Go to Settings)
-            </Link>
+          {canEnable || isLoading ? (
+            <>
+              <span className="hidden xxs:inline">AI Proofreading</span>
+              <span className="xxs:hidden">AI</span>
+            </>
+          ) : (
+            <>
+              <span className="hidden xs:inline">
+                AI Proofreading
+                <Link
+                  to="/settings"
+                  className="link text-base-content/50 cursor-pointer hover:text-primary ml-2"
+                >
+                  (Go to Settings)
+                </Link>
+              </span>
+              <span className="hidden xxs:inline xs:hidden">
+                <Link
+                  to="/settings"
+                  className="link text-base-content/50 cursor-pointer hover:text-primary ml-2"
+                >
+                  AI Proofreading
+                </Link>
+              </span>
+              <Link
+                to="/settings"
+                className="xxs:hidden link text-base-content/50 cursor-pointer hover:text-primary"
+              >
+                AI
+              </Link>
+            </>
           )}
         </span>
       </label>
