@@ -1,4 +1,6 @@
+import { useAtom } from "jotai"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { aiProofreadingEnabledAtom } from "../atoms/aiProofreadingAtom"
 import { getSettings } from "../lib/settings"
 import { readFromTextArea, writeToTextArea } from "../lib/textarea"
 
@@ -10,7 +12,7 @@ interface UseAIProofreadingProps {
 
 export const useAIProofreading = (props: UseAIProofreadingProps = {}) => {
   const { textAreaRef, isListening, onTextUpdate } = props
-  const [isEnabled, setIsEnabled] = useState(false)
+  const [isEnabled, setIsEnabled] = useAtom(aiProofreadingEnabledAtom)
   const [canEnable, setCanEnable] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const wasListeningRef = useRef(false)
@@ -49,7 +51,7 @@ export const useAIProofreading = (props: UseAIProofreadingProps = {}) => {
       window.removeEventListener("storage", handleStorageChange)
       window.removeEventListener("focus", handleFocus)
     }
-  }, [isEnabled])
+  }, [isEnabled, setIsEnabled])
 
   const proofreadText = useCallback(
     async (text: string): Promise<string> => {
