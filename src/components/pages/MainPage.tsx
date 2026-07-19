@@ -9,10 +9,12 @@ import type React from "react"
 import { useEffect, useRef } from "react"
 import { textAreaAtom } from "../../atoms/textAreaAtom"
 import { themeAtom } from "../../atoms/themeAtom"
+import { useAIProofreading } from "../../hooks/useAIProofreading"
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition"
 import { taterMachine } from "../../lang/speechLogic"
 import { themedToastError } from "../../lib/themedToast"
 import ActionButton from "../atoms/ActionButton"
+import AIProofreadingToggle from "../atoms/AIProofreadingToggle"
 import TextArea from "../atoms/TextArea"
 
 const MainPage: React.FC = () => {
@@ -44,6 +46,13 @@ const MainPage: React.FC = () => {
       speechRecognitionMachine: taterMachine,
     })
 
+  // Use AI proofreading hook with all necessary props
+  const aiProofreading = useAIProofreading({
+    textAreaRef,
+    isListening,
+    onTextUpdate: setText,
+  })
+
   useEffect(() => {
     if (errorMsg) {
       themedToastError(errorMsg)
@@ -61,9 +70,19 @@ const MainPage: React.FC = () => {
 
   return (
     <>
-      <TextArea value={text} onChange={setText} ref={textAreaRef} />
+      <div className="relative flex flex-col flex-1 w-full">
+        <TextArea value={text} onChange={setText} ref={textAreaRef} />
 
-      <div className="flex flex-col xxs:flex-row gap-4 mt-6 justify-center">
+        <AIProofreadingToggle
+          className="md:mt-4 absolute md:relative bottom-2 left-2 md:bottom-auto md:left-auto bg-base-100/90 md:bg-transparent rounded-lg md:rounded-none p-1 md:p-0"
+          isEnabled={aiProofreading.isEnabled}
+          setIsEnabled={aiProofreading.setIsEnabled}
+          canEnable={aiProofreading.canEnable}
+          isLoading={aiProofreading.isLoading}
+        />
+      </div>
+
+      <div className="flex flex-col xxs:flex-row gap-4 mt-4 justify-center">
         <ActionButton
           onClick={isListening ? stop : start}
           className={

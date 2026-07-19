@@ -19,37 +19,56 @@ bun run tauri        # Run Tauri CLI commands
 
 # Testing
 bun test src/lang/punctuation.test.ts  # Run punctuation system tests
+
+# Code Quality
+bun run check        # Run Biome linter/formatter with auto-fix
+bun run check:ci     # Run Biome check without auto-fix (CI mode)
+
+# Storybook
+bun run storybook    # Start Storybook development server
+bun run build-storybook  # Build Storybook for production
+bun run test-storybook   # Run Storybook tests with Vitest
 ```
 
 ## Technology Stack
 
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS v4 + DaisyUI components
-- **State Management**: XState v5 (Stately)
+- **State Management**: XState v5 (Stately) + Jotai
 - **Desktop Framework**: Tauri v2 (Rust backend)
+- **Speech Recognition**: AssemblyAI, Azure Cognitive Services, Web Speech API
+- **Testing**: Bun test runner, Vitest (for Storybook)
+- **Linting/Formatting**: Biome
 - **Functional Programming**: Effect library (v3.16.11)
 
 ## Architecture
 
 ### Frontend Structure
 - `src/App.tsx` - Main React application component
-- `src/components/` - Reusable React components
-- `src/lang/` - Core punctuation processing system
-- `src/xstate/` - State machine definitions using XState
+- `src/components/` - Atomic Design pattern (atoms → molecules → organisms → pages → templates)
+- `src/lang/` - Core punctuation processing system and speech recognition logic
+- `src/lib/` - Utility libraries (auth, settings, textarea management)
+- `src/atoms/` - Jotai atoms for global state management
+- `src/stories/` - Storybook stories for component documentation
 
 ### Punctuation System (`src/lang/`)
 The core feature is a pure TypeScript punctuation system that transforms spoken text:
 
 - **Architecture**: Functional pipeline using pure functions and composition
 - **Pipeline**: 15-step transformation process (trim → punctuation → capitalization → spacing)
-- **Features**: Handles punctuation, capitalization, quotes, smileys, special cases
-- **Testing**: Comprehensive test suite with `punctuation.test.ts`
+- **Features**: Handles spoken punctuation conversion, smart capitalization, quote handling, emoticons
+- **Testing**: Comprehensive test suite with `punctuation.test.ts` using Bun test runner
 
 Key transformations include:
 - Spoken punctuation ("comma" → ",", "period" → ".")
 - Smart capitalization and spacing
 - Quote handling and apostrophes
 - Emoticon processing ("smiley face" → ":)")
+
+### Speech Recognition (`src/lang/speechLogic.ts`)
+- State machine implementation using XState v5
+- Multiple provider support (AssemblyAI, Azure, Web Speech API)
+- Provider machines in `src/lang/providers/`
 
 ### Tauri Backend (`src-tauri/`)
 - Minimal Rust backend using Tauri framework
@@ -59,14 +78,31 @@ Key transformations include:
 
 ## Development Guidelines
 
+### Component Development
+- Follow Atomic Design pattern in `src/components/` directory structure
+- Check for existing components before creating new ones
+- Use native DaisyUI components (no need to create wrappers for buttons, inputs, etc.)
+- Write default Storybook stories for each component
+
 ### UI Components
-- Use **Tailwind CSS v4** for styling
+- Use **Tailwind CSS v4** for styling (imported via `@import "tailwindcss"`)
 - Use **DaisyUI** components for React UI elements
+- Use **Heroicons** for icons (`@heroicons/react`)
+- Use **clsx** for conditional class names
 - Example: `<button className="btn btn-primary">Click me</button>`
 
 ### State Management
-- Use **XState v5** (Stately) for complex state management
-- Store state machines in `src/xstate/` directory
+- Use **XState v5** (Stately) for complex state machines
+- Use **Jotai** for global state with atoms in `src/atoms/`
+- Use **Immer** if needed for immutable state updates
+
+### Forms
+- Use **React Hook Form** for form handling
+- Use **Zod** for schema validation
+
+### Authentication
+- Use `src/atoms/authAtoms.ts` for auth state
+- Use `src/lib/auth.ts` for auth operations
 
 ### Code Style
 - TypeScript with strict configuration
@@ -86,3 +122,16 @@ Key transformations include:
 - `tsconfig.json` - Strict TypeScript configuration
 - `src-tauri/tauri.conf.json` - Tauri application configuration
 - `.cursor/rules/` - Contains project-specific rules for bun, XState, and DaisyUI usage
+
+## Important Patterns
+
+### AI Integration
+- OpenRouter API for proofreading (model: `openai/gpt-4.1-mini`)
+- Settings persist in localStorage, toggle state in Jotai atom
+- Auto-proofreading triggers when speech recognition stops
+
+### UI Best Practices
+- Prevent layout shift: Wrap dynamic elements in fixed-size containers
+- Export defaults as constants for reset functionality
+- Use `htmlFor` + `id` for accessibility
+- Storybook: Use `MemoryRouter` wrapper for Router components
