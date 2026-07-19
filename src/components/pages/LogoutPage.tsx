@@ -7,7 +7,7 @@ const LogoutPage: React.FC = () => {
   const navigate = useNavigate()
   useEffect(() => {
     signOut().then(() => {
-      navigate("/login")
+      navigate("/")
     })
   }, [navigate])
   return null

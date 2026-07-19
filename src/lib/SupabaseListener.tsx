@@ -16,9 +16,12 @@ export const SupabaseListener = () => {
       setUserLoading(false)
     }
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      updateSession(session)
-    })
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        updateSession(session)
+      })
+      .catch(() => updateSession(null))
 
     // Listen for auth changes
     const {
